@@ -1,38 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:islamtime/read_file.dart';
-
-var read = ReadFile();
+import 'package:islamtime/pages/home_page.dart';
+import 'package:islamtime/pages/location_page.dart';
+import 'package:islamtime/user_information.dart';
 
 void main() {
-  runApp(MyApp());
-}
-
-
-
-
-
-
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Container(
-            child: FlatButton(
-              onPressed: read.loadAsset,
-              child: Icon(
-                Icons.add_circle,
-                color: Colors.yellow,
-                size: 100,
-              ),
-            ),
-          ),
-        ),
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: LocationPage(
+        userInformation: UserInformation(),
       ),
-    );
-  }
+    ),
+  );
 }
