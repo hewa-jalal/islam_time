@@ -42,6 +42,7 @@ class UserInformation {
   void getUserPrayer() async {
     await getUserLocation();
     getDate();
-    Prayer.getPrayer(userModel);
+    Prayer prayer = Prayer();
+    prayer.getPrayer(userModel);
   }
 }
