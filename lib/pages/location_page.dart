@@ -1,31 +1,96 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:islamtime/bloc/bang_bloc.dart';
 
-import 'package:islamtime/user_information.dart';
+import '../bang.dart';
 
-class LocationPage extends StatefulWidget {
-  final UserInformation userInformation;
-
-  const LocationPage({@required this.userInformation});
-
-  @override
-  _LocationPageState createState() => _LocationPageState();
-}
-
-class _LocationPageState extends State<LocationPage> {
+class LocationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.my_location),
-              onPressed: () => widget.userInformation.getUserPrayer(),
-            ),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        body: BlocBuilder<BangBloc, BangState>(
+          builder: (context, state) {
+            if (state is BangInitial) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Model State', style: TextStyle(fontSize: 36)),
+                  Expanded(
+                    child: FlatButton(
+                      child: Icon(
+                        Icons.my_location,
+                        size: 100,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: RaisedButton(
+                        onPressed: () async {
+                          getUserLocation(context);
+                        },
+                        child: Text('OK'),
+                      ),
+                    ),
+                  )
+                ],
+              );
+            } else if (state is BangLoaded) {
+              return columnWithData(state.bang);
+            } else if (state is BangLoading) {
+              return CircularProgressIndicator();
+            }
+          },
         ),
       ),
     );
+  }
+
+
+  Widget initialState() {
+    return Center(
+      child: FlatButton(
+        child: Text('Initial state'),
+        onPressed: () {},
+      ),
+    );
+  }
+
+  Widget columnWithData(Bang bang) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text('Model State ${bang.speda}', style: TextStyle(fontSize: 36)),
+        Text('Model State ${bang.rojHalat}', style: TextStyle(fontSize: 36)),
+        Text('Model State ${bang.nevro}', style: TextStyle(fontSize: 36)),
+        Text('Model State ${bang.evar}', style: TextStyle(fontSize: 36)),
+        Text('Model State ${bang.maghrab}', style: TextStyle(fontSize: 36)),
+        Text('Model State ${bang.aesha}', style: TextStyle(fontSize: 36)),
+      ],
+    );
+  }
+
+  Future<String> getUserLocation(context) async {
+    final bangBloc = BlocProvider.of<BangBloc>(context);
+
+    Position position = await Geolocator().getCurrentPosition();
+    List<Placemark> placemarks = await Geolocator()
+        .placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placemark = placemarks[0];
+
+    String formattedAddress = '${placemark.locality},${placemark.country}';
+    List<String> splitedAddress = formattedAddress.split(',');
+
+    var userCity = splitedAddress[0];
+    var userCountry = splitedAddress[1];
+
+    bangBloc.add(GetBang(countryName: userCountry, cityName: userCity));
+
+    return '$userCountry, $userCity';
   }
 }
