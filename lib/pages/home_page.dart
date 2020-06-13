@@ -2,22 +2,18 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:islamtime/bang.dart';
 import 'package:islamtime/custom_widgets/clock.dart';
 
+class HomePage extends StatelessWidget {
+  final Bang bang;
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  const HomePage({Key key, @required this.bang}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // print('build inside HomePage ${bang.myParse}');
+    bang.myParse();
     return Scaffold(
       body: SafeArea(
         child: Container(

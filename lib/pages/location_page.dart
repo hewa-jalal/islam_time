@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/custom_widgets/clock.dart';
+import 'package:islamtime/pages/home_page.dart';
 
 import '../bang.dart';
 
@@ -10,47 +12,61 @@ class LocationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: BlocBuilder<BangBloc, BangState>(
-          builder: (context, state) {
-            if (state is BangInitial) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Model State', style: TextStyle(fontSize: 36)),
-                  Expanded(
-                    child: FlatButton(
-                      child: Icon(
-                        Icons.my_location,
-                        size: 100,
-                      ),
-                      onPressed: () {},
-                    ),
+        body: BlocListener<BangBloc, BangState>(
+          listener: (context, state) {
+            if (state is BangLoaded) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: BlocProvider.of<BangBloc>(context),
+                    child: HomePage(bang: state.bang),
                   ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: RaisedButton(
-                        onPressed: () async {
-                          getUserLocation(context);
-                        },
-                        child: Text('OK'),
-                      ),
-                    ),
-                  )
-                ],
+                ),
               );
-            } else if (state is BangLoaded) {
-              return columnWithData(state.bang);
-            } else if (state is BangLoading) {
-              return CircularProgressIndicator();
             }
           },
+          child: BlocBuilder<BangBloc, BangState>(
+            builder: (context, state) {
+              if (state is BangInitial) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('Model State', style: TextStyle(fontSize: 36)),
+                    Expanded(
+                      child: FlatButton(
+                        child: Icon(
+                          Icons.my_location,
+                          size: 100,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: RaisedButton(
+                          onPressed: () async {
+                            await getUserLocation(context);
+                          },
+                          child: Text('OK'),
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              } else if (state is BangLoaded) {
+                return CircularProgressIndicator();
+              } else if (state is BangLoading) {
+                return CircularProgressIndicator();
+              }
+            },
+          ),
         ),
       ),
     );
   }
-
 
   Widget initialState() {
     return Center(
