@@ -48,8 +48,8 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     String evar = toAmPm(splitLine[5]);
     String makhrab = toAmPm(splitLine[6]);
     String aesha = toAmPm(splitLine[7]);
-    getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
-    // String midNight = 
+    List<String> midNight =
+        getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
 
     Bang bang = Bang(
       speda: speda,
@@ -58,6 +58,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       evar: evar,
       maghrab: makhrab,
       aesha: aesha,
+      midNight: midNight,
     );
 
     return bang;
@@ -68,6 +69,9 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     int day = Jiffy().date;
 
     // used quotes on the last one to make it a String
+    // TODO: use padLeft for the methods below
+    // String formattedMonth = month.toString().padLeft(2, '0');
+
     String formattedMonth = month < 10 ? '0$month' : '$month';
     String formattedDay = day < 10 ? '0$day' : '$day';
 
@@ -87,7 +91,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     return '${timeOfDay.hourOfPeriod}:${splitedTime[1]}';
   }
 
-  dynamic getTheDifference(String date, String speda, String maghrab) {
+  List<String> getTheDifference(String date, String speda, String maghrab) {
     List<String> splitedDate = date.split('-');
     int month = int.parse(splitedDate[0]);
     int day = int.parse(splitedDate[1]);
@@ -117,22 +121,41 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     DateTime spedaBang = DateFormat('dd/MM/yyyy HH:mm').parse(dateSpeda);
     DateTime maghrabBang = DateFormat('dd/MM/yyyy HH:mm').parse(dateMaghrab);
 
-    print('in new method TimeDate speda $spedaBang');
-    print('in new method TimeDate maghrab $maghrabBang');
+    // print('in new method TimeDate speda $spedaBang');
+    // print('in new method TimeDate maghrab $maghrabBang');
 
+    // get the full differnce between speda and maghrab bang
     DateTime spedaAndMaghrabDiff = spedaBang.subtract(
       Duration(days: maghrabBang.day, hours: maghrabBang.hour),
     );
 
-    int midNight = (spedaAndMaghrabDiff.hour ~/ 2).toInt();
-    print('midNight $midNight');
+    print('==========================');
+    print('important spedaAnfMaghrab FULL dif $spedaAndMaghrabDiff');
+    print('==========================');
+
+
+     // dividing [spedaAndMaghrabDiff] by 2 to get half of the night,
+    // and then added to maghrab bang
+    var midNight = spedaAndMaghrabDiff.subtract(Duration(
+      hours: (spedaAndMaghrabDiff.hour ~/ 2).toInt(),
+      minutes: (spedaAndMaghrabDiff.minute ~/ 2).toInt(),
+    ));
+
     
-    DateTime addToMaghrab = maghrabBang.add(Duration(hours: midNight));
+    // formatting midNight
+    String midNightH = (midNight.hour.toString()).padLeft(2, '0');
+    String midNightM = (midNight.minute.toString()).padLeft(2, '0');
+
+    print('==========================');
+    print('important new MID dif dummy $midNightH : $midNightM.');
+    print('==========================');
+
+    DateTime addToMaghrab = maghrabBang.add(Duration(hours: midNight.hour));
     print('newMidNight $addToMaghrab');
 
-    String formattedMidNight = DateFormat('HH:mm').format(addToMaghrab);
-    print('parsedMaghrab String => $formattedMidNight');
+    String formattedMidNightTime = DateFormat('HH:mm').format(addToMaghrab);
+    print('formattedMidNightTime => $formattedMidNightTime');
 
-    return formattedMidNight;
+    return ['$midNightH', '$midNightM'];
   }
 }
