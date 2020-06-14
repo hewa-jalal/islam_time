@@ -13,7 +13,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // print('build inside HomePage ${bang.myParse}');
-    bang.myParse();
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -28,7 +27,7 @@ class HomePage extends StatelessWidget {
                   animation: 'night_idle',
                   fit: BoxFit.fill,
                 ),
-                Clock(),
+                Align(alignment: Alignment.topCenter, child: Clock()),
                 Padding(
                   padding: const EdgeInsets.only(top: 90),
                   child: Align(
