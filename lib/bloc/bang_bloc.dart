@@ -37,7 +37,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     String matchedDate =
         fileLines.where((element) => element.contains(getDate())).toString();
 
-    print('matched data => $matchedDate');
+    // print('matched data => $matchedDate');
 
     // split the line that has the data by ','
     List<String> splitLine = matchedDate.split(',');
@@ -126,36 +126,42 @@ class BangBloc extends Bloc<BangEvent, BangState> {
 
     // get the full differnce between speda and maghrab bang
     DateTime spedaAndMaghrabDiff = spedaBang.subtract(
-      Duration(days: maghrabBang.day, hours: maghrabBang.hour),
+      Duration(
+        days: maghrabBang.day,
+        hours: maghrabBang.hour,
+        minutes: maghrabBang.minute,
+      ),
     );
 
     print('==========================');
     print('important spedaAnfMaghrab FULL dif $spedaAndMaghrabDiff');
     print('==========================');
 
-
-     // dividing [spedaAndMaghrabDiff] by 2 to get half of the night,
+    // dividing [spedaAndMaghrabDiff] by 2 to get half of the night,
     // and then added to maghrab bang
-    var midNight = spedaAndMaghrabDiff.subtract(Duration(
-      hours: (spedaAndMaghrabDiff.hour ~/ 2).toInt(),
-      minutes: (spedaAndMaghrabDiff.minute ~/ 2).toInt(),
-    ));
+    int seconds = (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 2);
+    Duration myDuration =
+        Duration(seconds: seconds, minutes: (spedaAndMaghrabDiff.minute ~/ 2));
+    int hours = myDuration.inHours;
+    int minRemainder = myDuration.inMinutes % (hours * 60);
+    int secondsRemainder = myDuration.inSeconds;
+    String myFormatedDuration = '$hours:$minRemainder:$secondsRemainder';
+    print('formatted duration $myFormatedDuration');
 
-    
-    // formatting midNight
-    String midNightH = (midNight.hour.toString()).padLeft(2, '0');
-    String midNightM = (midNight.minute.toString()).padLeft(2, '0');
-
-    print('==========================');
-    print('important new MID dif dummy $midNightH : $midNightM.');
-    print('==========================');
-
-    DateTime addToMaghrab = maghrabBang.add(Duration(hours: midNight.hour));
+    DateTime addToMaghrab = maghrabBang.add(
+      Duration(
+        hours: hours,
+        minutes: minRemainder,
+      ),
+    );
     print('newMidNight $addToMaghrab');
 
-    String formattedMidNightTime = DateFormat('HH:mm').format(addToMaghrab);
-    print('formattedMidNightTime => $formattedMidNightTime');
+    TimeOfDay formattedMidNightDay =
+        TimeOfDay(hour: addToMaghrab.hour, minute: addToMaghrab.minute);
 
-    return ['$midNightH', '$midNightM'];
+    String formattedMidNightTime = '${formattedMidNightDay.hourOfPeriod}:${formattedMidNightDay.minute}';
+    print('============> $formattedMidNightDay <==================');
+    
+    return [hours.toString(), minRemainder.toString(), formattedMidNightTime];
   }
 }

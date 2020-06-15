@@ -3,6 +3,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:islamtime/bang.dart';
 import 'package:islamtime/custom_widgets/clock.dart';
 
@@ -14,6 +15,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // print('build inside HomePage ${bang.myParse}');
+    // var bool = DateTime.now().compareTo(DateFormat);
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -160,16 +162,29 @@ class _CountdownPageState extends State<CountdownPage> {
 
   @override
   Widget build(BuildContext context) => Padding(
-        child: Text(
-          formatDuration(
-            remainingTime ?? duration,
-          ),
-          style: TextStyle(
-            fontSize: 60,
-            fontFamily: "monospace",
-            color: Colors.red,
-            fontWeight: FontWeight.w700, // w700 = bold
-          ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              formatDuration(
+                remainingTime ?? duration,
+              ),
+              style: TextStyle(
+                fontSize: 60,
+                fontFamily: "monospace",
+                color: Colors.red,
+                fontWeight: FontWeight.w700, // w700 = bold
+              ),
+            ),
+            Text(
+              bang.midNight[2],
+              style: TextStyle(
+                fontSize: 60,
+                fontFamily: "monospace",
+                color: Colors.red,
+                fontWeight: FontWeight.w700, // w700 = bold
+              ),
+            ),
+          ],
         ),
         padding: EdgeInsets.only(bottom: 50),
       );
