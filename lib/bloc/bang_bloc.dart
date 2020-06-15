@@ -137,31 +137,36 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     print('important spedaAnfMaghrab FULL dif $spedaAndMaghrabDiff');
     print('==========================');
 
-    // dividing [spedaAndMaghrabDiff] by 2 to get half of the night,
-    // and then added to maghrab bang
-    int seconds = (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 2);
-    Duration myDuration =
-        Duration(seconds: seconds, minutes: (spedaAndMaghrabDiff.minute ~/ 2));
-    int hours = myDuration.inHours;
-    int minRemainder = myDuration.inMinutes % (hours * 60);
-    int secondsRemainder = myDuration.inSeconds;
-    String myFormatedDuration = '$hours:$minRemainder:$secondsRemainder';
-    print('formatted duration $myFormatedDuration');
+    // ** get a third of the time
+    int midSeconds = (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 3);
+    Duration midDuration = Duration(
+        seconds: midSeconds, minutes: (spedaAndMaghrabDiff.minute ~/ 3));
+    int midHours = midDuration.inHours;
+    int midMin = midDuration.inMinutes % (midHours * 60);
+    // int midSecond = midDuration.inSeconds;
 
-    DateTime addToMaghrab = maghrabBang.add(
+    DateTime midNightTime = maghrabBang.add(
       Duration(
-        hours: hours,
-        minutes: minRemainder,
+        hours: midHours,
+        minutes: midMin,
       ),
     );
-    print('newMidNight $addToMaghrab');
 
     TimeOfDay formattedMidNightDay =
-        TimeOfDay(hour: addToMaghrab.hour, minute: addToMaghrab.minute);
+        TimeOfDay(hour: midNightTime.hour, minute: midNightTime.minute);
 
-    String formattedMidNightTime = '${formattedMidNightDay.hourOfPeriod}:${formattedMidNightDay.minute}';
-    print('============> $formattedMidNightDay <==================');
-    
-    return [hours.toString(), minRemainder.toString(), formattedMidNightTime];
+    String formattedMidNightTime =
+        '${formattedMidNightDay.hourOfPeriod}:${formattedMidNightDay.minute}';
+
+    print('midNight time ====>>>>>> $midNightTime');
+    var afterMidNight =
+        midNightTime.add(Duration(hours: midHours, minutes: midMin));
+    print('added midnight ++++++ $afterMidNight');
+
+    var lastThird =
+        afterMidNight.add(Duration(hours: midHours, minutes: midMin));
+    print('last Third -------- $lastThird');
+
+    return [midHours.toString(), midMin.toString(), formattedMidNightTime];
   }
 }

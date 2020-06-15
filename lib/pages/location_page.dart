@@ -1,3 +1,4 @@
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,6 +13,7 @@ class LocationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.grey,
         body: BlocListener<BangBloc, BangState>(
           listener: (context, state) {
             if (state is BangLoaded) {
@@ -29,32 +31,12 @@ class LocationPage extends StatelessWidget {
           child: BlocBuilder<BangBloc, BangState>(
             builder: (context, state) {
               if (state is BangInitial) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('Model State', style: TextStyle(fontSize: 36)),
-                    Expanded(
-                      child: FlatButton(
-                        child: Icon(
-                          Icons.my_location,
-                          size: 100,
-                        ),
-                        onPressed: () {},
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: RaisedButton(
-                          onPressed: () async {
-                            await getUserLocation(context);
-                          },
-                          child: Text('OK'),
-                        ),
-                      ),
-                    )
-                  ],
+                return GestureDetector(
+                  onTap: () => getUserLocation(context),
+                  child: FlareActor(
+                    'assets/flare/location_place_holder.flr',
+                    animation: 'jump',
+                  ),
                 );
               } else if (state is BangLoaded) {
                 return CircularProgressIndicator();
