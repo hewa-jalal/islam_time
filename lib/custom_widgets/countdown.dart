@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
 import '../bang.dart';
 
 class CountdownPage extends StatefulWidget {
@@ -13,29 +12,31 @@ class CountdownPage extends StatefulWidget {
 }
 
 class _CountdownPageState extends State<CountdownPage> {
-  TimeOfDay midNightStartTod;
-  TimeOfDay midNightEndTod;
-  TimeOfDay lastThirdTod;
+  Timer _secondTimer;
+
+  bool isMidNight;
 
   @override
   void initState() {
     super.initState();
 
+    isMidNight = bang.midNightStart == DateTime.now() ||
+        bang.midNightStart.isBefore(bang.midNightEnd);
 
-    midNightStartTod = stringToTod(bang.midNightStart);
-    midNightEndTod = stringToTod(bang.midNightEnd);
-    lastThirdTod = stringToTod(bang.lastThird);
+    print('new way =====>>>>> $isMidNight');
+
+    _secondTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
 
     duration = Duration(
-      hours: int.parse(bang.differenceH),
-      minutes: int.parse(bang.differenceM),
+      hours: bang.theThird.hour,
+      minutes: bang.theThird.minute,
     );
-
     endTime = DateTime.now().add(duration);
 
     startCountdown();
   }
-
 
   Bang get bang => widget.bang;
 
@@ -70,7 +71,7 @@ class _CountdownPageState extends State<CountdownPage> {
   void tick() {
     setState(() {});
     remainingTime = endTime.difference(DateTime.now());
-    print('inside tick $remainingTime');
+    // print('inside tick $remainingTime');
     if (remainingTime > Duration.zero) {
       timer = Timer(nextTick, tick);
     } else {
@@ -108,50 +109,35 @@ class _CountdownPageState extends State<CountdownPage> {
 
   @override
   Widget build(BuildContext context) {
-    startCountdown();
+    // print('inside build method');
+    // print('isMidNight => $isMidNight');
+    // _shouldStartCountdown();
     return Padding(
-        child: Column(
-          children: <Widget>[
-            Text(
-              formatDuration(
-                remainingTime ?? duration,
-              ),
-              style: TextStyle(
-                fontSize: 60,
-                fontFamily: "monospace",
-                color: Colors.red,
-                fontWeight: FontWeight.w700, // w700 = bold
-              ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            formatDuration(
+              remainingTime ?? duration,
             ),
-            Text(
-              bang.midNightStart,
-              style: TextStyle(
-                fontSize: 60,
-                fontFamily: "monospace",
-                color: Colors.red,
-                fontWeight: FontWeight.w700, // w700 = bold
-              ),
+            style: TextStyle(
+              fontSize: 60,
+              fontFamily: "monospace",
+              color: Colors.red,
+              fontWeight: FontWeight.w700,
             ),
-          ],
-        ),
-        padding: EdgeInsets.only(bottom: 50),
-      );
-  }
-
-    @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (TickerMode.of(context)) {
-      startTimer();
-    } else {
-      stopTimer();
-    }
-  }
-
-  TimeOfDay stringToTod(String date) {
-    return TimeOfDay(
-        hour: int.parse(date.split(':')[0]),
-        minute: int.parse(date.split(':')[1]));
+          ),
+          Text(
+            '${bang.midNightStart}',
+            style: TextStyle(
+              fontSize: 60,
+              fontFamily: "monospace",
+              color: Colors.red,
+              fontWeight: FontWeight.w700, // w700 = bold
+            ),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.only(bottom: 50),
+    );
   }
 }

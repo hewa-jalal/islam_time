@@ -48,7 +48,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     String evar = toAmPm(splitLine[5]);
     String makhrab = toAmPm(splitLine[6]);
     String aesha = toAmPm(splitLine[7]);
-    List<String> midNight =
+    List<DateTime> dates =
         getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
 
     Bang bang = Bang(
@@ -58,11 +58,10 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       evar: evar,
       maghrab: makhrab,
       aesha: aesha,
-      differenceH: midNight[0],
-      differenceM: midNight[1],
-      midNightStart: midNight[2],
-      midNightEnd: midNight[3],
-      lastThird: midNight[4],
+      theThird: dates[0],
+      midNightStart: dates[1],
+      midNightEnd: dates[2],
+      lastThird: dates[3],
     );
 
     return bang;
@@ -95,7 +94,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     return '${timeOfDay.hourOfPeriod}:${splitedTime[1]}';
   }
 
-  List<String> getTheDifference(String date, String speda, String maghrab) {
+  List<DateTime> getTheDifference(String date, String speda, String maghrab) {
     List<String> splitedDate = date.split('-');
     int month = int.parse(splitedDate[0]);
     int day = int.parse(splitedDate[1]);
@@ -108,22 +107,8 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     int maghrabH = int.parse(splitedMaghrabTime[0]);
     int maghrabM = int.parse(splitedMaghrabTime[1]);
 
-    var dateSpeda = Jiffy({
-      'month': month,
-      'day': day,
-      'hour': spedaH,
-      'minutes': spedaM,
-    }).format('dd/MM/yyyy HH:mm:ss');
-
-    var dateMaghrab = Jiffy({
-      'month': month,
-      'day': day,
-      'hour': maghrabH,
-      'minutes': maghrabM,
-    }).format('dd/MM/yyyy HH:mm:ss');
-
-    DateTime spedaBang = DateFormat('dd/MM/yyyy HH:mm').parse(dateSpeda);
-    DateTime maghrabBang = DateFormat('dd/MM/yyyy HH:mm').parse(dateMaghrab);
+    DateTime spedaBang = DateTime(2020, month, day, spedaH, spedaM);
+    DateTime maghrabBang = DateTime(2020, month, day, maghrabH, maghrabM);
 
     // get the full differnce between speda and maghrab bang
     DateTime spedaAndMaghrabDiff = spedaBang.subtract(
@@ -134,7 +119,6 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       ),
     );
 
-
     // ** get a third of the time
     int thirdOfDifferenceSeconds =
         (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 3);
@@ -143,7 +127,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
         minutes: (spedaAndMaghrabDiff.minute ~/ 3));
     int thirdHours = thirdDuration.inHours;
     int thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
-    // int midSecond = midDuration.inSeconds;
+    // int midSecond = thirdDuration.inSeconds;
 
     DateTime midNightStart = maghrabBang.add(
       Duration(
@@ -153,29 +137,24 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     );
 
     DateTime midNightEnd = midNightStart.add(
-      Duration(hours: thirdHours, minutes: thirdMin),
+      Duration(
+        hours: thirdHours,
+        minutes: thirdMin,
+      ),
     );
 
     DateTime lastThird = midNightEnd.add(
-      Duration(hours: thirdHours, minutes: thirdMin),
+      Duration(
+        hours: thirdHours,
+        minutes: thirdMin,
+      ),
     );
 
-    String formattedMidNightStart = formatDateToString(midNightStart);
-    String formattedMidNightEnd = formatDateToString(midNightEnd);
-    String formattedLastThird = formatDateToString(lastThird);
-
-    // String fromattedDifference =
-    //     '${'${thirdHours.toString()}'.padLeft(2, '0')}:'
-    //     '${'${thirdMin.toString()}'.padLeft(2, '0')}';
-
-    // print('formatted difference $fromattedDifference');
-
     return [
-      thirdHours.toString(),
-      thirdMin.toString(),
-      formattedMidNightStart,
-      formattedMidNightEnd,
-      formattedLastThird,
+      DateTime(2020, month, day, thirdHours, thirdMin),
+      midNightStart,
+      midNightEnd,
+      lastThird,
     ];
   }
 }
@@ -185,8 +164,4 @@ String formatDateToString(DateTime date) {
 
   return '${'${twelveHourTime.hour}'.padLeft(2, '0')}:'
       '${'${twelveHourTime.minute}'.padLeft(2, '0')}';
-}
-
-DateTime formatStringToDate(String dateString) {
-  return DateFormat('HH:mm').parse(dateString);
 }
