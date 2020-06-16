@@ -58,7 +58,11 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       evar: evar,
       maghrab: makhrab,
       aesha: aesha,
-      midNight: midNight,
+      differenceH: midNight[0],
+      differenceM: midNight[1],
+      midNightStart: midNight[2],
+      midNightEnd: midNight[3],
+      lastThird: midNight[4],
     );
 
     return bang;
@@ -121,9 +125,6 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     DateTime spedaBang = DateFormat('dd/MM/yyyy HH:mm').parse(dateSpeda);
     DateTime maghrabBang = DateFormat('dd/MM/yyyy HH:mm').parse(dateMaghrab);
 
-    // print('in new method TimeDate speda $spedaBang');
-    // print('in new method TimeDate maghrab $maghrabBang');
-
     // get the full differnce between speda and maghrab bang
     DateTime spedaAndMaghrabDiff = spedaBang.subtract(
       Duration(
@@ -133,40 +134,59 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       ),
     );
 
-    print('==========================');
-    print('important spedaAnfMaghrab FULL dif $spedaAndMaghrabDiff');
-    print('==========================');
 
     // ** get a third of the time
-    int midSeconds = (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 3);
-    Duration midDuration = Duration(
-        seconds: midSeconds, minutes: (spedaAndMaghrabDiff.minute ~/ 3));
-    int midHours = midDuration.inHours;
-    int midMin = midDuration.inMinutes % (midHours * 60);
+    int thirdOfDifferenceSeconds =
+        (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 3);
+    Duration thirdDuration = Duration(
+        seconds: thirdOfDifferenceSeconds,
+        minutes: (spedaAndMaghrabDiff.minute ~/ 3));
+    int thirdHours = thirdDuration.inHours;
+    int thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
     // int midSecond = midDuration.inSeconds;
 
-    DateTime midNightTime = maghrabBang.add(
+    DateTime midNightStart = maghrabBang.add(
       Duration(
-        hours: midHours,
-        minutes: midMin,
+        hours: thirdHours,
+        minutes: thirdMin,
       ),
     );
 
-    TimeOfDay formattedMidNightDay =
-        TimeOfDay(hour: midNightTime.hour, minute: midNightTime.minute);
+    DateTime midNightEnd = midNightStart.add(
+      Duration(hours: thirdHours, minutes: thirdMin),
+    );
 
-    String formattedMidNightTime =
-        '${formattedMidNightDay.hourOfPeriod}:${formattedMidNightDay.minute}';
+    DateTime lastThird = midNightEnd.add(
+      Duration(hours: thirdHours, minutes: thirdMin),
+    );
 
-    print('midNight time ====>>>>>> $midNightTime');
-    var afterMidNight =
-        midNightTime.add(Duration(hours: midHours, minutes: midMin));
-    print('added midnight ++++++ $afterMidNight');
+    String formattedMidNightStart = formatDateToString(midNightStart);
+    String formattedMidNightEnd = formatDateToString(midNightEnd);
+    String formattedLastThird = formatDateToString(lastThird);
 
-    var lastThird =
-        afterMidNight.add(Duration(hours: midHours, minutes: midMin));
-    print('last Third -------- $lastThird');
+    // String fromattedDifference =
+    //     '${'${thirdHours.toString()}'.padLeft(2, '0')}:'
+    //     '${'${thirdMin.toString()}'.padLeft(2, '0')}';
 
-    return [midHours.toString(), midMin.toString(), formattedMidNightTime];
+    // print('formatted difference $fromattedDifference');
+
+    return [
+      thirdHours.toString(),
+      thirdMin.toString(),
+      formattedMidNightStart,
+      formattedMidNightEnd,
+      formattedLastThird,
+    ];
   }
+}
+
+String formatDateToString(DateTime date) {
+  TimeOfDay twelveHourTime = TimeOfDay(hour: date.hour, minute: date.minute);
+
+  return '${'${twelveHourTime.hour}'.padLeft(2, '0')}:'
+      '${'${twelveHourTime.minute}'.padLeft(2, '0')}';
+}
+
+DateTime formatStringToDate(String dateString) {
+  return DateFormat('HH:mm').parse(dateString);
 }

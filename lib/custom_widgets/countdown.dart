@@ -13,16 +13,29 @@ class CountdownPage extends StatefulWidget {
 }
 
 class _CountdownPageState extends State<CountdownPage> {
+  TimeOfDay midNightStartTod;
+  TimeOfDay midNightEndTod;
+  TimeOfDay lastThirdTod;
+
   @override
   void initState() {
     super.initState();
-    print('midnightBang ${bang.midNight}');
+
+
+    midNightStartTod = stringToTod(bang.midNightStart);
+    midNightEndTod = stringToTod(bang.midNightEnd);
+    lastThirdTod = stringToTod(bang.lastThird);
+
     duration = Duration(
-      hours: int.parse(bang.midNight[0]),
-      minutes: int.parse(bang.midNight[1]),
+      hours: int.parse(bang.differenceH),
+      minutes: int.parse(bang.differenceM),
     );
+
+    endTime = DateTime.now().add(duration);
+
     startCountdown();
   }
+
 
   Bang get bang => widget.bang;
 
@@ -57,6 +70,7 @@ class _CountdownPageState extends State<CountdownPage> {
   void tick() {
     setState(() {});
     remainingTime = endTime.difference(DateTime.now());
+    print('inside tick $remainingTime');
     if (remainingTime > Duration.zero) {
       timer = Timer(nextTick, tick);
     } else {
@@ -81,7 +95,6 @@ class _CountdownPageState extends State<CountdownPage> {
   /// Starts the countdown
   void startCountdown() {
     running = true;
-    endTime = DateTime.now().add(duration);
     startTimer();
   }
 
@@ -94,7 +107,9 @@ class _CountdownPageState extends State<CountdownPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    startCountdown();
+    return Padding(
         child: Column(
           children: <Widget>[
             Text(
@@ -109,7 +124,7 @@ class _CountdownPageState extends State<CountdownPage> {
               ),
             ),
             Text(
-              bang.midNight[2],
+              bang.midNightStart,
               style: TextStyle(
                 fontSize: 60,
                 fontFamily: "monospace",
@@ -121,4 +136,22 @@ class _CountdownPageState extends State<CountdownPage> {
         ),
         padding: EdgeInsets.only(bottom: 50),
       );
+  }
+
+    @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (TickerMode.of(context)) {
+      startTimer();
+    } else {
+      stopTimer();
+    }
+  }
+
+  TimeOfDay stringToTod(String date) {
+    return TimeOfDay(
+        hour: int.parse(date.split(':')[0]),
+        minute: int.parse(date.split(':')[1]));
+  }
 }

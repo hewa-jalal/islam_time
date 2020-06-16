@@ -55,7 +55,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 Align(
-                  alignment: Alignment.center,
+                  alignment: Alignment.bottomCenter,
                   child: CountdownPage(bang: bang),
                 ),
               ],

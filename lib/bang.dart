@@ -8,7 +8,11 @@ class Bang extends Equatable {
   final String evar;
   final String maghrab;
   final String aesha;
-  final List<String> midNight;
+  final String differenceH;
+  final String differenceM;
+  final String midNightStart;
+  final String midNightEnd;
+  final String lastThird;
 
   Bang({
     @required this.speda,
@@ -17,10 +21,25 @@ class Bang extends Equatable {
     @required this.evar,
     @required this.maghrab,
     @required this.aesha,
-    @required this.midNight,
+    @required this.differenceH,
+    @required this.differenceM,
+    @required this.midNightStart,
+    @required this.midNightEnd,
+    @required this.lastThird,
   });
 
   @override
-  List<Object> get props =>
-      [speda, rojHalat, nevro, evar, maghrab, aesha, midNight];
+  List<Object> get props => [
+        speda,
+        rojHalat,
+        nevro,
+        evar,
+        maghrab,
+        aesha,
+        differenceH,
+        differenceM,
+        midNightStart,
+        midNightEnd,
+        lastThird,
+      ];
 }
