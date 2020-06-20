@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
-import 'package:islamtime/custom_widgets/clock.dart';
 import 'package:islamtime/pages/home_page.dart';
 
 import '../bang.dart';
@@ -39,7 +38,7 @@ class LocationPage extends StatelessWidget {
                   ),
                 );
               } else if (state is BangLoaded) {
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               } else if (state is BangLoading) {
                 return CircularProgressIndicator();
               }

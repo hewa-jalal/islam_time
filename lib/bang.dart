@@ -12,18 +12,23 @@ class Bang extends Equatable {
   final DateTime midNightStart;
   final DateTime midNightEnd;
   final DateTime lastThird;
+  final DateTime dayTime;
+  final DateTime maghrabDateTime;
 
-  Bang(
-      {@required this.speda,
-      @required this.rojHalat,
-      @required this.nevro,
-      @required this.evar,
-      @required this.maghrab,
-      @required this.aesha,
-      @required this.theThird,
-      @required this.midNightStart,
-      @required this.midNightEnd,
-      @required this.lastThird});
+  Bang({
+    @required this.speda,
+    @required this.rojHalat,
+    @required this.nevro,
+    @required this.evar,
+    @required this.maghrab,
+    @required this.aesha,
+    @required this.theThird,
+    @required this.midNightStart,
+    @required this.midNightEnd,
+    @required this.lastThird,
+    @required this.dayTime,
+    @required this.maghrabDateTime,
+  });
 
   @override
   List<Object> get props => [
@@ -37,5 +42,7 @@ class Bang extends Equatable {
         midNightStart,
         midNightEnd,
         lastThird,
+        dayTime,
+        maghrabDateTime,
       ];
 }

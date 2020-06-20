@@ -28,7 +28,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
 
   Future<Bang> getPrayerData(String countryName, String cityName) async {
     String fileString = await rootBundle
-        .loadString('assets/fixed_prayer_time/$countryName/$cityName.txt');
+        .loadString('assets/fixed_prayer_time/$countryName/Dihok.txt');
 
     // split the files into individual lines
     List<String> fileLines = fileString.split('\n');
@@ -62,6 +62,8 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       midNightStart: dates[1],
       midNightEnd: dates[2],
       lastThird: dates[3],
+      dayTime: dates[4],
+      maghrabDateTime: dates[5],
     );
 
     return bang;
@@ -107,6 +109,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     int maghrabH = int.parse(splitedMaghrabTime[0]);
     int maghrabM = int.parse(splitedMaghrabTime[1]);
 
+    // TODO: remove the hard-coded 2020
     DateTime spedaBang = DateTime(2020, month, day, spedaH, spedaM);
     DateTime maghrabBang = DateTime(2020, month, day, maghrabH, maghrabM);
 
@@ -150,18 +153,18 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       ),
     );
 
+    DateTime dayTime = maghrabBang.subtract(
+      Duration(hours: spedaBang.hour, minutes: spedaBang.minute),
+    );
+
+    // TODO: change the hard-coded 2020 year
     return [
       DateTime(2020, month, day, thirdHours, thirdMin),
       midNightStart,
       midNightEnd,
       lastThird,
+      dayTime,
+      maghrabBang,
     ];
   }
-}
-
-String formatDateToString(DateTime date) {
-  TimeOfDay twelveHourTime = TimeOfDay(hour: date.hour, minute: date.minute);
-
-  return '${'${twelveHourTime.hour}'.padLeft(2, '0')}:'
-      '${'${twelveHourTime.minute}'.padLeft(2, '0')}';
 }
