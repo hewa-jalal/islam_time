@@ -1,9 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import '../bang.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
+import 'package:islamtime/models/bang.dart';
+import 'package:islamtime/models/time_cycle.dart';
 
-enum TimeIs { nightStart, midNightStart, midNightEnd, lastThird }
+enum TimeIs { night, day, lastThird }
 
 class CountdownPage extends StatefulWidget {
   final Bang bang;
@@ -17,6 +19,8 @@ class CountdownPage extends StatefulWidget {
 class _CountdownPageState extends State<CountdownPage> {
   Bang get bang => widget.bang;
   TimeIs _timeIs;
+  bool _isLastThird = false;
+  TimeCycleBloc _timeCycleBloc;
 
   /// Formats a duration to 'mm:ss'.
   static String formatDuration(Duration d) =>
@@ -26,7 +30,6 @@ class _CountdownPageState extends State<CountdownPage> {
 
   /// Whether or not the countdown is (visually) running.
   bool get running {
-    print('inside running');
     return (lastTick.isAfter(startTime) ||
             lastTick.isAtSameMomentAs(startTime)) &&
         lastTick.isBefore(endTime);
@@ -55,8 +58,6 @@ class _CountdownPageState extends State<CountdownPage> {
   Duration get nextTick {
     if (true) {
       return remainingTime - Duration(seconds: remainingTime.inSeconds);
-    } else {
-      return startTime.difference(lastTick);
     }
   }
 
@@ -125,122 +126,135 @@ class _CountdownPageState extends State<CountdownPage> {
 
   @override
   Widget build(BuildContext context) {
-    timeEnum(bang.midNightStart, TimeIs.midNightStart);
-    timeEnum(bang.midNightEnd, TimeIs.midNightEnd);
-    timeEnum(bang.lastThird, TimeIs.lastThird);
+    _timeCycleBloc = BlocProvider.of<TimeCycleBloc>(context);
+    print('now => ${DateTime.now()}');
+    print('maghrab => ${bang.maghrabDateTime}');
+    print('speda => ${bang.spedaDateTime}');
+    print('lastThird => ${bang.lastThird}');
+    checkDayNight();
+    checkLastThird();
+
+    print('isLastThird => $_isLastThird');
     print('timeIs => $_timeIs');
-    // setDuration();
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text('Countdown'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () {
-              Navigator.of(context).pushNamed('settings');
-            },
-          )
-        ],
-      ),
-      body: SizedBox.expand(
-        child: Align(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if (true) ...[
-                Padding(
-                  child: Text(
-                    formatDuration(remainingTime ?? duration),
-                    style: TextStyle(
-                      fontSize: 60,
-                      fontFamily: "monospace",
-                    ),
-                  ),
-                  padding: EdgeInsets.only(bottom: 50),
+    return SizedBox.expand(
+      child: Align(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              child: Text(
+                formatDuration(remainingTime ?? duration),
+                style: TextStyle(
+                  fontSize: 60,
+                  fontFamily: "monospace",
                 ),
-                RaisedButton(
-                  child: Text("Restart"),
-                  onPressed: restartCountdown,
-                  color: Colors.red,
-                ),
-              ] else
-                Padding(
-                  child: Text(
-                    "Starts at ${startTime.hour}:${startTime.minute}",
-                    style: TextStyle(
-                      fontSize: 60,
-                      fontFamily: "monospace",
-                    ),
-                  ),
-                  padding: EdgeInsets.only(bottom: 50),
-                ),
-            ],
-          ),
+              ),
+              padding: EdgeInsets.only(bottom: 50),
+            ),
+            RaisedButton(
+              child: Text("Restart"),
+              onPressed: restartCountdown,
+              color: Colors.red,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  void setDuration(DateTime date) {
-    final tempBang = date.subtract(
+  void checkDayNight() {
+    // if it passed maghrab prayer time
+    if (DateTime.now().hour >= bang.maghrabDateTime.hour) {
+      if (DateTime.now().hour == bang.maghrabDateTime.hour) {
+        if (DateTime.now().minute >= bang.maghrabDateTime.minute) {
+          // hours and minutes are greater
+          _timeIs = TimeIs.night;
+          addToBloc();
+          setDurationToNight();
+        } else {
+          // minutes are still not greater so it's still day time
+          _timeIs = TimeIs.day;
+          addToBloc();
+          setDurationToDay();
+        }
+      } else {
+        // hours are greater
+        _timeIs = TimeIs.night;
+        addToBloc();
+        setDurationToNight();
+      }
+    }
+    // to also check if it's before speda prayer time
+    else if (DateTime.now().hour <= bang.spedaDateTime.hour) {
+      if (DateTime.now().hour == bang.spedaDateTime.hour) {
+        if (DateTime.now().minute < bang.spedaDateTime.minute) {
+          _timeIs = TimeIs.night;
+          addToBloc();
+          setDurationToNight();
+        } else {
+          _timeIs = TimeIs.day;
+          addToBloc();
+          setDurationToDay();
+        }
+      } else {
+        // hours are smaller
+        _timeIs = TimeIs.night;
+        addToBloc();
+        setDurationToNight();
+      }
+    } else {
+      _timeIs = TimeIs.day;
+      addToBloc();
+      setDurationToDay();
+    }
+  }
+
+  void addToBloc() {
+    _timeCycleBloc.add(
+      GetTimeCycle(
+        timeCycle: TimeCycle(timeIs: _timeIs, isLastThird: _isLastThird),
+      ),
+    );
+  }
+
+  void checkLastThird() {
+    // midNightEnd is the beginning of lastThird
+    // lastThird == MidNightEnd
+    if (DateTime.now().hour >= bang.lastThird.hour &&
+        TimeOfDay.now().period == DayPeriod.am &&
+        _timeIs == TimeIs.night) {
+      if (DateTime.now().hour == bang.lastThird.hour) {
+        if (DateTime.now().minute >= bang.lastThird.minute) {
+          _isLastThird = true;
+          addToBloc();
+        }
+      } else {
+        // hours are greater
+        _isLastThird = true;
+        addToBloc();
+      }
+    }
+  }
+
+  void setDurationToDay() {
+    final dayDuration = bang.maghrabDateTime.subtract(
       Duration(
         hours: DateTime.now().hour,
         minutes: DateTime.now().minute,
       ),
     );
-    duration = Duration(hours: tempBang.hour, minutes: tempBang.minute);
+    duration = Duration(hours: dayDuration.hour, minutes: dayDuration.minute);
   }
 
-  void timeEnum(DateTime date, TimeIs timeIs) {
-    print('date => $date');
-    print('now => ${DateTime.now()}');
-    print('midNightStart => ${bang.midNightStart}');
-    print('midNightEnd => ${bang.midNightEnd}');
-    print('lastThird => ${bang.lastThird}');
-    if (lastTick.hour > date.hour) {
-      switch (timeIs) {
-        case TimeIs.midNightStart:
-          _timeIs = TimeIs.midNightStart;
-          setDuration(bang.midNightEnd);
-          break;
-        case TimeIs.midNightEnd:
-          print('in midNightEnd');
-          _timeIs = TimeIs.midNightEnd;
-          setDuration(bang.lastThird);
-          break;
-        case TimeIs.lastThird:
-          print('in lastThird');
-          _timeIs = TimeIs.lastThird;
-          setDuration(bang.dayTime);
-          break;
-        case TimeIs.nightStart:
-          // just break because we alrady handled this case above
-          break;
-      }
-    } else if (lastTick.hour == date.hour) {
-      if (lastTick.minute >= date.minute) {
-        switch (timeIs) {
-          case TimeIs.midNightStart:
-            _timeIs = TimeIs.midNightStart;
-            setDuration(bang.midNightEnd);
-            break;
-          case TimeIs.midNightEnd:
-            _timeIs = TimeIs.midNightEnd;
-            setDuration(bang.lastThird);
-            break;
-          case TimeIs.lastThird:
-            _timeIs = TimeIs.lastThird;
-            setDuration(bang.dayTime);
-            break;
-          case TimeIs.nightStart:
-            // just break because we alrady handled this case above
-            break;
-        }
-      }
-    }
+  void setDurationToNight() {
+    final nightDuration = bang.spedaDateTime.subtract(
+      Duration(
+        hours: DateTime.now().hour,
+        minutes: DateTime.now().minute,
+      ),
+    );
+    duration =
+        Duration(hours: nightDuration.hour, minutes: nightDuration.minute);
   }
 }

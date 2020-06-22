@@ -17,7 +17,7 @@ class BangLoading extends BangState {
 }
 
 class BangLoaded extends BangState {
-  final Bang bang; // to display data in the model 
+  final Bang bang; // to display data in the model
   const BangLoaded(this.bang);
   @override
   List<Object> get props => [bang];

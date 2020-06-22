@@ -11,5 +11,5 @@ class GetBang extends BangEvent {
   const GetBang({@required this.countryName, @required this.cityName});
 
   @override
-  List<Object> get props => [cityName];
+  List<Object> get props => [cityName, countryName];
 }

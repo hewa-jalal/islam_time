@@ -3,9 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:islamtime/bang.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:islamtime/models/bang.dart';
 import 'package:jiffy/jiffy.dart';
 
 part 'bang_event.dart';
@@ -59,11 +58,10 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       maghrab: makhrab,
       aesha: aesha,
       theThird: dates[0],
-      midNightStart: dates[1],
-      midNightEnd: dates[2],
-      lastThird: dates[3],
-      dayTime: dates[4],
-      maghrabDateTime: dates[5],
+      lastThird: dates[1],
+      dayTime: dates[2],
+      maghrabDateTime: dates[3],
+      spedaDateTime: dates[4],
     );
 
     return bang;
@@ -73,12 +71,11 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     int month = Jiffy().month;
     int day = Jiffy().date;
 
-    // used quotes on the last one to make it a String
-    // TODO: use padLeft for the methods below
-    // String formattedMonth = month.toString().padLeft(2, '0');
+    String formattedMonth = month.toString().padLeft(2, '0');
+    String formattedDay = day.toString().padLeft(2, '0');
 
-    String formattedMonth = month < 10 ? '0$month' : '$month';
-    String formattedDay = day < 10 ? '0$day' : '$day';
+    // String formattedMonth = month < 10 ? '0$month' : '$month';
+    // String formattedDay = day < 10 ? '0$day' : '$day';
 
     return '$formattedMonth-$formattedDay';
   }
@@ -132,6 +129,10 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     int thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
     // int midSecond = thirdDuration.inSeconds;
 
+    print(
+        'the difference third =========> $thirdHours:$thirdMin <==============');
+    print('full difference +++++ $spedaAndMaghrabDiff +++++');
+
     DateTime midNightStart = maghrabBang.add(
       Duration(
         hours: thirdHours,
@@ -160,11 +161,10 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     // TODO: change the hard-coded 2020 year
     return [
       DateTime(2020, month, day, thirdHours, thirdMin),
-      midNightStart,
       midNightEnd,
-      lastThird,
       dayTime,
       maghrabBang,
+      spedaBang,
     ];
   }
 }

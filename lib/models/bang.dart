@@ -9,11 +9,10 @@ class Bang extends Equatable {
   final String maghrab;
   final String aesha;
   final DateTime theThird;
-  final DateTime midNightStart;
-  final DateTime midNightEnd;
   final DateTime lastThird;
   final DateTime dayTime;
   final DateTime maghrabDateTime;
+  final DateTime spedaDateTime;
 
   Bang({
     @required this.speda,
@@ -23,11 +22,10 @@ class Bang extends Equatable {
     @required this.maghrab,
     @required this.aesha,
     @required this.theThird,
-    @required this.midNightStart,
-    @required this.midNightEnd,
     @required this.lastThird,
     @required this.dayTime,
     @required this.maghrabDateTime,
+    @required this.spedaDateTime,
   });
 
   @override
@@ -39,8 +37,6 @@ class Bang extends Equatable {
         maghrab,
         aesha,
         theThird,
-        midNightStart,
-        midNightEnd,
         lastThird,
         dayTime,
         maghrabDateTime,
