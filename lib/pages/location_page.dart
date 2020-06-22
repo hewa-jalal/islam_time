@@ -12,7 +12,7 @@ class LocationPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey,
-        body: BlocListener<BangBloc, BangState>(
+        body: BlocConsumer<BangBloc, BangState>(
           listener: (context, state) {
             if (state is BangLoaded) {
               Navigator.push(
@@ -26,23 +26,21 @@ class LocationPage extends StatelessWidget {
               );
             }
           },
-          child: BlocBuilder<BangBloc, BangState>(
-            builder: (context, state) {
-              if (state is BangInitial) {
-                return GestureDetector(
-                  onTap: () => getUserLocation(context),
-                  child: FlareActor(
-                    'assets/flare/location_place_holder.flr',
-                    animation: 'jump',
-                  ),
-                );
-              } else if (state is BangLoaded) {
-                return Center(child: CircularProgressIndicator());
-              } else {
-                return CircularProgressIndicator();
-              }
-            },
-          ),
+          builder: (context, state) {
+            if (state is BangInitial) {
+              return GestureDetector(
+                onTap: () => getUserLocation(context),
+                child: FlareActor(
+                  'assets/flare/location_place_holder.flr',
+                  animation: 'jump',
+                ),
+              );
+            } else if (state is BangLoaded) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
         ),
       ),
     );

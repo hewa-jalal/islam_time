@@ -22,16 +22,37 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String isDayOrNight;
+  int animation;
+  bool once;
+
+  @override
+  void initState() {
+    super.initState();
+    animation = 0;
+    once = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: BlocProvider(
           create: (context) => TimeCycleBloc(),
-          child: BlocBuilder<TimeCycleBloc, TimeCycleState>(
-            builder: (context, state) {
+          child: BlocConsumer<TimeCycleBloc, TimeCycleState>(
+            listener: (context, state) {
               if (state is TimeCycleLoaded) {
-                isDay(state.timeCycle);
+                //this thing keep loaded.
+                if (isDay(state.timeCycle)) {
+                  animation = 2;
+                } else {
+                  animation = 1;
+                }
+              }
+            },
+            builder: (context, state) {
+              // print(state);
+              if (state is TimeCycleLoaded) {
+                // print(isDay(state.timeCycle));
                 return Container(
                   color: hexToColor('#E3E3ED'),
                   width: MediaQuery.of(context).size.width,
@@ -42,8 +63,24 @@ class _HomePageState extends State<HomePage> {
                         Text(state.timeCycle.timeIs.toString()),
                         FlareActor(
                           'assets/flare/DayAndNight.flr',
-                          animation:
-                              state.timeCycle.timeIs == TimeIs.day ? 'day_idle' : 'night_idle',
+                          animation: (animation == 0)
+                              ? 'day_idle'
+                              : (animation == 1)
+                                  ? 'switch_to_night'
+                                  : (animation == 2)
+                                      ? 'switch_to_day'
+                                      : 'night_idle',
+                          callback: (value) {
+                            if (value == 'switch_to_night') {
+                              setState(() {
+                                animation = 3;
+                              });
+                            } else {
+                              setState(() {
+                                animation = 0;
+                              });
+                            }
+                          },
                           fit: BoxFit.fill,
                         ),
                         // Align(alignment: Alignment.topCenter, child: Clock()),
@@ -121,12 +158,13 @@ class _HomePageState extends State<HomePage> {
       //   isDayOrNight = 'Day';
       // });
       return true;
-    } else {
-      // setState(() {
-      //   isDayOrNight = 'Night';
-      // });
-      return false;
     }
+    // } else {
+    // setState(() {
+    //   isDayOrNight = 'Night';
+    // });
+    return false;
+    // }
   }
 
   Color hexToColor(String code) {

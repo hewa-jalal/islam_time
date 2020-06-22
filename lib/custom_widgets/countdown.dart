@@ -17,8 +17,9 @@ class CountdownPage extends StatefulWidget {
 }
 
 class _CountdownPageState extends State<CountdownPage> {
-  Bang get bang => widget.bang;
+  Bang bang;
   TimeIs _timeIs;
+  TimeIs _oldTimeIs;
   bool _isLastThird = false;
   TimeCycleBloc _timeCycleBloc;
 
@@ -103,6 +104,8 @@ class _CountdownPageState extends State<CountdownPage> {
   void initState() {
     super.initState();
     duration = Duration(seconds: 5);
+    bang = widget.bang;
+    _timeCycleBloc = BlocProvider.of<TimeCycleBloc>(context);
     nextStartTime();
     restartCountdown();
   }
@@ -126,16 +129,15 @@ class _CountdownPageState extends State<CountdownPage> {
 
   @override
   Widget build(BuildContext context) {
-    _timeCycleBloc = BlocProvider.of<TimeCycleBloc>(context);
-    print('now => ${DateTime.now()}');
-    print('maghrab => ${bang.maghrabDateTime}');
-    print('speda => ${bang.spedaDateTime}');
-    print('lastThird => ${bang.lastThird}');
+    // print('now => ${DateTime.now()}');
+    // print('maghrab => ${bang.maghrabDateTime}');
+    // print('speda => ${bang.spedaDateTime}');
+    // print('lastThird => ${bang.lastThird}');
     checkDayNight();
     checkLastThird();
 
-    print('isLastThird => $_isLastThird');
-    print('timeIs => $_timeIs');
+    // print('isLastThird => $_isLastThird');
+    // print('timeIs => $_timeIs');
     return SizedBox.expand(
       child: Align(
         child: Column(
@@ -169,20 +171,33 @@ class _CountdownPageState extends State<CountdownPage> {
       if (DateTime.now().hour == bang.maghrabDateTime.hour) {
         if (DateTime.now().minute >= bang.maghrabDateTime.minute) {
           // hours and minutes are greater
+
           _timeIs = TimeIs.night;
-          addToBloc();
-          setDurationToNight();
+          if (_timeIs != _oldTimeIs) {
+            print('0 $_oldTimeIs');
+            _oldTimeIs = _timeIs;
+            addToBloc();
+            setDurationToNight();
+          }
         } else {
           // minutes are still not greater so it's still day time
           _timeIs = TimeIs.day;
-          addToBloc();
-          setDurationToDay();
+          if (_timeIs != _oldTimeIs) {
+            print('0 $_oldTimeIs');
+            _oldTimeIs = _timeIs;
+            addToBloc();
+            setDurationToDay();
+          }
         }
       } else {
         // hours are greater
         _timeIs = TimeIs.night;
-        addToBloc();
-        setDurationToNight();
+        if (_timeIs != _oldTimeIs) {
+          print('0 $_oldTimeIs');
+          _oldTimeIs = _timeIs;
+          addToBloc();
+          setDurationToNight();
+        }
       }
     }
     // to also check if it's before speda prayer time
@@ -190,23 +205,39 @@ class _CountdownPageState extends State<CountdownPage> {
       if (DateTime.now().hour == bang.spedaDateTime.hour) {
         if (DateTime.now().minute < bang.spedaDateTime.minute) {
           _timeIs = TimeIs.night;
-          addToBloc();
-          setDurationToNight();
+          if (_timeIs != _oldTimeIs) {
+            print('0 $_oldTimeIs');
+            _oldTimeIs = _timeIs;
+            addToBloc();
+            setDurationToNight();
+          }
         } else {
           _timeIs = TimeIs.day;
-          addToBloc();
-          setDurationToDay();
+          if (_timeIs != _oldTimeIs) {
+            print('1 $_oldTimeIs');
+            _oldTimeIs = _timeIs;
+            addToBloc();
+            setDurationToDay();
+          }
         }
       } else {
         // hours are smaller
         _timeIs = TimeIs.night;
-        addToBloc();
-        setDurationToNight();
+        if (_timeIs != _oldTimeIs) {
+          print('2 $_oldTimeIs');
+          _oldTimeIs = _timeIs;
+          addToBloc();
+          setDurationToNight();
+        }
       }
     } else {
       _timeIs = TimeIs.day;
-      addToBloc();
-      setDurationToDay();
+      if (_timeIs != _oldTimeIs) {
+        print('3 $_oldTimeIs');
+        _oldTimeIs = _timeIs;
+        addToBloc();
+        setDurationToDay();
+      }
     }
   }
 
@@ -226,13 +257,18 @@ class _CountdownPageState extends State<CountdownPage> {
         _timeIs == TimeIs.night) {
       if (DateTime.now().hour == bang.lastThird.hour) {
         if (DateTime.now().minute >= bang.lastThird.minute) {
-          _isLastThird = true;
-          addToBloc();
+          if (!_isLastThird) {
+            _isLastThird = true;
+
+            addToBloc();
+          }
         }
       } else {
         // hours are greater
-        _isLastThird = true;
-        addToBloc();
+        if (!_isLastThird) {
+          _isLastThird = true;
+          addToBloc();
+        }
       }
     }
   }
