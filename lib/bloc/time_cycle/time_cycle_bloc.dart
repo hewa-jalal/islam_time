@@ -20,8 +20,10 @@ class TimeCycleBloc extends Bloc<TimeCycleEvent, TimeCycleState> {
       yield TimeCycleLoading();
       if (event is GetTimeCycle) {
         TimeCycle timeCycle = TimeCycle(
-            isLastThird: event.timeCycle.isLastThird,
-            timeIs: event.timeCycle.timeIs);
+          isLastThird: event.timeCycle.isLastThird,
+          timeIs: event.timeCycle.timeIs,
+          untilDayOrNight: event.timeCycle.untilDayOrNight,
+        );
         yield TimeCycleLoaded(timeCycle);
       }
     }

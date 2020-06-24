@@ -18,7 +18,6 @@ class BangBloc extends Bloc<BangEvent, BangState> {
   Stream<BangState> mapEventToState(
     BangEvent event,
   ) async* {
-    yield BangLoading();
     if (event is GetBang) {
       Bang bang = await getPrayerData(event.countryName, event.cityName);
       yield BangLoaded(bang);

@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/time_cycle.dart';
 
-enum TimeIs { night, day, lastThird }
+enum TimeIs { night, day }
 
 class CountdownPage extends StatefulWidget {
   final Bang bang;
@@ -22,6 +23,7 @@ class _CountdownPageState extends State<CountdownPage> {
   TimeIs _oldTimeIs;
   bool _isLastThird = false;
   TimeCycleBloc _timeCycleBloc;
+  String isDayOrNightText;
 
   /// Formats a duration to 'mm:ss'.
   static String formatDuration(Duration d) =>
@@ -113,7 +115,6 @@ class _CountdownPageState extends State<CountdownPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     if (TickerMode.of(context)) {
       startTimer();
     } else {
@@ -135,32 +136,14 @@ class _CountdownPageState extends State<CountdownPage> {
     // print('lastThird => ${bang.lastThird}');
     checkDayNight();
     checkLastThird();
-
     // print('isLastThird => $_isLastThird');
     // print('timeIs => $_timeIs');
-    return SizedBox.expand(
-      child: Align(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              child: Text(
-                formatDuration(remainingTime ?? duration),
-                style: TextStyle(
-                  fontSize: 60,
-                  fontFamily: "monospace",
-                ),
-              ),
-              padding: EdgeInsets.only(bottom: 50),
-            ),
-            RaisedButton(
-              child: Text("Restart"),
-              onPressed: restartCountdown,
-              color: Colors.red,
-            ),
-          ],
-        ),
+    return Text(
+      formatDuration(remainingTime ?? duration),
+      style: GoogleFonts.farro(
+        fontSize: 50,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 6.0,
       ),
     );
   }
@@ -171,7 +154,6 @@ class _CountdownPageState extends State<CountdownPage> {
       if (DateTime.now().hour == bang.maghrabDateTime.hour) {
         if (DateTime.now().minute >= bang.maghrabDateTime.minute) {
           // hours and minutes are greater
-
           _timeIs = TimeIs.night;
           if (_timeIs != _oldTimeIs) {
             print('0 $_oldTimeIs');
@@ -242,9 +224,22 @@ class _CountdownPageState extends State<CountdownPage> {
   }
 
   void addToBloc() {
+    if (_timeIs == TimeIs.day) {
+      // it's day so we need time until Night
+      isDayOrNightText = 'Night';
+    } else if (_timeIs == TimeIs.night) {
+      isDayOrNightText = 'Day';
+    } if (_isLastThird) {
+      isDayOrNightText = 'Last Third';
+    }
+
     _timeCycleBloc.add(
       GetTimeCycle(
-        timeCycle: TimeCycle(timeIs: _timeIs, isLastThird: _isLastThird),
+        timeCycle: TimeCycle(
+          timeIs: _timeIs,
+          isLastThird: _isLastThird,
+          untilDayOrNight: isDayOrNightText,
+        ),
       ),
     );
   }
@@ -259,7 +254,6 @@ class _CountdownPageState extends State<CountdownPage> {
         if (DateTime.now().minute >= bang.lastThird.minute) {
           if (!_isLastThird) {
             _isLastThird = true;
-
             addToBloc();
           }
         }
