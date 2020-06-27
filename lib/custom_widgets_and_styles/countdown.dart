@@ -274,7 +274,7 @@ class _CountdownPageState extends State<CountdownPage> {
     } else if (_timeIs == TimeIs.night) {
       isDayOrNightText = 'Day';
     }
-    if (_isLastThird && _timeIs == TimeIs.night) {
+    if (_isLastThird) {
       isDayOrNightText = 'Last Third';
     }
 

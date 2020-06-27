@@ -44,10 +44,10 @@ class _HomePageState extends State<HomePage> {
             }
           },
           builder: (context, state) {
-            print('maghrab is a date not a string => ${bang.maghrabDateTime}');
             if (state is TimeCycleLoaded) {
               // final mediaQuerySize = MediaQuery.of(context).size;
               final timeCycle = state.timeCycle;
+              print('HomePage using toString() => ${timeCycle.toString()}');
               return Container(
                 color: hexToColor('#E3E3ED'),
                 width: MediaQuery.of(context).size.width,

@@ -36,7 +36,8 @@ class BangBloc extends Bloc<BangEvent, BangState> {
         final Bang bang =
             await repository.getPrayerData(event.countryName, event.cityName);
         yield BangLoaded(bang);
-      } catch (_) {
+      } catch (e) {
+        print('inside catch before FetchBang ${e.toString()}');
         add(FetchBang());
       }
     }
