@@ -223,27 +223,6 @@ class _CountdownPageState extends State<CountdownPage> {
     }
   }
 
-  void addToBloc() {
-    if (_timeIs == TimeIs.day) {
-      // it's day so we need time until Night
-      isDayOrNightText = 'Night';
-    } else if (_timeIs == TimeIs.night) {
-      isDayOrNightText = 'Day';
-    } if (_isLastThird) {
-      isDayOrNightText = 'Last Third';
-    }
-
-    _timeCycleBloc.add(
-      GetTimeCycle(
-        timeCycle: TimeCycle(
-          timeIs: _timeIs,
-          isLastThird: _isLastThird,
-          untilDayOrNight: isDayOrNightText,
-        ),
-      ),
-    );
-  }
-
   void checkLastThird() {
     // midNightEnd is the beginning of lastThird
     // lastThird == MidNightEnd
@@ -286,5 +265,27 @@ class _CountdownPageState extends State<CountdownPage> {
     );
     duration =
         Duration(hours: nightDuration.hour, minutes: nightDuration.minute);
+  }
+
+  void addToBloc() {
+    if (_timeIs == TimeIs.day) {
+      // it's day so we need time until Night
+      isDayOrNightText = 'Night';
+    } else if (_timeIs == TimeIs.night) {
+      isDayOrNightText = 'Day';
+    }
+    if (_isLastThird && _timeIs == TimeIs.night) {
+      isDayOrNightText = 'Last Third';
+    }
+
+    _timeCycleBloc.add(
+      GetTimeCycle(
+        timeCycle: TimeCycle(
+          timeIs: _timeIs,
+          isLastThird: _isLastThird,
+          untilDayOrNight: isDayOrNightText,
+        ),
+      ),
+    );
   }
 }

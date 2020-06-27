@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/home_page_widgets.dart';
 
 class NetworkPage extends StatefulWidget {
   @override
@@ -9,26 +12,31 @@ class NetworkPage extends StatefulWidget {
 class _NetworkPageState extends State<NetworkPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Center(
-          child: FlatButton(
-            child: Text('Network Request'),
-            onPressed: () => fetchPrayer(),
-          ),
-        ),
-      ),
+    return BlocBuilder<BangBloc, BangState>(
+      builder: (context, state) {
+        if (state is BangInitial) {
+          BlocProvider.of<BangBloc>(context).add(
+              GetBang(countryName: 'dd', cityName: 'rr'));
+        }
+        if (state is BangError) {
+          return Center(
+            child: Text('Error State'),
+          );
+        }
+        if (state is BangLoaded) {
+          return Column(
+            children: <Widget>[
+              Text('${state.bang.speda}', style: customTextStyle()),
+              Text('${state.bang.rojHalat}', style: customTextStyle()),
+              Text('${state.bang.nevro}', style: customTextStyle()),
+              Text('${state.bang.evar}', style: customTextStyle()),
+              Text('${state.bang.maghrab}', style: customTextStyle()),
+              Text('${state.bang.aesha}', style: customTextStyle()),
+            ],
+          );
+        }
+        return CircularProgressIndicator();
+      },
     );
-  }
-
-  Future<void> fetchPrayer() async {
-    print('inside fetchPrayer() method');
-    final response = await http.get(
-        'http://api.aladhan.com/v1/calendarByCity?city=Baghdad&country=Iraq&method=5&month=06&year=2020');
-    if (response.statusCode == 200) {
-      print(response.body);
-    } else {
-      throw Exception('Failed to get prayers');
-    }
   }
 }

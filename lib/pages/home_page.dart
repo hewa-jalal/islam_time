@@ -6,7 +6,6 @@ import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
-import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/home_page_widgets.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 
@@ -21,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int animation;
+
   Bang get bang => widget.bang;
 
   @override
@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
             }
           },
           builder: (context, state) {
+            print('maghrab is a date not a string => ${bang.maghrabDateTime}');
             if (state is TimeCycleLoaded) {
               // final mediaQuerySize = MediaQuery.of(context).size;
               final timeCycle = state.timeCycle;

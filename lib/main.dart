@@ -3,22 +3,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/pages/network_page.dart';
+import 'package:islamtime/repository/bang_api_client.dart';
+import 'package:islamtime/repository/bang_repository.dart';
+import 'package:http/http.dart' as http;
 
 import 'pages/location_page.dart';
 
 void main() {
+  final BangRepository repository = BangRepository(
+    bangApiClient: BangApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider<BangBloc>(
-          create: (_) => BangBloc(),
+          create: (_) => BangBloc(repository: repository),
         ),
         BlocProvider<TimeCycleBloc>(
           create: (_) => TimeCycleBloc(),
         ),
       ],
       child: MaterialApp(
-        home: NetworkPage(),
+        home: LocationPage(),
       ),
     ),
   );
