@@ -16,7 +16,7 @@ class LocationPage extends StatelessWidget {
         backgroundColor: Colors.grey,
         body: BlocConsumer<BangBloc, BangState>(
           listener: (context, state) {
-            if (state is BangLoaded) { 
+            if (state is BangLoaded) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -106,9 +106,7 @@ class LocationPage extends StatelessWidget {
     String userCity = splitedAddress[0];
     String userCountry = splitedAddress[1];
 
-    bangBloc.add(
-      GetBang(countryName: userCountry, cityName: userCity),
-    );
+    bangBloc.add(GetBang(countryName: userCountry, cityName: userCity));
 
     return '$userCountry, $userCity';
   }

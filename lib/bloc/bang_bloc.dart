@@ -4,16 +4,19 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/repository/bang_repository.dart';
+import 'package:islamtime/repository/location_repository.dart';
 
 part 'bang_event.dart';
 part 'bang_state.dart';
 
 class BangBloc extends Bloc<BangEvent, BangState> {
-  final BangRepository repository;
+  final BangRepository bangRepository;
+  final LocationRepository locationRepository;
 
-  BangBloc({@required this.repository});
+  BangBloc({@required this.bangRepository, @required this.locationRepository});
 
   @override
   BangState get initialState => BangInitial();
@@ -25,7 +28,10 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     yield BangLoading();
     if (event is FetchBang) {
       try {
-        final Bang bang = await repository.fetchBang();
+        Position position = await locationRepository.getUserLocation();
+        print('position $position');
+        final Bang bang = await bangRepository.fetchBang(position.latitude,
+            position.longitude, DateTime.now().month, DateTime.now().year);
         yield BangLoaded(bang);
       } catch (e) {
         print('catch BangError() => ${e.toString()}');
@@ -33,8 +39,8 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       }
     } else if (event is GetBang) {
       try {
-        final Bang bang =
-            await repository.getPrayerData(event.countryName, event.cityName);
+        final Bang bang = await bangRepository.getPrayerData(
+            event.countryName, event.cityName);
         yield BangLoaded(bang);
       } catch (e) {
         print('inside catch before FetchBang ${e.toString()}');

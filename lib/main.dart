@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
-import 'package:islamtime/pages/network_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:http/http.dart' as http;
+import 'package:islamtime/repository/location_repository.dart';
 
 import 'pages/location_page.dart';
 
 void main() {
+  print('vscodeeee');
+
   final BangRepository repository = BangRepository(
     bangApiClient: BangApiClient(
       httpClient: http.Client(),
@@ -20,7 +22,10 @@ void main() {
     MultiBlocProvider(
       providers: [
         BlocProvider<BangBloc>(
-          create: (_) => BangBloc(repository: repository),
+          create: (_) => BangBloc(
+            bangRepository: repository,
+            locationRepository: LocationRepository(),
+          ),
         ),
         BlocProvider<TimeCycleBloc>(
           create: (_) => TimeCycleBloc(),

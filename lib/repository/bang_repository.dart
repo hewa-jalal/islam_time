@@ -10,13 +10,16 @@ class BangRepository {
 
   BangRepository({@required this.bangApiClient});
 
-  Future<Bang> fetchBang() async {
-    return await bangApiClient.fetchBang();
+  Future<Bang> fetchBang(
+      double latitude, double longtitude, int month, int year) async {
+    return await bangApiClient.fetchBang(latitude, longtitude, month, year);
   }
 
   Future<Bang> getPrayerData(String countryName, String cityName) async {
+    print('country name => $countryName, city name => $cityName');
+    
     String fileString = await rootBundle
-        .loadString('assets/fixed_prayer_time/$countryName/gg.txt');
+        .loadString('assets/fixed_prayer_time/$countryName/$cityName.txt');
 
     // split the files into individual lines
     List<String> fileLines = fileString.split('\n');
@@ -94,8 +97,6 @@ class BangRepository {
     List<String> splitedMaghrabTime = maghrab.split(':');
     int maghrabH = int.parse(splitedMaghrabTime[0]);
     int maghrabM = int.parse(splitedMaghrabTime[1]);
-
-
 
     // TODO: remove the hard-coded 2020
     DateTime spedaBang = DateTime(2020, month, day, spedaH, spedaM);

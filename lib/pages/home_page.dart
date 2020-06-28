@@ -2,11 +2,13 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:islamtime/arrow_animation_provider.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:islamtime/models/bang.dart';
+import 'package:provider/provider.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   int animation;
 
   Bang get bang => widget.bang;
+  SolidController _solidController = SolidController();
 
   @override
   void initState() {
@@ -47,7 +50,6 @@ class _HomePageState extends State<HomePage> {
             if (state is TimeCycleLoaded) {
               // final mediaQuerySize = MediaQuery.of(context).size;
               final timeCycle = state.timeCycle;
-              print('HomePage using toString() => ${timeCycle.toString()}');
               return Container(
                 color: hexToColor('#E3E3ED'),
                 width: MediaQuery.of(context).size.width,
@@ -81,12 +83,13 @@ class _HomePageState extends State<HomePage> {
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: SolidBottomSheet(
+                          controller: _solidController,
                           maxHeight: MediaQuery.of(context).size.height / 2,
                           headerBar: SizedBox(
                             height: 100,
                             child: FlareActor(
                               'assets/flare/arrow_up_down.flr',
-                              animation: 'upArrowAnimation',
+                              animation: '',
                             ),
                           ),
                           body: BottomSheetTime(
@@ -94,6 +97,14 @@ class _HomePageState extends State<HomePage> {
                             timeCycle: timeCycle,
                           ),
                         ),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          setState(() {
+                            // arrowAnimationDirection = 'downArrowAnimation';
+                          });
+                        },
+                        child: Text('change animation'),
                       )
                     ],
                   ),
