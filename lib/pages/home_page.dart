@@ -2,13 +2,11 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:islamtime/arrow_animation_provider.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:islamtime/models/bang.dart';
-import 'package:provider/provider.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
@@ -89,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                             height: 100,
                             child: FlareActor(
                               'assets/flare/arrow_up_down.flr',
-                              animation: '',
+                              animation: 'upArrowAnimation',
                             ),
                           ),
                           body: BottomSheetTime(

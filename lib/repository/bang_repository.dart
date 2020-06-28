@@ -19,7 +19,7 @@ class BangRepository {
     print('country name => $countryName, city name => $cityName');
     
     String fileString = await rootBundle
-        .loadString('assets/fixed_prayer_time/$countryName/$cityName.txt');
+        .loadString('assets/fixed_prayer_time/$countryName/Dihok.txt');
 
     // split the files into individual lines
     List<String> fileLines = fileString.split('\n');
