@@ -19,6 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String _arrowAnimation = 'upArrowAnimation';
   int animation;
 
   Bang get bang => widget.bang;
@@ -83,12 +84,28 @@ class _HomePageState extends State<HomePage> {
                         child: SolidBottomSheet(
                           controller: _solidController,
                           maxHeight: MediaQuery.of(context).size.height / 2,
-                          headerBar: SizedBox(
-                            height: 100,
-                            child: FlareActor(
-                              'assets/flare/arrow_up_down.flr',
-                              animation: 'upArrowAnimation',
-                            ),
+                          headerBar: StatefulBuilder(
+                            builder: (context, sheetSetState) {
+                              _solidController.isOpenStream.listen((event) {
+                                print('event $event');
+                                if (event) {
+                                  sheetSetState(() {
+                                    _arrowAnimation = 'downArrowAnimation';
+                                  });
+                                } else {
+                                  sheetSetState(() {
+                                    _arrowAnimation = 'upArrowAnimation';
+                                  });
+                                }
+                              });
+                              return SizedBox(
+                                height: 100,
+                                child: FlareActor(
+                                  'assets/flare/arrow_up_down.flr',
+                                  animation: _arrowAnimation,
+                                ),
+                              );
+                            },
                           ),
                           body: BottomSheetTime(
                             bang: bang,
