@@ -1,7 +1,10 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
@@ -11,8 +14,13 @@ import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
   final Bang bang;
+  final String userLocation;
 
-  const HomePage({Key key, @required this.bang}) : super(key: key);
+  const HomePage({
+    Key key,
+    @required this.bang,
+    @required this.userLocation,
+  }) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -29,6 +37,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     animation = 0;
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => showLocationDialog(context));
   }
 
   @override
@@ -115,9 +125,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       FlatButton(
                         onPressed: () {
-                          setState(() {
-                            // arrowAnimationDirection = 'downArrowAnimation';
-                          });
+                          showLocationDialog(context);
                         },
                         child: Text('change animation'),
                       )
@@ -136,5 +144,23 @@ class _HomePageState extends State<HomePage> {
 
   Color hexToColor(String code) {
     return Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
+  }
+
+  void showLocationDialog(BuildContext context) async {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.INFO,
+      animType: AnimType.SCALE,
+      body: Center(
+        child: Text(
+          'Your Location is ${widget.userLocation}',
+          style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
+      btnCancelOnPress: () {},
+      btnOkOnPress: () {},
+      btnCancelColor: Colors.blue,
+      btnCancelText: 'Not Corrcet?',
+    )..show();
   }
 }

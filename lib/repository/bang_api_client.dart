@@ -13,7 +13,7 @@ class BangApiClient {
   Future<Bang> fetchBang(
       double latitude, double longtitude, int month, int year) async {
     final url = _baseUrl +
-        'latitude=$latitude&longitude=$longtitude&method=2&month=$month&year=$year';
+        'latitude=$latitude&longitude=$longtitude&method=3&month=$month&year=$year';
     //  final url, separate parts for parameters
     final response = await this.httpClient.get(url);
     if (response.statusCode != 200) {

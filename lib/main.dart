@@ -9,7 +9,23 @@ import 'package:islamtime/repository/location_repository.dart';
 
 import 'pages/location_page.dart';
 
+class SimpleBlocDelegate extends BlocDelegate {
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print(transition);
+  }
+
+    @override
+  void onEvent(Bloc bloc, Object event) {
+    super.onEvent(bloc, event);
+    print('event $event');
+  }
+}
+
 void main() {
+  BlocSupervisor.delegate = SimpleBlocDelegate();
+
   print('vscodeeee');
 
   final BangRepository repository = BangRepository(

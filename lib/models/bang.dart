@@ -58,8 +58,6 @@ class Bang extends Equatable {
 
     List<DateTime> dates = getTheDifference(spedaDateTime, maghrabDateTime);
     print('dates $dates');
-    // DateTime testTime =
-    //     _customStringToDate(json['data'][day]['timings']['Maghrib']);
 
     return Bang(
       speda: speda,
@@ -149,6 +147,8 @@ class Bang extends Equatable {
         minutes: thirdMin,
       ),
     );
+
+    print('the last Third $lastThird');
 
     DateTime dayTime = maghrabBang.subtract(
       Duration(hours: spedaBang.hour, minutes: spedaBang.minute),
