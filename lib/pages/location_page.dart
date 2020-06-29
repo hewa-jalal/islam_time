@@ -17,6 +17,24 @@ class LocationPage extends StatefulWidget {
 
 class _LocationPageState extends State<LocationPage> {
   List<String> cities = [];
+  TextEditingController controller = TextEditingController();
+  String filter;
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(() {
+      setState(() {
+        filter = controller.text;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +42,7 @@ class _LocationPageState extends State<LocationPage> {
       child: Scaffold(
         appBar: AppBar(
           title: TextField(
+            controller: controller,
             decoration: InputDecoration.collapsed(
                 fillColor: Colors.white, hintText: 'Enter a city name'),
           ),
@@ -59,9 +78,23 @@ class _LocationPageState extends State<LocationPage> {
                               cities.add(
                                   item.substring(element.start, element.end));
                             }
-                            return ListTile(
-                              title: Text(cities[index].toString()),
-                            );
+                            print('cities $cities');
+                            if (filter == null || filter == '') {
+                              return InkWell(
+                                onTap: () => print(cities[index]),
+                                child: ListTile(
+                                  title: Text(cities[index]),
+                                ),
+                              );
+                            } else {
+                              return cities[index]
+                                      .toLowerCase()
+                                      .contains(filter.toLowerCase())
+                                  ? ListTile(
+                                      title: Text(cities[index]),
+                                    )
+                                  : Container();
+                            }
                           },
                         )
                       : CircularProgressIndicator(
