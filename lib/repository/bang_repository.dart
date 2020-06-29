@@ -16,47 +16,50 @@ class BangRepository {
   }
 
   Future<Bang> getPrayerData(String countryName, String cityName) async {
-    print('country name => $countryName, city name => $cityName');
-    
-    String fileString = await rootBundle
-        .loadString('assets/fixed_prayer_time/$countryName/gg.txt');
+    print('countryName $countryName');
+    if (countryName.toLowerCase() == 'iraq') {
+      String fileString = await rootBundle
+          .loadString('assets/fixed_prayer_time/Iraq/$cityName.txt');
 
-    // split the files into individual lines
-    List<String> fileLines = fileString.split('\n');
+      // split the files into individual lines
+      List<String> fileLines = fileString.split('\n');
 
-    // get the line that contains the matched date
-    String matchedDate =
-        fileLines.where((element) => element.contains(getDate())).toString();
+      // get the line that contains the matched date
+      String matchedDate =
+          fileLines.where((element) => element.contains(getDate())).toString();
 
-    // print('matched data => $matchedDate');
+      // print('matched data => $matchedDate');
 
-    // split the line that has the data by ','
-    List<String> splitLine = matchedDate.split(',');
+      // split the line that has the data by ','
+      List<String> splitLine = matchedDate.split(',');
 
-    String speda = toAmPm(splitLine[2]);
-    String rojHalat = toAmPm(splitLine[3]);
-    String nevro = toAmPm(splitLine[4]);
-    String evar = toAmPm(splitLine[5]);
-    String makhrab = toAmPm(splitLine[6]);
-    String aesha = toAmPm(splitLine[7]);
-    List<DateTime> dates =
-        getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
+      String speda = toAmPm(splitLine[2]);
+      String rojHalat = toAmPm(splitLine[3]);
+      String nevro = toAmPm(splitLine[4]);
+      String evar = toAmPm(splitLine[5]);
+      String makhrab = toAmPm(splitLine[6]);
+      String aesha = toAmPm(splitLine[7]);
+      List<DateTime> dates =
+          getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
 
-    Bang bang = Bang(
-      speda: speda,
-      rojHalat: rojHalat,
-      nevro: nevro,
-      evar: evar,
-      maghrab: makhrab,
-      aesha: aesha,
-      theThird: dates[0],
-      lastThird: dates[1],
-      dayTime: dates[2],
-      maghrabDateTime: dates[3],
-      spedaDateTime: dates[4],
-    );
-
-    return bang;
+      Bang bang = Bang(
+        speda: speda,
+        rojHalat: rojHalat,
+        nevro: nevro,
+        evar: evar,
+        maghrab: makhrab,
+        aesha: aesha,
+        theThird: dates[0],
+        lastThird: dates[1],
+        dayTime: dates[2],
+        maghrabDateTime: dates[3],
+        spedaDateTime: dates[4],
+      );
+      return bang;
+    } else {
+      // so it goes to FetchBang() event
+      throw Exception();
+    }
   }
 
   String getDate() {

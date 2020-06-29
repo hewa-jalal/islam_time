@@ -40,96 +40,110 @@ class _LocationPageState extends State<LocationPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: TextField(
-            controller: controller,
-            decoration: InputDecoration.collapsed(
-                fillColor: Colors.white, hintText: 'Enter a city name'),
-          ),
-        ),
         backgroundColor: Colors.grey,
         body: BlocConsumer<BangBloc, BangState>(
           listener: (context, state) async {
             if (state is BangLoaded) {
-              // getUserLocation(context).then((value) {
-              //   Navigator.pushReplacement(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (_) =>
-              //           HomePage(bang: state.bang, userLocation: value),
-              //     ),
-              //   );
-              // });
+              getUserLocation(context).then((value) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        HomePage(bang: state.bang, userLocation: value),
+                  ),
+                );
+              });
             }
           },
           builder: (context, state) {
             if (state is BangInitial) {
               return FutureBuilder(
-                future: _initImages(context),
-                builder: (context, snapshot) {
-                  return snapshot.hasData
-                      ? ListView.builder(
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            final String item = snapshot.data[index];
-                            final regex = RegExp(r'\w+(?=\.)');
-                            Iterable iter = regex.allMatches(item);
-                            for (var element in iter) {
-                              cities.add(
-                                  item.substring(element.start, element.end));
-                            }
-                            print('cities $cities');
-                            if (filter == null || filter == '') {
-                              return InkWell(
-                                onTap: () => print(cities[index]),
-                                child: ListTile(
-                                  title: Text(cities[index]),
-                                ),
-                              );
-                            } else {
-                              return cities[index]
-                                      .toLowerCase()
-                                      .contains(filter.toLowerCase())
-                                  ? ListTile(
-                                      title: Text(cities[index]),
-                                    )
-                                  : Container();
-                            }
-                          },
-                        )
-                      : CircularProgressIndicator(
-                          backgroundColor: Colors.green,
-                        );
+                future: Future.wait(
+                    [_initImages(context), getUserLocation(context)]),
+                builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                  if (snapshot.hasData && snapshot.data[1].contains('Ir5aq')) {
+                    return Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: controller,
+                            decoration: InputDecoration.collapsed(
+                                fillColor: Colors.white,
+                                hintText: 'Enter a city name'),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: snapshot.data[0].length,
+                            itemBuilder: (context, index) {
+                              final String item = snapshot.data[0][index];
+                              final regex = RegExp(r'\w+(?=\.)');
+                              Iterable iter = regex.allMatches(item);
+                              for (var element in iter) {
+                                cities.add(
+                                    item.substring(element.start, element.end));
+                              }
+                              if (filter == null || filter == '') {
+                                return InkWell(
+                                  onTap: () {
+                                    final bangBloc =
+                                        BlocProvider.of<BangBloc>(context);
+                                    bangBloc.add(GetBang(
+                                        cityName: 'Dihok',
+                                        countryName: 'Iraq'));
+                                  },
+                                  child: ListTile(
+                                    title: Text(cities[index]),
+                                  ),
+                                );
+                              } else {
+                                return cities[index]
+                                        .toLowerCase()
+                                        .contains(filter.toLowerCase())
+                                    ? ListTile(
+                                        title: Text(cities[index]),
+                                      )
+                                    : Container();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Stack(
+                      children: <Widget>[
+                        GestureDetector(
+                          onTap: () => getUserLocation(context, true),
+                          child: FlareActor(
+                            'assets/flare/location_place_holder.flr',
+                            animation: 'jump',
+                          ),
+                        ),
+                        Positioned.fill(
+                          top: 30,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Text(
+                              'Tap the screen to get your location',
+                              style: GoogleFonts.roboto(
+                                  fontSize: 22,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w900),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                 },
               );
-              // return Stack(
-              //   children: <Widget>[
-              //     GestureDetector(
-              //       onTap: () => getUserLocation(context),
-              //       child: FlareActor(
-              //         'assets/flare/location_place_holder.flr',
-              //         animation: 'jump',
-              //       ),
-              //     ),
-              //     Positioned.fill(
-              //       top: 30,
-              //       child: Align(
-              //         alignment: Alignment.topCenter,
-              //         child: Text(
-              //           'Tap the screen to get your location',
-              //           style: GoogleFonts.roboto(
-              //               fontSize: 22,
-              //               color: Colors.black,
-              //               fontWeight: FontWeight.w900),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // );
             }
             if (state is BangLoading) {
               return CircularProgressIndicator();
             }
+            return CircularProgressIndicator();
           },
         ),
       ),
@@ -151,23 +165,19 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   Future<List<String>> _initImages(BuildContext context) async {
-    // >> To get paths you need these 2 lines
     final manifestContent =
         await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
 
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-    // >> To get paths you need these 2 lines
 
-    final imagePaths = manifestMap.keys
+    final filePaths = manifestMap.keys
         .where((String key) => key.contains('fixed_prayer_time/Iraq/'))
         .where((String key) => key.contains('.txt'))
         .toList();
-    return imagePaths;
+    return filePaths;
   }
 
-  Future<String> getUserLocation(context) async {
-    final bangBloc = BlocProvider.of<BangBloc>(context);
-
+  Future<String> getUserLocation(context, [bool addEvent = false]) async {
     Position position = await Geolocator().getCurrentPosition();
     List<Placemark> placemarks = await Geolocator()
         .placemarkFromCoordinates(position.latitude, position.longitude);
@@ -179,7 +189,10 @@ class _LocationPageState extends State<LocationPage> {
     String userCity = splitedAddress[0];
     String userCountry = splitedAddress[1];
 
-    bangBloc.add(GetBang(countryName: userCountry, cityName: userCity));
+    if (addEvent) {
+      final bangBloc = BlocProvider.of<BangBloc>(context);
+      bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
+    }
 
     return '$userCountry, $userCity';
   }
