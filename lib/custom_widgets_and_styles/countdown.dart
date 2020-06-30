@@ -138,12 +138,15 @@ class _CountdownPageState extends State<CountdownPage> {
     checkLastThird();
     // print('isLastThird => $_isLastThird');
     // print('timeIs => $_timeIs');
-    return Text(
-      formatDuration(remainingTime ?? duration),
-      style: GoogleFonts.farro(
-        fontSize: 50,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 6.0,
+    return Padding(
+      padding: const EdgeInsets.only(right: 60),
+      child: Text(
+        formatDuration(remainingTime ?? duration),
+        style: GoogleFonts.farro(
+          fontSize: 50,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 6.0,
+        ),
       ),
     );
   }

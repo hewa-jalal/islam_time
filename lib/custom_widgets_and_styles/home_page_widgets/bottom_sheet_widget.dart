@@ -4,6 +4,7 @@ import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/prayer_tile_widget.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/time_cycle.dart';
+import 'package:islamtime/pages/setting_page.dart';
 
 class BottomSheetTime extends StatelessWidget {
   final Bang bang;
@@ -21,26 +22,58 @@ class BottomSheetTime extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
           child: Column(
             children: <Widget>[
-              Text(
-                'Time Remaining Until ${timeCycle.untilDayOrNight}',
-                style: GoogleFonts.farro(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    flex: 5,
+                    child: Text(
+                      'Time Remaining Until ${timeCycle.untilDayOrNight}',
+                      style: GoogleFonts.farro(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Expanded(
+                    child: FlatButton(
+                      child: Icon(
+                        Icons.settings,
+                        color: Colors.blue,
+                        size: 50,
+                      ),
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => SettingPage()));
+                      },
+                    ),
+                  ),
+                ],
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 22),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: CountdownPage(
                   bang: bang,
                 ),
               ),
               Divider(color: Colors.black, height: 20, thickness: 2),
-              PrayerTile(prayerTime: bang.speda, prayerName: 'Fajr', iconTime: 'sun'),
-              PrayerTile(prayerTime: bang.rojHalat, prayerName: 'Sunrise', iconTime: 'sun'),
-              PrayerTile(prayerTime: bang.nevro, prayerName: 'Zuhr', iconTime: 'sun'),
-              PrayerTile(prayerTime: bang.evar, prayerName: 'Asr', iconTime: 'sun'),
-              PrayerTile(prayerTime: bang.maghrab, prayerName: 'Maghrib', iconTime: 'moon'),
-              PrayerTile(prayerTime: bang.aesha, prayerName: 'Isha',  iconTime: 'moon'),
+              PrayerTile(
+                  prayerTime: bang.speda, prayerName: 'Fajr', iconTime: 'sun'),
+              PrayerTile(
+                  prayerTime: bang.rojHalat,
+                  prayerName: 'Sunrise',
+                  iconTime: 'sun'),
+              PrayerTile(
+                  prayerTime: bang.nevro, prayerName: 'Zuhr', iconTime: 'sun'),
+              PrayerTile(
+                  prayerTime: bang.evar, prayerName: 'Asr', iconTime: 'sun'),
+              PrayerTile(
+                  prayerTime: bang.maghrab,
+                  prayerName: 'Maghrib',
+                  iconTime: 'moon'),
+              PrayerTile(
+                  prayerTime: bang.aesha, prayerName: 'Isha', iconTime: 'moon'),
             ],
           ),
         ),

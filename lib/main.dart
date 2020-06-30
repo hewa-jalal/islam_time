@@ -28,7 +28,7 @@ void main() {
 
   print('vscodeeee');
 
-  final BangRepository repository = BangRepository(
+  final LocalBangRepository repository = LocalBangRepository(
     bangApiClient: BangApiClient(
       httpClient: http.Client(),
     ),

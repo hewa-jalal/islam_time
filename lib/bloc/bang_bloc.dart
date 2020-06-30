@@ -34,7 +34,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
             position.longitude, DateTime.now().month, DateTime.now().year);
         yield BangLoaded(bang);
       } catch (e) {
-        print('catch BangError() => ${e.toString()}');
+        print('catch BangError() in FetchBang => ${e.toString()}');
         yield BangError();
       }
     } else if (event is GetBang) {
@@ -43,7 +43,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
             event.countryName, event.cityName);
         yield BangLoaded(bang);
       } catch (e) {
-        print('inside catch before FetchBang ${e.toString()}');
+        print('catch error in GetBang() ${e.toString()}');
         add(FetchBang());
       }
     }

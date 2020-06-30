@@ -22,3 +22,9 @@ class FetchBang extends BangEvent {
   @override
   List<Object> get props => [];
 }
+
+class FetchBangWithSettings extends BangEvent {
+  @override
+  List<Object> get props => [];
+
+}

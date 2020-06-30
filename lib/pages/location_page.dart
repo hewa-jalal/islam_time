@@ -80,7 +80,7 @@ class _LocationPageState extends State<LocationPage> {
     String userCity = splitedAddress[0];
     String userCountry = splitedAddress[1];
 
-    if (userCountry.contains('Iraq')) {
+    if (userCountry.toLowerCase().contains('i4raq')) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => SelectCityPage()));
     } else {

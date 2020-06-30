@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
-import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/pages/home_page.dart';
 
 class SelectCityPage extends StatefulWidget {
@@ -56,7 +55,8 @@ class _SelectCityPageState extends State<SelectCityPage> {
         },
         child: FutureBuilder(
           future: _initFiles(context),
-          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          builder: (context, snapshot) {
+            final bangBloc = BlocProvider.of<BangBloc>(context);
             if (snapshot.hasData) {
               return Column(
                 children: <Widget>[
@@ -78,8 +78,6 @@ class _SelectCityPageState extends State<SelectCityPage> {
                           return InkWell(
                             onTap: () {
                               userCity = cities[index];
-                              final bangBloc =
-                                  BlocProvider.of<BangBloc>(context);
                               bangBloc.add(
                                 GetBang(
                                     cityName: cities[index],
@@ -96,11 +94,12 @@ class _SelectCityPageState extends State<SelectCityPage> {
                                   .contains(filter.toLowerCase())
                               ? InkWell(
                                   onTap: () {
-                                    final bangBloc =
-                                        BlocProvider.of<BangBloc>(context);
-                                    bangBloc.add(GetBang(
-                                        cityName: cities[index],
-                                        countryName: 'Iraq'));
+                                    userCity = cities[index];
+                                    bangBloc.add(
+                                      GetBang(
+                                          cityName: cities[index],
+                                          countryName: 'Iraq'),
+                                    );
                                   },
                                   child: ListTile(
                                     title: Text(cities[index]),
