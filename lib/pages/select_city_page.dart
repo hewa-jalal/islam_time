@@ -48,8 +48,12 @@ class _SelectCityPageState extends State<SelectCityPage> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (_) => HomePage(
-                      bang: state.bang, userLocation: 'Iraq, $userCity')),
+                builder: (_) => HomePage(
+                  bang: state.bang,
+                  userLocation: 'Iraq, $userCity',
+                  showDialog: false,
+                ),
+              ),
             );
           }
         },

@@ -46,6 +46,16 @@ class BangBloc extends Bloc<BangEvent, BangState> {
         print('catch error in GetBang() ${e.toString()}');
         add(FetchBang());
       }
+    } else if (event is FetchBangWithSettings) {
+      Position position = await locationRepository.getUserLocation();
+      print('position in FetchBangWithSetting $position');
+      final Bang bang = await bangRepository.fetchBangWithSettings(
+          position.latitude,
+          position.longitude,
+          DateTime.now().month,
+          DateTime.now().year,
+          event.methodNumber);
+      yield BangLoaded(bang);
     }
   }
 }

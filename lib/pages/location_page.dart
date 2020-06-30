@@ -25,8 +25,11 @@ class _LocationPageState extends State<LocationPage> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        HomePage(bang: state.bang, userLocation: value),
+                    builder: (_) => HomePage(
+                      bang: state.bang,
+                      userLocation: value,
+                      showDialog: true,
+                    ),
                   ),
                 );
               });

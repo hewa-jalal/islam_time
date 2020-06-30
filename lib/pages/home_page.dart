@@ -15,11 +15,13 @@ import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 class HomePage extends StatefulWidget {
   final Bang bang;
   final String userLocation;
+  final bool showDialog;
 
   const HomePage({
     Key key,
     @required this.bang,
     @required this.userLocation,
+    @required this.showDialog,
   }) : super(key: key);
 
   @override
@@ -37,8 +39,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     animation = 0;
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => showLocationDialog(context));
+    if (widget.showDialog) {
+      SchedulerBinding.instance
+          .addPostFrameCallback((_) => showLocationDialog(context));
+    }
   }
 
   @override
