@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart' as getPackage;
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
@@ -16,7 +17,7 @@ class SimpleBlocDelegate extends BlocDelegate {
     print(transition);
   }
 
-    @override
+  @override
   void onEvent(Bloc bloc, Object event) {
     super.onEvent(bloc, event);
     print('event $event');
@@ -47,7 +48,7 @@ void main() {
           create: (_) => TimeCycleBloc(),
         ),
       ],
-      child: MaterialApp(
+      child: getPackage.GetMaterialApp(
         home: LocationPage(),
       ),
     ),

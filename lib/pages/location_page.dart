@@ -2,6 +2,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/pages/select_city_page.dart';
@@ -22,14 +23,11 @@ class _LocationPageState extends State<LocationPage> {
           listener: (context, state) async {
             if (state is BangLoaded) {
               getUserLocation(context).then((value) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => HomePage(
-                      bang: state.bang,
-                      userLocation: value,
-                      showDialog: true,
-                    ),
+                Get.off(
+                  HomePage(
+                    bang: state.bang,
+                    userLocation: value,
+                    showDialog: true,
                   ),
                 );
               });
@@ -83,9 +81,8 @@ class _LocationPageState extends State<LocationPage> {
     String userCity = splitedAddress[0];
     String userCountry = splitedAddress[1];
 
-    if (userCountry.toLowerCase().contains('i4raq')) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => SelectCityPage()));
+    if (userCountry.toLowerCase().contains('iraq')) {
+      Get.off(SelectCityPage());
     } else {
       bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
     }

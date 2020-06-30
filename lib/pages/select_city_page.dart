@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/pages/home_page.dart';
 
@@ -45,14 +46,11 @@ class _SelectCityPageState extends State<SelectCityPage> {
       body: BlocListener<BangBloc, BangState>(
         listener: (context, state) {
           if (state is BangLoaded) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => HomePage(
-                  bang: state.bang,
-                  userLocation: 'Iraq, $userCity',
-                  showDialog: false,
-                ),
+            Get.off(
+              HomePage(
+                bang: state.bang,
+                userLocation: 'Iraq, $userCity',
+                showDialog: false,
               ),
             );
           }

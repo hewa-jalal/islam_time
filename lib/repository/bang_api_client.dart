@@ -10,23 +10,15 @@ class BangApiClient {
 
   BangApiClient({@required this.httpClient});
 
-  Future<Bang> fetchBang(
-      double latitude, double longtitude, int month, int year) async {
-    print('lat $latitude, lon $longtitude, month $month, year $year');
+  Future<Bang> fetchBang({
+    @required double lat,
+    @required double lng,
+    @required int month,
+    @required int year,
+    int method,
+  }) async {
     final url = _baseUrl +
-        'latitude=$latitude&longitude=$longtitude&method=3&month=$month&year=$year';
-    final response = await this.httpClient.get(url);
-    if (response.statusCode != 200) {
-      throw Exception('error getting bangs');
-    }
-    final json = jsonDecode(response.body);
-    return Bang.fromJson(json, DateTime.now().day - 1);
-  }
-
-  Future<Bang> fetchBangWithSetting(double latitude, double longtitude,
-      int month, int year, int method) async {
-    final url = _baseUrl +
-        'latitude=$latitude&longitude=$longtitude&method=$method&month=$month&year=$year';
+        'latitude=$lat&longitude=$lng&method=$method&month=$month&year=$year';
     final response = await this.httpClient.get(url);
     if (response.statusCode != 200) {
       throw Exception('error getting bangs');

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/prayer_tile_widget.dart';
@@ -44,8 +45,7 @@ class BottomSheetTime extends StatelessWidget {
                         size: 50,
                       ),
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => SettingPage()));
+                        Get.to(SettingPage());
                       },
                     ),
                   ),

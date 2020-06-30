@@ -6,10 +6,13 @@ import 'package:jiffy/jiffy.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 abstract class BangRepository {
-  Future<Bang> fetchBangWithSettings(
-      double latitude, double longtitude, int month, int year, int method);
-  Future<Bang> fetchBang(
-      double latitude, double longtitude, int month, int year);
+  Future<Bang> fetchBang({
+    @required double lat,
+    @required double lng,
+    @required int month,
+    @required int year,
+    int method
+  });
   Future<Bang> getPrayerData(String countryName, String cityName);
 }
 
@@ -19,16 +22,15 @@ class LocalBangRepository implements BangRepository {
   LocalBangRepository({@required this.bangApiClient});
 
   @override
-  Future<Bang> fetchBang(
-      double latitude, double longtitude, int month, int year) async {
-    return await bangApiClient.fetchBang(latitude, longtitude, month, year);
-  }
-
-  @override
-  Future<Bang> fetchBangWithSettings(double latitude, double longtitude,
-      int month, int year, int method) async {
-    return await bangApiClient.fetchBangWithSetting(
-        latitude, longtitude, month, year, method);
+  Future<Bang> fetchBang({
+    @required double lat,
+    @required double lng,
+    @required int month,
+    @required int year,
+    int method = 3,
+  }) async {
+    return await bangApiClient.fetchBang(
+        lat: lat, lng: lng, month: month, year: year, method: method);
   }
 
   @override

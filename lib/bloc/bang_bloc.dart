@@ -30,8 +30,12 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       try {
         Position position = await locationRepository.getUserLocation();
         print('position $position');
-        final Bang bang = await bangRepository.fetchBang(position.latitude,
-            position.longitude, DateTime.now().month, DateTime.now().year);
+        final Bang bang = await bangRepository.fetchBang(
+          lat: position.latitude,
+          lng: position.longitude,
+          month: DateTime.now().month,
+          year: DateTime.now().year,
+        );
         yield BangLoaded(bang);
       } catch (e) {
         print('catch BangError() in FetchBang => ${e.toString()}');
@@ -48,13 +52,14 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       }
     } else if (event is FetchBangWithSettings) {
       Position position = await locationRepository.getUserLocation();
-      print('position in FetchBangWithSetting $position');
-      final Bang bang = await bangRepository.fetchBangWithSettings(
-          position.latitude,
-          position.longitude,
-          DateTime.now().month,
-          DateTime.now().year,
-          event.methodNumber);
+      print('methodNumber => => => ${event.methodNumber}');
+      final Bang bang = await bangRepository.fetchBang(
+        lat: position.latitude,
+        lng: position.longitude,
+        month: DateTime.now().month,
+        year: DateTime.now().year,
+        method: event.methodNumber,
+      );
       yield BangLoaded(bang);
     }
   }
