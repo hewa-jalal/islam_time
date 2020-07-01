@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/home_page_widgets.dart';
 import 'package:islamtime/pages/home_page.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class SettingPage extends StatefulWidget {
@@ -14,16 +14,9 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
   bool asTabs = false;
-  MethodNumber selectedNumber;
+  MethodNumber selectedNumber = MethodNumber(3);
+  List<int> methodNumbersList = [0, 0, 0, 0, 0, 0];
   final List<DropdownMenuItem> items = [];
-
-  static const String appTitle = "Search Choices demo";
-  final String loremIpsum = "Lorem ipsum dolor sit amet,";
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   List<Widget> get appBarActions {
     return ([
@@ -58,64 +51,144 @@ class _SettingPageState extends State<SettingPage> {
             child: SafeArea(
               child: Scaffold(
                 backgroundColor: Colors.grey,
-                body: Column(
-                  children: <Widget>[
-                    Material(
-                      child: SearchableDropdown.single(
-                        items: MethodNumber.list.map((exNum) {
-                          return DropdownMenuItem(
-                            child: Text(exNum.numberString),
-                            value: exNum,
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          selectedNumber = value;
-                          // bloc.add(FetchBangWithSettings(
-                          //     methodNumber: selectedNumber.number));
-                          print('SelectedNumber ${selectedNumber.number}');
-                        },
-                        value: selectedNumber,
-                        hint: 'select one number',
-                        isExpanded: true,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
+                body: SingleChildScrollView(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                    child: Column(
                       children: <Widget>[
-                        Expanded(
-                            child: Text('speda', style: customTextStyle())),
-                        Flexible(
+                        Material(
+                          child: SearchableDropdown.single(
+                            items: MethodNumber.list.map((exNum) {
+                              return DropdownMenuItem(
+                                child: Text(exNum.numberString),
+                                value: exNum,
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              selectedNumber = value;
+                              // bloc.add(FetchBangWithSettings(
+                              //     methodNumber: selectedNumber.number));
+                              print('SelectedNumber ${selectedNumber.number}');
+                            },
+                            value: selectedNumber,
+                            hint: 'select a method',
+                            isExpanded: true,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        MethodNumberTile(
+                          prayerName: 'Fajr',
+                          onChange: (val) =>
+                              methodNumbersList[0] = int.parse(val),
+                        ),
+                        MethodNumberTile(
+                          prayerName: 'Sunrise',
+                          onChange: (val) =>
+                              methodNumbersList[1] = int.parse(val),
+                        ),
+                        MethodNumberTile(
+                          prayerName: 'Zuhr',
+                          onChange: (val) =>
+                              methodNumbersList[2] = int.parse(val),
+                        ),
+                        MethodNumberTile(
+                          prayerName: 'Asr',
+                          onChange: (val) =>
+                              methodNumbersList[3] = int.parse(val),
+                        ),
+                        MethodNumberTile(
+                          prayerName: 'Maghrib',
+                          onChange: (val) =>
+                              methodNumbersList[4] = int.parse(val),
+                        ),
+                        MethodNumberTile(
+                          prayerName: 'Isha',
+                          isEnd: true,
+                          onChange: (val) =>
+                              methodNumbersList[5] = int.parse(val),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomRight,
                           child: Container(
-                            width: 40,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                              width: 1,
-                            )),
-                            child: TextField(
-                              style: customTextStyle(),
-                              textAlign: TextAlign.center,
+                            color: Colors.yellow,
+                            child: FlatButton(
+                              child: Text('ok', style: customTextStyle()),
+                              onPressed: () {
+                                bloc.add(
+                                  FetchBangWithSettings(
+                                    methodNumber: selectedNumber.number,
+                                    tuning: methodNumbersList,
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ),
                       ],
                     ),
-                    Container(
-                      color: Colors.yellow,
-                      child: FlatButton(
-                        child: Text('5', style: customTextStyle()),
-                        onPressed: () {
-                          bloc.add(FetchBangWithSettings(
-                              methodNumber: selectedNumber.number));
-                        },
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
           );
         }
       },
+    );
+  }
+}
+
+class MethodNumberTile extends StatelessWidget {
+  final bool isEnd;
+  final String prayerName;
+  final Function onChange;
+  const MethodNumberTile({
+    Key key,
+    this.isEnd = false,
+    @required this.prayerName,
+    @required this.onChange,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.lime[900],
+      child: ListTile(
+        dense: true,
+        title: Text(prayerName, style: customTextStyle()),
+        trailing: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 2,
+                color: Colors.amber[500],
+              ),
+            ),
+            width: 80,
+            child: TextField(
+              maxLength: 2,
+              maxLengthEnforced: true,
+              keyboardType: TextInputType.number,
+              textInputAction:
+                  isEnd ? TextInputAction.done : TextInputAction.next,
+              decoration:
+                  InputDecoration(border: InputBorder.none, counterText: ''),
+              onSubmitted: (_) {
+                isEnd
+                    ? FocusScope.of(context).unfocus()
+                    : FocusScope.of(context).nextFocus();
+              },
+              style: GoogleFonts.roboto(
+                fontSize: 30,
+                color: Colors.white,
+              ),
+              onChanged: onChange,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

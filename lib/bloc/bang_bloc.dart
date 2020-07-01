@@ -53,12 +53,14 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     } else if (event is FetchBangWithSettings) {
       Position position = await locationRepository.getUserLocation();
       print('methodNumber => => => ${event.methodNumber}');
+      print('tuning => => => ${event.tuning}');
       final Bang bang = await bangRepository.fetchBang(
         lat: position.latitude,
         lng: position.longitude,
         month: DateTime.now().month,
         year: DateTime.now().year,
         method: event.methodNumber,
+        tuning: event.tuning,
       );
       yield BangLoaded(bang);
     }

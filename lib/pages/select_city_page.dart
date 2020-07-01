@@ -50,7 +50,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
               HomePage(
                 bang: state.bang,
                 userLocation: 'Iraq, $userCity',
-                showDialog: false,
+                showDialog: true,
               ),
             );
           }

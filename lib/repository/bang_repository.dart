@@ -11,7 +11,8 @@ abstract class BangRepository {
     @required double lng,
     @required int month,
     @required int year,
-    int method
+    int method,
+    List<int> tuning,
   });
   Future<Bang> getPrayerData(String countryName, String cityName);
 }
@@ -28,9 +29,16 @@ class LocalBangRepository implements BangRepository {
     @required int month,
     @required int year,
     int method = 3,
+    List<int> tuning = const [0, 0, 0, 0, 0, 0],
   }) async {
     return await bangApiClient.fetchBang(
-        lat: lat, lng: lng, month: month, year: year, method: method);
+      lat: lat,
+      lng: lng,
+      month: month,
+      year: year,
+      method: method,
+      tuning: tuning,
+    );
   }
 
   @override
