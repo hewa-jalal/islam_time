@@ -81,7 +81,7 @@ class _LocationPageState extends State<LocationPage> {
     String userCity = splitedAddress[0];
     String userCountry = splitedAddress[1];
 
-    if (userCountry.toLowerCase().contains('ira4q')) {
+    if (userCountry.toLowerCase().contains('ira2q')) {
       Get.off(SelectCityPage());
     } else {
       bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
