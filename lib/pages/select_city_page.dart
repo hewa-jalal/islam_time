@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/pages/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectCityPage extends StatefulWidget {
   @override
@@ -92,6 +93,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
                                 return InkWell(
                                   onTap: () {
                                     userCity = cities[index];
+                                    saveLocationPrefs(userCity);
                                     setState(() {
                                       isLoading = true;
                                     });
@@ -112,6 +114,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
                                     ? InkWell(
                                         onTap: () {
                                           userCity = cities[index];
+                                          saveLocationPrefs(userCity);
                                           setState(() {
                                             isLoading = true;
                                           });
@@ -163,5 +166,10 @@ class _SelectCityPageState extends State<SelectCityPage> {
         .where((String key) => key.contains('.txt'))
         .toList();
     return filePaths;
+  }
+
+  void saveLocationPrefs(String cityName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('location', 'Iraq, $cityName');
   }
 }

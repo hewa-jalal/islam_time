@@ -53,9 +53,7 @@ class BottomSheetTime extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                child: CountdownPage(
-                  bang: bang,
-                ),
+                child: CountdownPage(bang: bang),
               ),
               Divider(color: Colors.black, height: 20, thickness: 2),
               PrayerTile(

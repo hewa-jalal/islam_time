@@ -1,12 +1,16 @@
+import 'package:adhan/adhan.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/pages/select_city_page.dart';
 import 'package:islamtime/pages/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationPage extends StatefulWidget {
   @override
@@ -21,16 +25,28 @@ class _LocationPageState extends State<LocationPage> {
         backgroundColor: Colors.grey,
         body: BlocConsumer<BangBloc, BangState>(
           listener: (context, state) async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            String prefStr = prefs.get('location');
             if (state is BangLoaded) {
-              getUserLocation(context).then((value) {
+              if (prefStr != null) {
                 Get.off(
                   HomePage(
                     bang: state.bang,
-                    userLocation: value,
+                    userLocation: prefStr,
                     showDialog: true,
                   ),
                 );
-              });
+              } else {
+                getUserLocation(context).then((value) {
+                  Get.off(
+                    HomePage(
+                      bang: state.bang,
+                      userLocation: value,
+                      showDialog: true,
+                    ),
+                  );
+                });
+              }
             }
           },
           builder: (context, state) {
@@ -59,7 +75,7 @@ class _LocationPageState extends State<LocationPage> {
                   ),
                 ],
               );
-            }
+            } else if (state is BangLoaded) {}
             return CircularProgressIndicator(backgroundColor: Colors.pink);
           },
         ),
@@ -67,8 +83,9 @@ class _LocationPageState extends State<LocationPage> {
     );
   }
 
-  Future<String> getUserLocation(context) async {
+  Future<String> getUserLocation(context, [Bang bang]) async {
     final bangBloc = BlocProvider.of<BangBloc>(context);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
     Position position = await Geolocator().getCurrentPosition();
     List<Placemark> placemarks = await Geolocator()
@@ -81,8 +98,16 @@ class _LocationPageState extends State<LocationPage> {
     String userCity = splitedAddress[0];
     String userCountry = splitedAddress[1];
 
-    if (userCountry.toLowerCase().contains('ira2q')) {
-      Get.off(SelectCityPage());
+    if (userCountry.toLowerCase().contains('iraq')) {
+      String strPrefs = prefs.getString('location');
+      List<String> splitedPrefs = strPrefs.split(',');
+      if (strPrefs != null) {
+        bangBloc.add(GetBang(
+            countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()));
+      } else {
+        Get.off(SelectCityPage());
+      }
+      print('strPrefs LocationPage $strPrefs');
     } else {
       bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
     }

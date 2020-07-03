@@ -2,6 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+// part 'bang.g.dart';
+
+
 class Bang extends Equatable {
   final String speda;
   final String rojHalat;

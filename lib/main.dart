@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart' as getPackage;
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
+import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:islamtime/repository/location_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pages/location_page.dart';
 
@@ -14,17 +16,19 @@ class SimpleBlocDelegate extends BlocDelegate {
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
-    print(transition);
+    // print(transition);
   }
 
   @override
   void onEvent(Bloc bloc, Object event) {
     super.onEvent(bloc, event);
-    print('event $event');
+    // print('event $event');
   }
 }
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   BlocSupervisor.delegate = SimpleBlocDelegate();
 
   print('vscodeeee');
@@ -49,6 +53,7 @@ void main() {
         ),
       ],
       child: getPackage.GetMaterialApp(
+        debugShowCheckedModeBanner: false,
         home: LocationPage(),
       ),
     ),

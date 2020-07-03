@@ -10,6 +10,7 @@ import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:islamtime/models/bang.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
@@ -35,9 +36,16 @@ class _HomePageState extends State<HomePage> {
   Bang get bang => widget.bang;
   SolidController _solidController = SolidController();
 
+  void getLocationPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String strPrefs = prefs.getString('location');
+    print('strPrefs HomePage $strPrefs');
+  }
+
   @override
   void initState() {
     super.initState();
+    getLocationPrefs();
     animation = 0;
     if (widget.showDialog) {
       SchedulerBinding.instance
