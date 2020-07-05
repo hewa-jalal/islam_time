@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/home_page_widgets.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -75,11 +76,7 @@ class Bang extends Equatable {
     DateTime hijriDateTime = DateTime(int.parse(hijriDateSplit[2]),
         int.parse(hijriDateSplit[1]), int.parse(hijriDateSplit[0]));
 
-    final formattedHijriDate = Jiffy({
-      'year': hijriDateTime.year,
-      'month': hijriDateTime.month,
-      'day': hijriDateTime.day
-    }).format('dd MMM yyyy');
+    
 
     DateTime spedaDateTime =
         _customStringToDate(json['data'][day]['timings']['Fajr']);
@@ -103,7 +100,7 @@ class Bang extends Equatable {
       spedaDateTime: dates[4],
       date: date,
       hijriDate: hijriDateTime,
-      formattedHijriDate: formattedHijriDate,
+      formattedHijriDate: todayHijri,
     );
   }
 

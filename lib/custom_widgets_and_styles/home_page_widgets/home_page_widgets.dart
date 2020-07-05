@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
+import 'package:jiffy/jiffy.dart';
 
 TextStyle customTextStyle({bool isBold = false}) => GoogleFonts.roboto(
       fontSize: 40.0,
@@ -37,3 +39,12 @@ RichText customRichText(TimeCycleLoaded state) {
     ),
   );
 }
+
+var tempHijri = HijriCalendar.now();
+String todayHijri = tempHijri.toFormat('MMMM dd yyyy');
+
+final todayGeorgean = Jiffy({
+  'year': DateTime.now().year,
+  'month': DateTime.now().month,
+  'day': DateTime.now().day
+}).format('dd MMM yyyy');

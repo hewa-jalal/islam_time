@@ -119,11 +119,13 @@ class _LocationPageState extends State<LocationPage> {
 
     if (userCountry.toLowerCase().contains('iraq')) {
       String strPrefs = prefs.getString('location');
-      List<String> splitedPrefs = strPrefs.split(',');
       if (strPrefs != null) {
+        List<String> splitedPrefs = strPrefs.split(',');
+        print('not go to select city page');
         bangBloc.add(GetBang(
             countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()));
       } else {
+        print('go to select city page');
         Get.off(SelectCityPage());
       }
     } else {

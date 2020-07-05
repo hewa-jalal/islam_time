@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hijri/hijri_calendar.dart';
+import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/home_page_widgets.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:jiffy/jiffy.dart';
@@ -81,6 +83,8 @@ class LocalBangRepository implements BangRepository {
         dayTime: dates[2],
         maghrabDateTime: dates[3],
         spedaDateTime: dates[4],
+        formattedHijriDate: todayHijri,
+        date: todayGeorgean,
       );
       return bang;
     } else {
