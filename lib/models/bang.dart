@@ -1,10 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-// part 'bang.g.dart';
+part 'bang.g.dart';
 
-
+@JsonSerializable()
 class Bang extends Equatable {
   final String speda;
   final String rojHalat;
@@ -17,6 +20,10 @@ class Bang extends Equatable {
   final DateTime dayTime;
   final DateTime maghrabDateTime;
   final DateTime spedaDateTime;
+  final String date;
+  final DateTime hijriDate;
+  final String formattedHijriDate;
+  final String formattedAddedHijriTime;
 
   Bang({
     @required this.speda,
@@ -30,6 +37,10 @@ class Bang extends Equatable {
     @required this.dayTime,
     @required this.maghrabDateTime,
     @required this.spedaDateTime,
+    @required this.date,
+    @required this.hijriDate,
+    @required this.formattedHijriDate,
+    @required this.formattedAddedHijriTime,
   });
 
   @override
@@ -46,13 +57,41 @@ class Bang extends Equatable {
         maghrabDateTime,
       ];
 
-  static Bang fromJson(dynamic json, int day) {
+  factory Bang.fromJson(Map<String, dynamic> json) => _$BangFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BangToJson(this);
+
+  static Bang fromJsonRequest(dynamic json, int day) {
     String speda = _toAmPm(json['data'][day]['timings']['Fajr']);
     String rojHalat = _toAmPm(json['data'][day]['timings']['Sunrise']);
     String nevro = _toAmPm(json['data'][day]['timings']['Dhuhr']);
     String evar = _toAmPm(json['data'][day]['timings']['Asr']);
     String maghrab = _toAmPm(json['data'][day]['timings']['Maghrib']);
     String aesha = _toAmPm(json['data'][day]['timings']['Isha']);
+
+    String date = json['data'][day]['date']['readable'];
+    String hijriDate = json['data'][day]['date']['hijri']['date'];
+
+    List<String> hijriDateSplit = hijriDate.split('-');
+    DateTime hijriDateTime = DateTime(int.parse(hijriDateSplit[2]),
+        int.parse(hijriDateSplit[1]), int.parse(hijriDateSplit[0]));
+
+    DateTime addHijriDateTime = hijriDateTime.add(Duration(days: 1));
+
+    final formattedHijriDate = Jiffy({
+      'year': hijriDateTime.year,
+      'month': hijriDateTime.month,
+      'day': hijriDateTime.day
+    }).yMMMMd;
+
+    final formattedAddedHijriDate = Jiffy({
+      'year': addHijriDateTime.year,
+      'month': addHijriDateTime.month,
+      'day': addHijriDateTime.day
+    }).yMMMMd;
+
+    print('formattedDate ==> $formattedHijriDate');
+    print('AddedformattedDate ==> $formattedAddedHijriDate');
 
     DateTime spedaDateTime =
         _customStringToDate(json['data'][day]['timings']['Fajr']);
@@ -74,6 +113,10 @@ class Bang extends Equatable {
       lastThird: dates[1],
       theThird: dates[0],
       spedaDateTime: dates[4],
+      date: date,
+      hijriDate: hijriDateTime,
+      formattedHijriDate: formattedHijriDate,
+      formattedAddedHijriTime: formattedAddedHijriDate,
     );
   }
 

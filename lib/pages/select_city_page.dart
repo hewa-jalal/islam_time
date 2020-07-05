@@ -61,7 +61,6 @@ class _SelectCityPageState extends State<SelectCityPage> {
                 if (state is BangLoaded) {
                   Get.off(
                     HomePage(
-                      bang: state.bang,
                       userLocation: 'Iraq, $userCity',
                       showDialog: true,
                     ),

@@ -130,23 +130,14 @@ class _CountdownPageState extends State<CountdownPage> {
 
   @override
   Widget build(BuildContext context) {
-    // print('now => ${DateTime.now()}');
-    // print('maghrab => ${bang.maghrabDateTime}');
-    // print('speda => ${bang.spedaDateTime}');
-    // print('lastThird => ${bang.lastThird}');
     checkDayNight();
     checkLastThird();
-    // print('isLastThird => $_isLastThird');
-    // print('timeIs => $_timeIs');
-    return Padding(
-      padding: const EdgeInsets.only(right: 60),
-      child: Text(
-        formatDuration(remainingTime ?? duration),
-        style: GoogleFonts.farro(
-          fontSize: 50,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 6.0,
-        ),
+    return Text(
+      formatDuration(remainingTime ?? duration),
+      style: GoogleFonts.farro(
+        fontSize: 50,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 6.0,
       ),
     );
   }
@@ -275,10 +266,10 @@ class _CountdownPageState extends State<CountdownPage> {
       // it's day so we need time until Night
       isDayOrNightText = 'Night';
     } else if (_timeIs == TimeIs.night) {
-      isDayOrNightText = 'Day';
+      isDayOrNightText = 'Last Third';
     }
     if (_isLastThird) {
-      isDayOrNightText = 'Last Third';
+      isDayOrNightText = 'Day';
     }
 
     _timeCycleBloc.add(

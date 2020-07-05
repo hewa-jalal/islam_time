@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/repository/location_repository.dart';
@@ -12,14 +11,33 @@ import 'package:islamtime/repository/location_repository.dart';
 part 'bang_event.dart';
 part 'bang_state.dart';
 
-class BangBloc extends Bloc<BangEvent, BangState> {
+class BangBloc extends HydratedBloc<BangEvent, BangState> {
   final BangRepository bangRepository;
   final LocationRepository locationRepository;
 
-  BangBloc({@required this.bangRepository, @required this.locationRepository});
+  BangBloc({
+    @required this.bangRepository,
+    @required this.locationRepository,
+  }) : super(BangInitial());
 
   @override
-  BangState get initialState => BangInitial();
+  BangState fromJson(Map<String, dynamic> json) {
+    try {
+      final bang = Bang.fromJson(json);
+      return BangLoaded(bang);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic> toJson(BangState state) {
+    if (state is BangLoaded) {
+      return state.bang.toJson();
+    } else {
+      return null;
+    }
+  }
 
   @override
   Stream<BangState> mapEventToState(
@@ -29,7 +47,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
     if (event is FetchBang) {
       try {
         Position position = await locationRepository.getUserLocation();
-        print('position $position');
+        print('position with FetchBang $position');
         final Bang bang = await bangRepository.fetchBang(
           lat: position.latitude,
           lng: position.longitude,
@@ -52,6 +70,7 @@ class BangBloc extends Bloc<BangEvent, BangState> {
       }
     } else if (event is FetchBangWithSettings) {
       Position position = await locationRepository.getUserLocation();
+      print('with Setting position $position');
       print('methodNumber => => => ${event.methodNumber}');
       print('tuning => => => ${event.tuning}');
       final Bang bang = await bangRepository.fetchBang(

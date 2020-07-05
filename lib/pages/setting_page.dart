@@ -42,7 +42,6 @@ class _SettingPageState extends State<SettingPage> {
           Get.to(
             HomePage(
               showDialog: false,
-              bang: state.bang,
               userLocation: 'from setting',
             ),
           );
@@ -123,28 +122,53 @@ class _SettingPageState extends State<SettingPage> {
                               methodNumbersList[5] = int.parse(val),
                         ),
                         Spacer(),
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 8),
-                            child: RaisedButton(
+                        Row(
+                          children: <Widget>[
+                            Align(
+                              alignment: Alignment.bottomRight,
                               child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text('Ok',
-                                    style: GoogleFonts.roboto(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold)),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 20, horizontal: 8),
+                                child: RaisedButton(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text('Get a new location',
+                                        style: GoogleFonts.roboto(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  color: Colors.lime[500],
+                                  onPressed: () => bloc.add(
+                                    FetchBang(),
+                                  ),
+                                ),
                               ),
-                              color: Colors.lime[500],
-                              onPressed: () {
-                                bloc.add(FetchBangWithSettings(
-                                  methodNumber: selectedNumber.number,
-                                  tuning: methodNumbersList,
-                                ));
-                              },
                             ),
-                          ),
+                            Spacer(),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 20, horizontal: 8),
+                                child: RaisedButton(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text('Ok',
+                                        style: GoogleFonts.roboto(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  color: Colors.lime[500],
+                                  onPressed: () => bloc.add(
+                                    FetchBangWithSettings(
+                                      methodNumber: selectedNumber.number,
+                                      tuning: methodNumbersList,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

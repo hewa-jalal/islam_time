@@ -5,22 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
-import 'package:islamtime/models/bang.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
-  final Bang bang;
   final String userLocation;
   final bool showDialog;
 
   const HomePage({
     Key key,
-    @required this.bang,
     @required this.userLocation,
     @required this.showDialog,
   }) : super(key: key);
@@ -33,7 +31,6 @@ class _HomePageState extends State<HomePage> {
   String _arrowAnimation = 'upArrowAnimation';
   int animation;
 
-  Bang get bang => widget.bang;
   SolidController _solidController = SolidController();
 
   void getLocationPrefs() async {
@@ -109,15 +106,12 @@ class _HomePageState extends State<HomePage> {
                           headerBar: StatefulBuilder(
                             builder: (context, sheetSetState) {
                               _solidController.isOpenStream.listen((event) {
-                                print('event $event');
                                 if (event) {
-                                  sheetSetState(() {
-                                    _arrowAnimation = 'downArrowAnimation';
-                                  });
+                                  sheetSetState(() =>
+                                      _arrowAnimation = 'downArrowAnimation');
                                 } else {
-                                  sheetSetState(() {
-                                    _arrowAnimation = 'upArrowAnimation';
-                                  });
+                                  sheetSetState(() =>
+                                      _arrowAnimation = 'upArrowAnimation');
                                 }
                               });
                               return SizedBox(
@@ -129,24 +123,51 @@ class _HomePageState extends State<HomePage> {
                               );
                             },
                           ),
-                          body: BottomSheetTime(
-                            bang: bang,
-                            timeCycle: timeCycle,
-                          ),
+                          body: BottomSheetTime(timeCycle: timeCycle),
                         ),
                       ),
-                      FlatButton(
-                        onPressed: () {
-                          showLocationDialog(context);
+                      BlocBuilder<BangBloc, BangState>(
+                        builder: (context, state) {
+                          if (state is BangLoaded) {
+                            return Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 14, bottom: 18),
+                                  child: Text(
+                                    'Time Remaining Until ${timeCycle.untilDayOrNight}',
+                                    style: GoogleFonts.farro(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: CountdownPage(bang: state.bang),
+                                ),
+                              ],
+                            );
+                          }
+                          return CircularProgressIndicator(
+                            backgroundColor: Colors.white,
+                          );
                         },
-                        child: Text('change animation'),
                       )
                     ],
                   ),
                 ),
               );
             } else {
-              return CountdownPage(bang: bang);
+              return BlocBuilder<BangBloc, BangState>(
+                builder: (context, state) {
+                  if (state is BangLoaded) {
+                    return CountdownPage(bang: state.bang);
+                  }
+                  return SizedBox();
+                },
+              );
             }
           },
         ),

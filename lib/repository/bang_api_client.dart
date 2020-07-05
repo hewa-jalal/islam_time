@@ -25,6 +25,6 @@ class BangApiClient {
       throw Exception('error getting bangs');
     }
     final json = jsonDecode(response.body);
-    return Bang.fromJson(json, DateTime.now().day - 1);
+    return Bang.fromJsonRequest(json, DateTime.now().day - 1);
   }
 }
