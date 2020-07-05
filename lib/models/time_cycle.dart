@@ -17,7 +17,6 @@ class TimeCycle extends Equatable {
   List<Object> get props => [timeIs, isLastThird, untilDayOrNight];
 
   @override
-  String toString() {
-    return 'timeIs $timeIs , isLastThird $isLastThird, UntilDayOrNight $untilDayOrNight';
-  }
+  String toString() =>
+      'timeIs $timeIs , isLastThird $isLastThird, UntilDayOrNight $untilDayOrNight';
 }

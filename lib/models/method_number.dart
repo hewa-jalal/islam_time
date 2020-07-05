@@ -16,10 +16,13 @@ class MethodNumberTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.lime[900],
+      color: Colors.blueGrey[700],
       child: ListTile(
         dense: true,
-        title: Text(prayerName, style: customTextStyle()),
+        title: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Text(prayerName, style: customTextStyle()),
+        ),
         trailing: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Container(

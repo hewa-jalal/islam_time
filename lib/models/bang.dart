@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,6 @@ class Bang extends Equatable {
   final String date;
   final DateTime hijriDate;
   final String formattedHijriDate;
-  final String formattedAddedHijriTime;
 
   Bang({
     @required this.speda,
@@ -40,7 +40,6 @@ class Bang extends Equatable {
     @required this.date,
     @required this.hijriDate,
     @required this.formattedHijriDate,
-    @required this.formattedAddedHijriTime,
   });
 
   @override
@@ -76,22 +75,11 @@ class Bang extends Equatable {
     DateTime hijriDateTime = DateTime(int.parse(hijriDateSplit[2]),
         int.parse(hijriDateSplit[1]), int.parse(hijriDateSplit[0]));
 
-    DateTime addHijriDateTime = hijriDateTime.add(Duration(days: 1));
-
     final formattedHijriDate = Jiffy({
       'year': hijriDateTime.year,
       'month': hijriDateTime.month,
       'day': hijriDateTime.day
-    }).yMMMMd;
-
-    final formattedAddedHijriDate = Jiffy({
-      'year': addHijriDateTime.year,
-      'month': addHijriDateTime.month,
-      'day': addHijriDateTime.day
-    }).yMMMMd;
-
-    print('formattedDate ==> $formattedHijriDate');
-    print('AddedformattedDate ==> $formattedAddedHijriDate');
+    }).format('dd MMM yyyy');
 
     DateTime spedaDateTime =
         _customStringToDate(json['data'][day]['timings']['Fajr']);
@@ -116,7 +104,6 @@ class Bang extends Equatable {
       date: date,
       hijriDate: hijriDateTime,
       formattedHijriDate: formattedHijriDate,
-      formattedAddedHijriTime: formattedAddedHijriDate,
     );
   }
 

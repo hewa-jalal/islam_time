@@ -5,7 +5,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
-import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/pages/select_city_page.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +29,7 @@ class _LocationPageState extends State<LocationPage> {
                 Get.off(
                   HomePage(
                     userLocation: prefStr,
-                    showDialog: true,
+                    showDialog: false,
                   ),
                 );
               } else {
@@ -127,7 +126,6 @@ class _LocationPageState extends State<LocationPage> {
       } else {
         Get.off(SelectCityPage());
       }
-      print('strPrefs LocationPage $strPrefs');
     } else {
       bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
     }

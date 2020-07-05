@@ -51,7 +51,7 @@ class _SettingPageState extends State<SettingPage> {
         if (state is BangLoaded) {
           return SafeArea(
             child: Scaffold(
-              backgroundColor: Colors.grey,
+              backgroundColor: Colors.grey[900],
               body: SingleChildScrollView(
                 child: Container(
                   height: MediaQuery.of(context).size.height,
@@ -137,7 +137,7 @@ class _SettingPageState extends State<SettingPage> {
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold)),
                                   ),
-                                  color: Colors.lime[500],
+                                  color: Colors.blueGrey[700],
                                   onPressed: () => bloc.add(
                                     FetchBang(),
                                   ),
@@ -158,7 +158,7 @@ class _SettingPageState extends State<SettingPage> {
                                             fontSize: 24,
                                             fontWeight: FontWeight.bold)),
                                   ),
-                                  color: Colors.lime[500],
+                                  color: Colors.blueGrey[700],
                                   onPressed: () => bloc.add(
                                     FetchBangWithSettings(
                                       methodNumber: selectedNumber.number,

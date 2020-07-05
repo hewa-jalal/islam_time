@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/time_cycle.dart';
+import 'package:jiffy/jiffy.dart';
 
 enum TimeIs { night, day }
 
@@ -135,7 +136,7 @@ class _CountdownPageState extends State<CountdownPage> {
     return Text(
       formatDuration(remainingTime ?? duration),
       style: GoogleFonts.farro(
-        fontSize: 50,
+        fontSize: 46,
         fontWeight: FontWeight.w500,
         letterSpacing: 6.0,
       ),
