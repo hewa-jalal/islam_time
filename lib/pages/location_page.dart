@@ -121,11 +121,9 @@ class _LocationPageState extends State<LocationPage> {
       String strPrefs = prefs.getString('location');
       if (strPrefs != null) {
         List<String> splitedPrefs = strPrefs.split(',');
-        print('not go to select city page');
         bangBloc.add(GetBang(
             countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()));
       } else {
-        print('go to select city page');
         Get.off(SelectCityPage());
       }
     } else {

@@ -10,6 +10,7 @@ import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 
@@ -30,6 +31,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _arrowAnimation = 'upArrowAnimation';
   int animation;
+
+  double prefsLat;
+  double prefsLng;
+  int prefsMethodNumber;
+  List<int> prefsTuning;
+
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   SolidController _solidController = SolidController();
 
@@ -52,84 +61,89 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final bangBloc = BlocProvider.of<BangBloc>(context);
     return SafeArea(
       child: Scaffold(
-        body: BlocConsumer<TimeCycleBloc, TimeCycleState>(
-          listener: (context, state) {
-            if (state is TimeCycleLoaded) {
-              if (state.timeCycle.timeIs == TimeIs.day) {
-                animation = 2;
-              } else {
-                animation = 1;
+        body: SmartRefresher(
+          onLoading: () => _onLoading(bangBloc),
+          onRefresh: () => _onRefresh(bangBloc),
+          controller: _refreshController,
+          enablePullDown: true,
+          header: WaterDropHeader(
+            waterDropColor: Colors.blue,
+          ),
+          child: BlocConsumer<TimeCycleBloc, TimeCycleState>(
+            listener: (context, state) {
+              if (state is TimeCycleLoaded) {
+                if (state.timeCycle.timeIs == TimeIs.day) {
+                  animation = 2;
+                } else {
+                  animation = 1;
+                }
               }
-            }
-          },
-          builder: (context, state) {
-            if (state is TimeCycleLoaded) {
-              // final mediaQuerySize = MediaQuery.of(context).size;
-              final timeCycle = state.timeCycle;
-              return Container(
-                color: hexToColor('#E3E3ED'),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: Center(
-                  child: Stack(
-                    children: <Widget>[
-                      FlareActor(
-                        'assets/flare/DayAndNight.flr',
-                        animation: (animation == 0)
-                            ? 'day_idle'
-                            : (animation == 1)
-                                ? 'switch_to_night'
-                                : (animation == 2)
-                                    ? 'switch_to_day'
-                                    : 'night_idle',
-                        callback: (value) {
-                          if (value == 'switch_to_night') {
-                            setState(() {
-                              animation = 3;
+            },
+            builder: (context, state) {
+              if (state is TimeCycleLoaded) {
+                // final mediaQuerySize = MediaQuery.of(context).size;
+                final timeCycle = state.timeCycle;
+                return Stack(
+                  children: <Widget>[
+                    FlareActor(
+                      'assets/flare/DayAndNight.flr',
+                      animation: (animation == 0)
+                          ? 'day_idle'
+                          : (animation == 1)
+                              ? 'switch_to_night'
+                              : (animation == 2)
+                                  ? 'switch_to_day'
+                                  : 'night_idle',
+                      callback: (value) {
+                        if (value == 'switch_to_night') {
+                          setState(() {
+                            animation = 3;
+                          });
+                        } else {
+                          setState(() {
+                            animation = 0;
+                          });
+                        }
+                      },
+                      fit: BoxFit.fill,
+                    ),
+                    // Align(alignment: Alignment.topCenter, child: Clock()),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: SolidBottomSheet(
+                        controller: _solidController,
+                        maxHeight: MediaQuery.of(context).size.height / 2,
+                        headerBar: StatefulBuilder(
+                          builder: (context, sheetSetState) {
+                            _solidController.isOpenStream.listen((event) {
+                              if (event) {
+                                sheetSetState(() =>
+                                    _arrowAnimation = 'downArrowAnimation');
+                              } else {
+                                sheetSetState(
+                                    () => _arrowAnimation = 'upArrowAnimation');
+                              }
                             });
-                          } else {
-                            setState(() {
-                              animation = 0;
-                            });
-                          }
-                        },
-                        fit: BoxFit.fill,
-                      ),
-                      // Align(alignment: Alignment.topCenter, child: Clock()),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: SolidBottomSheet(
-                          controller: _solidController,
-                          maxHeight: MediaQuery.of(context).size.height / 2,
-                          headerBar: StatefulBuilder(
-                            builder: (context, sheetSetState) {
-                              _solidController.isOpenStream.listen((event) {
-                                if (event) {
-                                  sheetSetState(() =>
-                                      _arrowAnimation = 'downArrowAnimation');
-                                } else {
-                                  sheetSetState(() =>
-                                      _arrowAnimation = 'upArrowAnimation');
-                                }
-                              });
-                              return SizedBox(
-                                height: 100,
-                                child: FlareActor(
-                                  'assets/flare/arrow_up_down.flr',
-                                  animation: _arrowAnimation,
-                                ),
-                              );
-                            },
-                          ),
-                          body: BottomSheetTime(timeCycle: timeCycle),
+                            return SizedBox(
+                              height: 100,
+                              child: FlareActor(
+                                'assets/flare/arrow_up_down.flr',
+                                animation: _arrowAnimation,
+                              ),
+                            );
+                          },
                         ),
+                        body: BottomSheetTime(timeCycle: timeCycle),
                       ),
-                      BlocBuilder<BangBloc, BangState>(
-                        builder: (context, state) {
-                          if (state is BangLoaded) {
-                            return Column(
+                    ),
+                    BlocBuilder<BangBloc, BangState>(
+                      builder: (context, state) {
+                        if (state is BangLoaded) {
+                          return SingleChildScrollView(
+                            child: Column(
                               children: <Widget>[
                                 Padding(
                                   padding: const EdgeInsets.only(
@@ -148,35 +162,29 @@ class _HomePageState extends State<HomePage> {
                                   child: CountdownPage(bang: state.bang),
                                 ),
                               ],
-                            );
-                          }
-                          return CircularProgressIndicator(
-                            backgroundColor: Colors.white,
+                            ),
                           );
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              return BlocBuilder<BangBloc, BangState>(
-                builder: (context, state) {
-                  if (state is BangLoaded) {
-                    return CountdownPage(bang: state.bang);
-                  }
-                  return SizedBox();
-                },
-              );
-            }
-          },
+                        }
+                        return SizedBox();
+                      },
+                    )
+                  ],
+                );
+              } else {
+                return BlocBuilder<BangBloc, BangState>(
+                  builder: (context, state) {
+                    if (state is BangLoaded) {
+                      return CountdownPage(bang: state.bang);
+                    }
+                    return SizedBox();
+                  },
+                );
+              }
+            },
+          ),
         ),
       ),
     );
-  }
-
-  Color hexToColor(String code) {
-    return Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
   }
 
   void showLocationDialog(BuildContext context) async {
@@ -195,5 +203,38 @@ class _HomePageState extends State<HomePage> {
       btnCancelColor: Colors.blue,
       btnCancelText: 'Not Corrcet?',
     )..show();
+  }
+
+  Future<void> _onLoading(BangBloc bloc) async {
+    print('onLoading');
+    await getSharedPrefs();
+    bloc.add(FetchBangWithSettings(
+        methodNumber: prefsMethodNumber, tuning: prefsTuning));
+    _refreshController.loadComplete();
+  }
+
+  Future<void> _onRefresh(BangBloc bloc) async {
+    print('onRfresh');
+    await getSharedPrefs();
+    bloc.add(FetchBangWithSettings(
+        methodNumber: prefsMethodNumber, tuning: prefsTuning));
+    _refreshController.refreshCompleted();
+  }
+
+  Future<void> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefsLat = prefs.getDouble('lat');
+    prefsLng = prefs.getDouble('lng');
+    prefsMethodNumber = prefs.getInt('methodNumber');
+
+    List<String> tuningString = prefs.getStringList('tuning');
+    List<int> tuningInt = tuningString.map((e) => int.parse(e)).toList();
+
+    prefsTuning = tuningInt;
+
+    print(''' lat prefs $prefsLat} 
+              lng prefs $prefsLng}
+              methodNumber prefs $prefsMethodNumber}
+              tuning prefs $tuningInt''');
   }
 }

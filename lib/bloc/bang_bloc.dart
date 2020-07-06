@@ -7,6 +7,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/repository/location_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'bang_event.dart';
 part 'bang_state.dart';
@@ -73,6 +74,11 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
       print('with Setting position $position');
       print('methodNumber => => => ${event.methodNumber}');
       print('tuning => => => ${event.tuning}');
+      saveSettingsToPrefs(
+          lat: position.latitude,
+          lng: position.longitude,
+          methodNumber: event.methodNumber,
+          tuning: event.tuning);
       final Bang bang = await bangRepository.fetchBang(
         lat: position.latitude,
         lng: position.longitude,
@@ -83,5 +89,20 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
       );
       yield BangLoaded(bang);
     }
+  }
+
+  void saveSettingsToPrefs(
+      {double lat, double lng, int methodNumber, List<int> tuning}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> stringTuning = tuning.map((e) => e.toString()).toList();
+    prefs.setDouble('lat', lat);
+    prefs.setDouble('lng', lng);
+    prefs.setInt('methodNumber', methodNumber);
+    prefs.setStringList('tuning', stringTuning);
+
+    print(''' bloc => lat prefs ${prefs.getDouble('lat')} 
+              bloc => lng prefs ${prefs.getDouble('lng')}
+              bloc => methodNumber prefs ${prefs.getInt('methodNumber')}
+              bloc => tuning prefs ${prefs.getStringList('tuning')}''');
   }
 }

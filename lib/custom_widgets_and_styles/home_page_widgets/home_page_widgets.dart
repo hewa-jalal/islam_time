@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 TextStyle customTextStyle({bool isBold = false}) => GoogleFonts.roboto(
       fontSize: 40.0,
@@ -18,6 +19,10 @@ TextStyle customTextStyle({bool isBold = false}) => GoogleFonts.roboto(
         ],
       ),
     );
+
+Color hexToColor(String code) {
+  return Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
+}
 
 RichText customRichText(TimeCycleLoaded state) {
   return RichText(
@@ -48,3 +53,8 @@ final todayGeorgean = Jiffy({
   'month': DateTime.now().month,
   'day': DateTime.now().day
 }).format('dd MMM yyyy');
+
+void saveToPrefs(String userCity) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('userCity', userCity);
+}
