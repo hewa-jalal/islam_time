@@ -12,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'bang_event.dart';
 part 'bang_state.dart';
 
+// enum BangEvent {BangLoaded,  }
+
 class BangBloc extends HydratedBloc<BangEvent, BangState> {
   final BangRepository bangRepository;
   final LocationRepository locationRepository;
@@ -48,13 +50,14 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
     if (event is FetchBang) {
       try {
         Position position = await locationRepository.getUserLocation();
-        print('position with FetchBang $position');
+        _saveUserLocationToPrefs(position);
         final Bang bang = await bangRepository.fetchBang(
           lat: position.latitude,
           lng: position.longitude,
           month: DateTime.now().month,
           year: DateTime.now().year,
         );
+
         yield BangLoaded(bang);
       } catch (e) {
         print('catch BangError() in FetchBang => ${e.toString()}');
@@ -74,7 +77,7 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
       print('with Setting position $position');
       print('methodNumber => => => ${event.methodNumber}');
       print('tuning => => => ${event.tuning}');
-      saveSettingsToPrefs(
+      _saveSettingsToPrefs(
           lat: position.latitude,
           lng: position.longitude,
           methodNumber: event.methodNumber,
@@ -91,9 +94,9 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
     }
   }
 
-  void saveSettingsToPrefs(
+  void _saveSettingsToPrefs(
       {double lat, double lng, int methodNumber, List<int> tuning}) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     List<String> stringTuning = tuning.map((e) => e.toString()).toList();
     prefs.setDouble('lat', lat);
     prefs.setDouble('lng', lng);
@@ -104,5 +107,22 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
               bloc => lng prefs ${prefs.getDouble('lng')}
               bloc => methodNumber prefs ${prefs.getInt('methodNumber')}
               bloc => tuning prefs ${prefs.getStringList('tuning')}''');
+  }
+
+  void _saveUserLocationToPrefs(Position position) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<Placemark> placemarks = await Geolocator()
+        .placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placemark = placemarks[0];
+
+    String formattedAddress = '${placemark.locality},${placemark.country}';
+    List<String> splitedAddress = formattedAddress.split(',');
+
+    String userCity = splitedAddress[0];
+    String userCountry = splitedAddress[1];
+
+    prefs.setString('location', '$userCountry, $userCity');
+
+    print('bloc userLocation => ${prefs.getString('location')}');
   }
 }

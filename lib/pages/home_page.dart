@@ -17,11 +17,13 @@ import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 class HomePage extends StatefulWidget {
   final String userLocation;
   final bool showDialog;
+  final bool isLocal;
 
   const HomePage({
     Key key,
     @required this.userLocation,
-    @required this.showDialog,
+    this.showDialog = false,
+    this.isLocal = false,
   }) : super(key: key);
 
   @override
@@ -31,6 +33,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _arrowAnimation = 'upArrowAnimation';
   int animation;
+
+  bool get isLocal => widget.isLocal;
 
   double prefsLat;
   double prefsLng;
@@ -55,7 +59,7 @@ class _HomePageState extends State<HomePage> {
     animation = 0;
     if (widget.showDialog) {
       SchedulerBinding.instance
-          .addPostFrameCallback((_) => showLocationDialog(context));
+          .addPostFrameCallback((_) => _showLocationDialog(context));
     }
   }
 
@@ -65,10 +69,8 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Scaffold(
         body: SmartRefresher(
-          onLoading: () => _onLoading(bangBloc),
           onRefresh: () => _onRefresh(bangBloc),
           controller: _refreshController,
-          enablePullDown: true,
           header: WaterDropHeader(
             waterDropColor: Colors.blue,
           ),
@@ -110,7 +112,6 @@ class _HomePageState extends State<HomePage> {
                       },
                       fit: BoxFit.fill,
                     ),
-                    // Align(alignment: Alignment.topCenter, child: Clock()),
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: SolidBottomSheet(
@@ -136,10 +137,16 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                         ),
-                        body: BottomSheetTime(timeCycle: timeCycle),
+                        body: BottomSheetTime(
+                            timeCycle: timeCycle, isLocal: true),
                       ),
                     ),
-                    BlocBuilder<BangBloc, BangState>(
+                    BlocConsumer<BangBloc, BangState>(
+                      listener: (context, state) {
+                        if (state is BangLoaded) {
+                          _refreshController.refreshCompleted();
+                        }
+                      },
                       builder: (context, state) {
                         if (state is BangLoaded) {
                           return SingleChildScrollView(
@@ -187,7 +194,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void showLocationDialog(BuildContext context) async {
+  void _showLocationDialog(BuildContext context) async {
     AwesomeDialog(
       context: context,
       dialogType: DialogType.INFO,
@@ -198,30 +205,17 @@ class _HomePageState extends State<HomePage> {
           style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
-      btnCancelOnPress: () {},
       btnOkOnPress: () {},
-      btnCancelColor: Colors.blue,
-      btnCancelText: 'Not Corrcet?',
     )..show();
   }
 
-  Future<void> _onLoading(BangBloc bloc) async {
-    print('onLoading');
-    await getSharedPrefs();
-    bloc.add(FetchBangWithSettings(
-        methodNumber: prefsMethodNumber, tuning: prefsTuning));
-    _refreshController.loadComplete();
-  }
-
   Future<void> _onRefresh(BangBloc bloc) async {
-    print('onRfresh');
-    await getSharedPrefs();
+    await _getSharedPrefs();
     bloc.add(FetchBangWithSettings(
         methodNumber: prefsMethodNumber, tuning: prefsTuning));
-    _refreshController.refreshCompleted();
   }
 
-  Future<void> getSharedPrefs() async {
+  Future<void> _getSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefsLat = prefs.getDouble('lat');
     prefsLng = prefs.getDouble('lng');

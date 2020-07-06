@@ -103,6 +103,7 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   Future<String> getUserLocation(context) async {
+    // ignore: close_sinks
     final bangBloc = BlocProvider.of<BangBloc>(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -129,7 +130,6 @@ class _LocationPageState extends State<LocationPage> {
     } else {
       bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
     }
-
     return '$userCountry, $userCity';
   }
 }

@@ -10,10 +10,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class BottomSheetTime extends StatelessWidget {
   final TimeCycle timeCycle;
-  const BottomSheetTime({Key key, @required this.timeCycle}) : super(key: key);
+  final bool isLocal;
+  const BottomSheetTime({
+    Key key,
+    @required this.timeCycle,
+    this.isLocal = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final bloc = BlocProvider.of<BangBloc>(context);
     return Container(
       color: Colors.grey.withOpacity(0.4),
       child: SingleChildScrollView(
@@ -66,11 +72,15 @@ class BottomSheetTime extends StatelessWidget {
                             padding: const EdgeInsets.only(left: 10),
                             child: FlatButton(
                               child: Icon(
-                                Icons.settings,
+                                isLocal ? Icons.add_location : Icons.settings,
                                 color: Colors.blue,
                                 size: 50,
                               ),
-                              onPressed: () => Get.to(SettingPage()),
+                              onPressed: () {
+                                isLocal
+                                    ? bloc.add(FetchBang())
+                                    : Get.to(SettingPage());
+                              },
                             ),
                           ),
                         ],

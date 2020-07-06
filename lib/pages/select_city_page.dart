@@ -63,6 +63,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
                     HomePage(
                       userLocation: 'Iraq, $userCity',
                       showDialog: true,
+                      isLocal: true,
                     ),
                   );
                 }
