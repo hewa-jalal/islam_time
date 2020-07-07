@@ -19,6 +19,7 @@ class BottomSheetTime extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: close_sinks
     final bloc = BlocProvider.of<BangBloc>(context);
     return Container(
       color: Colors.grey.withOpacity(0.4),
@@ -126,7 +127,7 @@ class BottomSheetTime extends StatelessWidget {
   }
 
   Future<String> getLocation() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     return prefs.getString('location');
   }
 }

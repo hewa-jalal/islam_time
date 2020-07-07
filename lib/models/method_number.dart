@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/home_page_widgets.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 
 class MethodNumberTile extends StatelessWidget {
   final bool isEnd;

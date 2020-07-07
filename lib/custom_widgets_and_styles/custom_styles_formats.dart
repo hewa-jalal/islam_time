@@ -54,7 +54,4 @@ final todayGeorgean = Jiffy({
   'day': DateTime.now().day
 }).format('dd MMM yyyy');
 
-void saveToPrefs(String userCity) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString('userCity', userCity);
-}
+

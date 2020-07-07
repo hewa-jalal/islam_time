@@ -40,22 +40,16 @@ class _HomePageState extends State<HomePage> {
   double prefsLng;
   int prefsMethodNumber;
   List<int> prefsTuning;
+  String locationPrefs;
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   SolidController _solidController = SolidController();
 
-  void getLocationPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String strPrefs = prefs.getString('location');
-    print('strPrefs HomePage $strPrefs');
-  }
-
   @override
   void initState() {
     super.initState();
-    getLocationPrefs();
     animation = 0;
     if (widget.showDialog) {
       SchedulerBinding.instance
@@ -216,10 +210,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _getSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     prefsLat = prefs.getDouble('lat');
     prefsLng = prefs.getDouble('lng');
     prefsMethodNumber = prefs.getInt('methodNumber');
+    locationPrefs = prefs.getString('location');
 
     List<String> tuningString = prefs.getStringList('tuning');
     List<int> tuningInt = tuningString.map((e) => int.parse(e)).toList();

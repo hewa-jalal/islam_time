@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/home_page_widgets.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'bang.g.dart';

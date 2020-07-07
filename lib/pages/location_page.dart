@@ -22,13 +22,13 @@ class _LocationPageState extends State<LocationPage> {
         backgroundColor: Colors.grey,
         body: BlocConsumer<BangBloc, BangState>(
           listener: (context, state) async {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            String prefStr = prefs.get('location');
+            final prefs = await SharedPreferences.getInstance();
+            String locationPrefs = prefs.get('location');
             if (state is BangLoaded) {
-              if (prefStr != null) {
+              if (locationPrefs != null) {
                 Get.off(
                   HomePage(
-                    userLocation: prefStr,
+                    userLocation: locationPrefs,
                     showDialog: false,
                   ),
                 );
@@ -45,57 +45,30 @@ class _LocationPageState extends State<LocationPage> {
             }
           },
           builder: (context, state) {
-            if (state is BangLoaded) {
-              return Stack(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => getUserLocation(context),
-                    child: FlareActor(
-                      'assets/flare/location_place_holder.flr',
-                      animation: 'jump',
+            return Stack(
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () => getUserLocation(context),
+                  child: FlareActor(
+                    'assets/flare/location_place_holder.flr',
+                    animation: 'jump',
+                  ),
+                ),
+                Positioned.fill(
+                  top: 30,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      'Tap the screen to get your location',
+                      style: GoogleFonts.roboto(
+                          fontSize: 22,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w900),
                     ),
                   ),
-                  Positioned.fill(
-                    top: 30,
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        'Tap the screen to get your location',
-                        style: GoogleFonts.roboto(
-                            fontSize: 22,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w900),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            } else {
-              return Stack(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => getUserLocation(context),
-                    child: FlareActor(
-                      'assets/flare/location_place_holder.flr',
-                      animation: 'jump',
-                    ),
-                  ),
-                  Positioned.fill(
-                    top: 30,
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Text(
-                        'Tap the screen to get your location',
-                        style: GoogleFonts.roboto(
-                            fontSize: 22,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w900),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            }
+                ),
+              ],
+            );
           },
         ),
       ),
@@ -105,7 +78,8 @@ class _LocationPageState extends State<LocationPage> {
   Future<String> getUserLocation(context) async {
     // ignore: close_sinks
     final bangBloc = BlocProvider.of<BangBloc>(context);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
+    String locationPrefs = prefs.getString('location');
 
     Position position = await Geolocator().getCurrentPosition();
     List<Placemark> placemarks = await Geolocator()
@@ -118,18 +92,17 @@ class _LocationPageState extends State<LocationPage> {
     String userCity = splitedAddress[0];
     String userCountry = splitedAddress[1];
 
-    if (userCountry.toLowerCase().contains('iraq')) {
-      String strPrefs = prefs.getString('location');
-      if (strPrefs != null) {
-        List<String> splitedPrefs = strPrefs.split(',');
-        bangBloc.add(GetBang(
-            countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()));
-      } else {
-        Get.off(SelectCityPage());
-      }
-    } else {
+    if (locationPrefs != null) {
       bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
     }
+
+    if (userCountry.toLowerCase().contains('iraq')) {
+      Get.off(SelectCityPage());
+    } else {}
+    List<String> splitedPrefs = locationPrefs.split(',');
+    bangBloc.add(GetBang(
+        countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()));
+
     return '$userCountry, $userCity';
   }
 }

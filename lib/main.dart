@@ -32,8 +32,7 @@ void main() async {
   HydratedBloc.storage = await HydratedStorage.build();
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String strPrefs = prefs.getString('location');
-  print('strPrefs $strPrefs');
+  String locationPrefs = prefs.getString('location');
 
   print('vscodeeee');
 
@@ -58,10 +57,10 @@ void main() async {
       ],
       child: getPackage.GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        // home: strPrefs != null
-        //     ? HomePage(showDialog: false, userLocation: strPrefs)
-        //     : LocationPage(),
-        home: LocationPage(),
+        home: locationPrefs != null
+            ? HomePage(showDialog: false, userLocation: locationPrefs)
+            : LocationPage(),
+        // home: LocationPage(),
       ),
     ),
   );
