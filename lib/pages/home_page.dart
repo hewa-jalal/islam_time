@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Text(
           'Your Location is ${widget.userLocation}',
-          style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+          style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
       btnOkOnPress: () {},

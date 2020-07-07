@@ -7,6 +7,7 @@ import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/prayer_tile_widget.dart';
 import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/setting_page.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BottomSheetTime extends StatelessWidget {
@@ -91,7 +92,10 @@ class BottomSheetTime extends StatelessWidget {
                                         ),
                                         onPressed: () {
                                           isLocal
-                                              ? bloc.add(FetchBang())
+                                              ? () {
+                                                  _showLocationConfirmDialog(
+                                                      context, bloc);
+                                                }()
                                               : Get.to(SettingPage());
                                         },
                                       ),
@@ -105,31 +109,8 @@ class BottomSheetTime extends StatelessWidget {
                       ),
                     ),
                     Divider(color: Colors.black, height: 20, thickness: 2),
-                    PrayerTile(
-                        prayerTime: state.bang.speda,
-                        prayerName: 'Fajr',
-                        iconTime: 'sun'),
-                    PrayerTile(
-                        prayerTime: state.bang.rojHalat,
-                        prayerName: 'Sunrise',
-                        iconTime: 'sun'),
-                    PrayerTile(
-                        prayerTime: state.bang.nevro,
-                        prayerName: 'Zuhr',
-                        iconTime: 'sun'),
-                    PrayerTile(
-                        prayerTime: state.bang.evar,
-                        prayerName: 'Asr',
-                        iconTime: 'sun'),
-                    PrayerTile(
-                        prayerTime: state.bang.maghrab,
-                        prayerName: 'Maghrib',
-                        iconTime: 'moon'),
-                    PrayerTile(
-                        prayerTime: state.bang.aesha,
-                        prayerName: 'Isha',
-                        iconTime: 'moon'),
-                  ],
+                    prayerTilesList(state),
+                  ], 
                 );
               } else {
                 return CircularProgressIndicator(
@@ -147,4 +128,54 @@ class BottomSheetTime extends StatelessWidget {
     final prefs = await SharedPreferences.getInstance();
     return '${prefs.getString('location')},${prefs.getBool(IS_LOCAL_KEY)}';
   }
+
+  void _showLocationConfirmDialog(BuildContext context, BangBloc bloc) async {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.WARNING,
+      animType: AnimType.SCALE,
+      body: Center(
+        child: Wrap(
+          direction: Axis.horizontal,
+          children: <Widget>[
+            Text(
+              'you have fixed prayer times for you location, are you sure you want to change your location',
+              style:
+                  GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              'and get prayer times from the internet?',
+              style:
+                  GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+      btnOkOnPress: () => bloc.add(FetchBang()),
+      btnCancelOnPress: () {},
+    )..show();
+  }
 }
+
+Column prayerTilesList(state) => Column(
+      children: <Widget>[
+        PrayerTile(
+            prayerTime: state.bang.speda, prayerName: 'Fajr', iconTime: 'sun'),
+        PrayerTile(
+            prayerTime: state.bang.rojHalat,
+            prayerName: 'Sunrise',
+            iconTime: 'sun'),
+        PrayerTile(
+            prayerTime: state.bang.nevro, prayerName: 'Zuhr', iconTime: 'sun'),
+        PrayerTile(
+            prayerTime: state.bang.evar, prayerName: 'Asr', iconTime: 'sun'),
+        PrayerTile(
+            prayerTime: state.bang.maghrab,
+            prayerName: 'Maghrib',
+            iconTime: 'moon'),
+        PrayerTile(
+            prayerTime: state.bang.aesha, prayerName: 'Isha', iconTime: 'moon'),
+      ],
+    );

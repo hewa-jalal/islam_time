@@ -25,22 +25,21 @@ Color hexToColor(String code) {
   return Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 }
 
-RichText customRichText(TimeCycleLoaded state) {
+RichText customRichText(String hijriDate) {
   return RichText(
     text: TextSpan(
       children: <TextSpan>[
         TextSpan(
-          text: 'It\'s ',
-          style: customTextStyle(),
+          text: 'Hijri ',
+          style: GoogleFonts.farro(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         TextSpan(
-          text: state.timeCycle.untilDayOrNight,
+          text: hijriDate,
           style: customTextStyle(isBold: true),
         ),
-        TextSpan(
-          text: ' Time',
-          style: customTextStyle(),
-        )
       ],
     ),
   );

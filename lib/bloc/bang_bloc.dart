@@ -79,10 +79,12 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
       print('methodNumber => => => ${event.methodNumber}');
       print('tuning => => => ${event.tuning}');
       _saveSettingsToPrefs(
-          lat: position.latitude,
-          lng: position.longitude,
-          methodNumber: event.methodNumber,
-          tuning: event.tuning);
+        lat: position.latitude,
+        lng: position.longitude,
+        methodNumber: event.methodNumber,
+        tuning: event.tuning,
+        isLocal: false,
+      );
       final Bang bang = await bangRepository.fetchBang(
         lat: position.latitude,
         lng: position.longitude,
@@ -99,7 +101,7 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
     double lat,
     double lng,
     int methodNumber = 3,
-    List<int> tuning = const [0,0,0,0,0,0],
+    List<int> tuning = const [0, 0, 0, 0, 0, 0],
     bool isLocal,
   }) async {
     final prefs = await SharedPreferences.getInstance();
@@ -114,7 +116,7 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
               bloc => lng prefs ${prefs.getDouble('lng')}
               bloc => methodNumber prefs ${prefs.getInt('methodNumber')}
               bloc => tuning prefs ${prefs.getStringList('tuning')}
-              bloc => isLocal ${prefs.getStringList(IS_LOCAL_KEY)}''');
+              bloc => isLocal ${prefs.getBool(IS_LOCAL_KEY)}''');
   }
 
   void _saveUserLocationToPrefs(Position position) async {
