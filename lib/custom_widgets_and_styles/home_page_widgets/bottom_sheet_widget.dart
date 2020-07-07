@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/prayer_tile_widget.dart';
 import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/setting_page.dart';
@@ -10,11 +11,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class BottomSheetTime extends StatelessWidget {
   final TimeCycle timeCycle;
-  final bool isLocal;
   const BottomSheetTime({
     Key key,
     @required this.timeCycle,
-    this.isLocal = false,
   }) : super(key: key);
 
   @override
@@ -58,31 +57,49 @@ class BottomSheetTime extends StatelessWidget {
                           FutureBuilder<String>(
                             future: getLocation(),
                             builder: (_, snapshot) {
-                              return Text(
-                                'Prayer Times for \n  ${snapshot.data}',
-                                style: GoogleFonts.farro(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  height: 1.4,
-                                ),
-                                textAlign: TextAlign.center,
-                              );
+                              if (!snapshot.hasData) {
+                                return CircularProgressIndicator(
+                                    backgroundColor: Colors.teal);
+                              } else {
+                                List<String> splitSnapshot =
+                                    snapshot.data.split(',');
+                                String location =
+                                    '${splitSnapshot[0]}, ${splitSnapshot[1]}';
+                                bool isLocal = splitSnapshot[2] == 'true';
+                                print('BOTTOM SHEET split => $splitSnapshot');
+                                print('BOTTOM SHEET islocal => $isLocal');
+                                return Row(
+                                  children: <Widget>[
+                                    Text(
+                                      'Prayer Times for \n  $location',
+                                      style: GoogleFonts.farro(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        height: 1.4,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: FlatButton(
+                                        child: Icon(
+                                          isLocal
+                                              ? Icons.add_location
+                                              : Icons.settings,
+                                          color: Colors.blue,
+                                          size: 50,
+                                        ),
+                                        onPressed: () {
+                                          isLocal
+                                              ? bloc.add(FetchBang())
+                                              : Get.to(SettingPage());
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
                             },
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: FlatButton(
-                              child: Icon(
-                                isLocal ? Icons.add_location : Icons.settings,
-                                color: Colors.blue,
-                                size: 50,
-                              ),
-                              onPressed: () {
-                                isLocal
-                                    ? bloc.add(FetchBang())
-                                    : Get.to(SettingPage());
-                              },
-                            ),
                           ),
                         ],
                       ),
@@ -128,6 +145,6 @@ class BottomSheetTime extends StatelessWidget {
 
   Future<String> getLocation() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('location');
+    return '${prefs.getString('location')},${prefs.getBool(IS_LOCAL_KEY)}';
   }
 }

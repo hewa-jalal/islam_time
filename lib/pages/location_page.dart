@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/pages/select_city_page.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,16 +94,18 @@ class _LocationPageState extends State<LocationPage> {
     String userCountry = splitedAddress[1];
 
     if (locationPrefs != null) {
-      bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
+      List<String> splitedPrefs = locationPrefs.split(',');
+      bangBloc.add(GetBang(
+          countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()));
     }
 
     if (userCountry.toLowerCase().contains('iraq')) {
+      prefs.setBool(IS_LOCAL_KEY, true);
       Get.off(SelectCityPage());
-    } else {}
-    List<String> splitedPrefs = locationPrefs.split(',');
-    bangBloc.add(GetBang(
-        countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()));
-
+    } else {
+      prefs.setBool(IS_LOCAL_KEY, false);
+      bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
+    }
     return '$userCountry, $userCity';
   }
 }

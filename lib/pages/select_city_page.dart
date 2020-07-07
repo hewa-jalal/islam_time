@@ -63,7 +63,6 @@ class _SelectCityPageState extends State<SelectCityPage> {
                     HomePage(
                       userLocation: 'Iraq, $userCity',
                       showDialog: true,
-                      isLocal: true,
                     ),
                   );
                 }
@@ -71,6 +70,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
               child: FutureBuilder(
                 future: citiesFiles,
                 builder: (context, snapshot) {
+                  // ignore: close_sinks
                   final bangBloc = BlocProvider.of<BangBloc>(context);
                   if (snapshot.hasData) {
                     return Column(

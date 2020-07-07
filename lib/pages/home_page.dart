@@ -17,13 +17,11 @@ import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 class HomePage extends StatefulWidget {
   final String userLocation;
   final bool showDialog;
-  final bool isLocal;
 
   const HomePage({
     Key key,
     @required this.userLocation,
     this.showDialog = false,
-    this.isLocal = false,
   }) : super(key: key);
 
   @override
@@ -33,8 +31,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _arrowAnimation = 'upArrowAnimation';
   int animation;
-
-  bool get isLocal => widget.isLocal;
 
   double prefsLat;
   double prefsLng;
@@ -131,8 +127,7 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                         ),
-                        body: BottomSheetTime(
-                            timeCycle: timeCycle, isLocal: true),
+                        body: BottomSheetTime(timeCycle: timeCycle),
                       ),
                     ),
                     BlocConsumer<BangBloc, BangState>(

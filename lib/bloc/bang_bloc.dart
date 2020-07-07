@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/repository/location_repository.dart';
@@ -51,14 +52,14 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
       try {
         Position position = await locationRepository.getUserLocation();
         _saveUserLocationToPrefs(position);
-        _saveSettingsToPrefs(lat: position.latitude, lng: position.longitude);
+        _saveSettingsToPrefs(
+            lat: position.latitude, lng: position.longitude, isLocal: false);
         final Bang bang = await bangRepository.fetchBang(
           lat: position.latitude,
           lng: position.longitude,
           month: DateTime.now().month,
           year: DateTime.now().year,
         );
-
         yield BangLoaded(bang);
       } catch (e) {
         print('catch BangError() in FetchBang => ${e.toString()}');
@@ -94,19 +95,26 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
     }
   }
 
-  void _saveSettingsToPrefs(
-      {double lat, double lng, int methodNumber, List<int> tuning}) async {
+  void _saveSettingsToPrefs({
+    double lat,
+    double lng,
+    int methodNumber = 3,
+    List<int> tuning = const [0,0,0,0,0,0],
+    bool isLocal,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> stringTuning = tuning.map((e) => e.toString()).toList();
     prefs.setDouble('lat', lat);
     prefs.setDouble('lng', lng);
     prefs.setInt('methodNumber', methodNumber);
     prefs.setStringList('tuning', stringTuning);
+    prefs.setBool(IS_LOCAL_KEY, isLocal);
 
     print(''' bloc => lat prefs ${prefs.getDouble('lat')} 
               bloc => lng prefs ${prefs.getDouble('lng')}
               bloc => methodNumber prefs ${prefs.getInt('methodNumber')}
-              bloc => tuning prefs ${prefs.getStringList('tuning')}''');
+              bloc => tuning prefs ${prefs.getStringList('tuning')}
+              bloc => isLocal ${prefs.getStringList(IS_LOCAL_KEY)}''');
   }
 
   void _saveUserLocationToPrefs(Position position) async {

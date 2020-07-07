@@ -35,6 +35,7 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: close_sinks
     final bloc = BlocProvider.of<BangBloc>(context);
     return BlocConsumer<BangBloc, BangState>(
       listener: (context, state) {
