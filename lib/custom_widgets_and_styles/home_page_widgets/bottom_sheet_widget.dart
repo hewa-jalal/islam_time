@@ -25,19 +25,89 @@ class BottomSheetTime extends StatefulWidget {
 }
 
 class _BottomSheetTimeState extends State<BottomSheetTime> {
-  GlobalKey settingButtonKey = GlobalKey();
-  List<TargetFocus> targets = List();
+  GlobalKey _settingButtonKey = GlobalKey();
+  List<TargetFocus> _targets = List();
+  bool _firstTimeTutorial = false;
+  bool _isLocal = false;
+  Future<String> _locationFuture;
+  Future<bool> _isLocalFuture;
 
   @override
   void initState() {
     super.initState();
+    _locationFuture = _getLocation();
+    _isLocalFuture = _getIsLocal();
     _initTargets();
     SchedulerBinding.instance.addPostFrameCallback((_) => _afterLayout(_));
   }
 
+  Future<String> _getLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    return '${prefs.getString('location')}';
+  }
+
+  Future<void> clearSp() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
+
+  Future<bool> _getIsLocal() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.get(IS_LOCAL_KEY);
+  }
+
+  void _initTargets() async {
+    _isLocalFuture.then((value) {
+      _isLocal = value;
+      _targets.add(
+        TargetFocus(
+          identify: 'Target 1',
+          keyTarget: _settingButtonKey,
+          shape: ShapeLightFocus.Circle,
+          contents: [
+            ContentTarget(
+              align: AlignContent.top,
+              child: Text(
+                _isLocal
+                    ? 'Tap here to get a new location'
+                    : 'Tap here to tune prayers times or get a new location',
+                style: GoogleFonts.autourOne(fontSize: 30),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  void _showTutorial() {
+    TutorialCoachMark(
+      context,
+      targets: _targets,
+      colorShadow: Colors.grey[400],
+      textSkip: 'Ok',
+      clickSkip: () {},
+      finish: () => _persisetTutorialDisplay(),
+    )..show();
+  }
+
+  void _afterLayout(_) async {
+    final prefs = await SharedPreferences.getInstance();
+    _firstTimeTutorial = prefs.getBool(IS_FIRST_TIME_KEY);
+    Future.delayed(Duration(milliseconds: 700), () {
+      if (_firstTimeTutorial == null) {
+        _showTutorial();
+      }
+    });
+  }
+
+  Future<void> _persisetTutorialDisplay() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool(IS_FIRST_TIME_KEY, true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // ignore: close_sinks
     final bloc = BlocProvider.of<BangBloc>(context);
     return Container(
       color: Colors.grey.withOpacity(0.4),
@@ -53,18 +123,12 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                       children: <Widget>[
                         Text(
                           'Hijri ${state.bang.formattedHijriDate}',
-                          style: GoogleFonts.farro(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: customFarroStyle(),
                         ),
                         Spacer(),
                         Text(
                           state.bang.date,
-                          style: GoogleFonts.farro(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: customFarroStyle(),
                         ),
                       ],
                     ),
@@ -74,21 +138,20 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                         children: <Widget>[
                           Spacer(),
                           FutureBuilder<String>(
-                            future: getLocation(),
+                            future: _locationFuture,
                             builder: (_, snapshot) {
                               if (!snapshot.hasData) {
                                 return CircularProgressIndicator(
                                     backgroundColor: Colors.teal);
                               } else {
-                                List<String> splitSnapshot =
-                                    snapshot.data.split(',');
-                                String location =
-                                    '${splitSnapshot[0]}, ${splitSnapshot[1]}';
-                                bool isLocal = splitSnapshot[2] == 'true';
                                 return Row(
                                   children: <Widget>[
+                                    FlatButton(
+                                      child: Icon(Icons.clear_all),
+                                      onPressed: () => clearSp(),
+                                    ),
                                     Text(
-                                      'Prayer Times for \n  $location',
+                                      'Prayer Times for \n  ${snapshot.data}',
                                       style: GoogleFonts.farro(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
@@ -96,27 +159,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: FlatButton(
-                                        key: settingButtonKey,
-                                        child: Icon(
-                                          isLocal
-                                              ? Icons.add_location
-                                              : Icons.settings,
-                                          color: Colors.blue,
-                                          size: 50,
-                                        ),
-                                        onPressed: () {
-                                          isLocal
-                                              ? () {
-                                                  _showLocationConfirmDialog(
-                                                      context, bloc);
-                                                }()
-                                              : Get.to(SettingPage());
-                                        },
-                                      ),
-                                    ),
+                                    buildSettingChoiceButton(context, bloc),
                                   ],
                                 );
                               }
@@ -126,7 +169,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                       ),
                     ),
                     Divider(color: Colors.black, height: 20, thickness: 2),
-                    prayerTilesList(state),
+                    _buildPrayerTilesList(state),
                   ],
                 );
               } else {
@@ -141,45 +184,21 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     );
   }
 
-  Future<String> getLocation() async {
-    final prefs = await SharedPreferences.getInstance();
-    return '${prefs.getString('location')},${prefs.getBool(IS_LOCAL_KEY)}';
-  }
-
-  void _initTargets() async {
-    targets.add(
-      TargetFocus(
-        identify: 'Target 1',
-        keyTarget: settingButtonKey,
-        shape: ShapeLightFocus.Circle,
-        contents: [
-          ContentTarget(
-            align: AlignContent.top,
-            child: Text(
-              'Tap here to tune prayers times or get a new location',
-              style: GoogleFonts.autourOne(fontSize: 30),
-            ),
-          ),
-        ],
+  Padding buildSettingChoiceButton(BuildContext context, BangBloc bloc) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: FlatButton(
+        key: _settingButtonKey,
+        child: Icon(
+          _isLocal ? Icons.add_location : Icons.settings,
+          color: Colors.blue,
+          size: 50,
+        ),
+        onPressed: () => _isLocal
+            ? _showLocationConfirmDialog(context, bloc)
+            : Get.to(SettingPage()),
       ),
     );
-  }
-
-  void _showTutorial() {
-    TutorialCoachMark(
-      context,
-      targets: targets,
-      colorShadow: Colors.grey[400],
-      textSkip: 'Ok',
-      clickSkip: () {},
-      clickTarget: (target) => Get.to(SettingPage()),
-    )..show();
-  }
-
-  void _afterLayout(_) {
-    Future.delayed(Duration(milliseconds: 800), () {
-      _showTutorial();
-    });
   }
 
   void _showLocationConfirmDialog(BuildContext context, BangBloc bloc) async {
@@ -212,7 +231,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   }
 }
 
-Column prayerTilesList(state) => Column(
+Column _buildPrayerTilesList(state) => Column(
       children: <Widget>[
         PrayerTile(
             prayerTime: state.bang.speda, prayerName: 'Fajr', iconTime: 'sun'),

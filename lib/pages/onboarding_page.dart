@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intro_views_flutter/Models/page_view_model.dart';
 import 'package:intro_views_flutter/intro_views_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-
 import 'location_page.dart';
 
 class OnBoardingPage extends StatefulWidget {
@@ -44,8 +43,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         )
       ],
     ),
-    mainImage:
-        Icon(Icons.remove_circle_outline, size: 200, color: Colors.red[900]),
+    mainImage: Icon(Icons.clear, size: 200, color: Colors.red[900]),
     body: Text(''),
     pageColor: Colors.red[500],
     textStyle: GoogleFonts.heebo(

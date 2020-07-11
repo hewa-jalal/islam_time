@@ -21,6 +21,11 @@ TextStyle customTextStyle({bool isBold = false}) => GoogleFonts.roboto(
       ),
     );
 
+TextStyle customFarroStyle([double size = 16]) => GoogleFonts.farro(
+      fontSize: size,
+      fontWeight: FontWeight.bold,
+    );
+
 Color hexToColor(String code) {
   return Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 }

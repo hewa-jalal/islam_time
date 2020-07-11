@@ -32,7 +32,7 @@ class _LocationPageState extends State<LocationPage> {
                 Get.off(
                   HomePage(
                     userLocation: locationPrefs,
-                    showDialog: false,
+                    showDialog: true,
                   ),
                 );
               } else {
@@ -72,11 +72,6 @@ class _LocationPageState extends State<LocationPage> {
                     ),
                   ),
                 ),
-                FlatButton(
-                  child: Text('button'),
-                  onPressed: () {},
-                  key: key1,
-                ),
               ],
             );
           },
@@ -88,6 +83,7 @@ class _LocationPageState extends State<LocationPage> {
   Future<String> getUserLocation(context) async {
     // ignore: close_sinks
     final bangBloc = BlocProvider.of<BangBloc>(context);
+    
     final prefs = await SharedPreferences.getInstance();
     String locationPrefs = prefs.getString('location');
 

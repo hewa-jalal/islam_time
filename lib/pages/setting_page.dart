@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/models/method_number.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -61,17 +62,23 @@ class _SettingPageState extends State<SettingPage> {
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
                     child: Column(
                       children: <Widget>[
-                        Material(
+                        Container(
+                          color: Colors.blueGrey[700],
                           child: SearchableDropdown.single(
+                            menuBackgroundColor: Colors.blueGrey[700],
                             items: MethodNumber.list.map((exNum) {
                               return DropdownMenuItem(
-                                child: Text(exNum.numberString),
+                                child: Text(
+                                  exNum.numberString,
+                                  style: GoogleFonts.robotoCondensed(
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                  ),
+                                ),
                                 value: exNum,
                               );
                             }).toList(),
-                            onChanged: (value) {
-                              selectedNumber = value;
-                            },
+                            onChanged: (value) => selectedNumber = value,
                             value: selectedNumber,
                             hint: 'select a method',
                             isExpanded: true,
@@ -91,37 +98,7 @@ class _SettingPageState extends State<SettingPage> {
                             ),
                           ),
                         ),
-                        MethodNumberTile(
-                          prayerName: 'Fajr',
-                          onChange: (val) =>
-                              methodNumbersList[0] = int.parse(val),
-                        ),
-                        MethodNumberTile(
-                          prayerName: 'Sunrise',
-                          onChange: (val) =>
-                              methodNumbersList[1] = int.parse(val),
-                        ),
-                        MethodNumberTile(
-                          prayerName: 'Zuhr',
-                          onChange: (val) =>
-                              methodNumbersList[2] = int.parse(val),
-                        ),
-                        MethodNumberTile(
-                          prayerName: 'Asr',
-                          onChange: (val) =>
-                              methodNumbersList[3] = int.parse(val),
-                        ),
-                        MethodNumberTile(
-                          prayerName: 'Maghrib',
-                          onChange: (val) =>
-                              methodNumbersList[4] = int.parse(val),
-                        ),
-                        MethodNumberTile(
-                          prayerName: 'Isha',
-                          isEnd: true,
-                          onChange: (val) =>
-                              methodNumbersList[5] = int.parse(val),
-                        ),
+                        _buildMehtodNumberTiles(),
                         Spacer(),
                         Row(
                           children: <Widget>[
@@ -139,9 +116,7 @@ class _SettingPageState extends State<SettingPage> {
                                             fontWeight: FontWeight.bold)),
                                   ),
                                   color: Colors.blueGrey[700],
-                                  onPressed: () => bloc.add(
-                                    FetchBang(),
-                                  ),
+                                  onPressed: () => bloc.add(FetchBang()),
                                 ),
                               ),
                             ),
@@ -179,9 +154,46 @@ class _SettingPageState extends State<SettingPage> {
             ),
           );
         } else {
-          return CircularProgressIndicator();
+          return Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+            color: Colors.blueGrey[700],
+          );
         }
       },
+    );
+  }
+
+  Column _buildMehtodNumberTiles() {
+    return Column(
+      children: <Widget>[
+        MethodNumberTile(
+          prayerName: 'Fajr',
+          onChange: (val) => methodNumbersList[0] = int.parse(val),
+        ),
+        MethodNumberTile(
+          prayerName: 'Sunrise',
+          onChange: (val) => methodNumbersList[1] = int.parse(val),
+        ),
+        MethodNumberTile(
+          prayerName: 'Zuhr',
+          onChange: (val) => methodNumbersList[2] = int.parse(val),
+        ),
+        MethodNumberTile(
+          prayerName: 'Asr',
+          onChange: (val) => methodNumbersList[3] = int.parse(val),
+        ),
+        MethodNumberTile(
+          prayerName: 'Maghrib',
+          onChange: (val) => methodNumbersList[4] = int.parse(val),
+        ),
+        MethodNumberTile(
+          prayerName: 'Isha',
+          isEnd: true,
+          onChange: (val) => methodNumbersList[5] = int.parse(val),
+        ),
+      ],
     );
   }
 }

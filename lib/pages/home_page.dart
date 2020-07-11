@@ -11,9 +11,11 @@ import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/body_status_cubit.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_tooltip/simple_tooltip.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/content_target.dart';
@@ -36,9 +38,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _arrowAnimation = 'upArrowAnimation';
-  int animation;
+  int _animation;
 
-  GlobalKey swipeSheetKey = GlobalKey();
+  GlobalKey _swipeSheetKey = GlobalKey();
+  GlobalKey _fullScreenKey = GlobalKey();
   List<TargetFocus> _targets = List();
 
   double prefsLat;
@@ -46,28 +49,30 @@ class _HomePageState extends State<HomePage> {
   int prefsMethodNumber;
   List<int> prefsTuning;
   String locationPrefs;
-
+  Future<bool> _isLocalFuture;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+  Future<bool> _isFirstTimeTutorialFuture;
+  bool _afterSpotLight = false;
 
   SolidController _solidController = SolidController();
 
   @override
   void initState() {
-    animation = 0;
+    _animation = 0;
+    _isLocalFuture = _getIsLocal();
+    _isFirstTimeTutorialFuture = _getTutorialDisplay();
     if (widget.showDialog) {
       SchedulerBinding.instance
           .addPostFrameCallback((_) => _showLocationDialog(context));
     }
     _initTargets();
-    SchedulerBinding.instance.addPostFrameCallback((_) => _afterLayout(_));
     super.initState();
   }
 
-  void _afterLayout(_) {
-    Future.delayed(Duration(milliseconds: 100), () {
-      _showTutorial();
-    });
+  Future<bool> _getIsLocal() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(IS_LOCAL_KEY);
   }
 
   void _showTutorial() {
@@ -82,7 +87,8 @@ class _HomePageState extends State<HomePage> {
         color: Colors.black,
       ),
       paddingFocus: -100,
-      clickTarget: (target) {},
+      clickTarget: (target) => _afterSpotLight = true,
+      finish: () => setState(() => _afterSpotLight = true),
     )..show();
   }
 
@@ -90,7 +96,7 @@ class _HomePageState extends State<HomePage> {
     _targets.add(
       TargetFocus(
         identify: 'Target 1',
-        keyTarget: swipeSheetKey,
+        keyTarget: _swipeSheetKey,
         shape: ShapeLightFocus.Circle,
         contents: [
           ContentTarget(
@@ -100,10 +106,7 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   Text(
                     'Swipe to get more details',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20.0),
+                    style: customTextStyle(),
                   ),
                 ],
               ),
@@ -138,7 +141,7 @@ class _HomePageState extends State<HomePage> {
           style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
-      btnOkOnPress: () {},
+      btnOkOnPress: () => _showTutorial(),
     )..show();
   }
 
@@ -148,142 +151,189 @@ class _HomePageState extends State<HomePage> {
         methodNumber: prefsMethodNumber, tuning: prefsTuning));
   }
 
+  Future<void> _persisetTutorialDisplay() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool(IS_FIRST_TIME_KEY, true);
+  }
+
+  Future<bool> _getTutorialDisplay() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(IS_FIRST_TIME_KEY);
+  }
+
   @override
   Widget build(BuildContext context) {
     final bangBloc = BlocProvider.of<BangBloc>(context);
     final bodyStatusCubit = context.cubit<BodyStatusCubit>();
-    print('isOpenedController ${_solidController.isOpened}');
     return SafeArea(
       child: Scaffold(
-        body: SmartRefresher(
-          onRefresh: () => _onRefresh(bangBloc),
-          controller: _refreshController,
-          header: WaterDropHeader(
-            waterDropColor: Colors.blue,
-          ),
-          child: BlocConsumer<TimeCycleBloc, TimeCycleState>(
-            listener: (context, state) {
-              if (state is TimeCycleLoaded) {
-                if (state.timeCycle.timeIs == TimeIs.day) {
-                  animation = 2;
-                } else {
-                  animation = 1;
-                }
-              }
-            },
-            builder: (context, state) {
-              if (state is TimeCycleLoaded) {
-                // final mediaQuerySize = MediaQuery.of(context).size;
-                final timeCycle = state.timeCycle;
-                return Stack(
-                  children: <Widget>[
-                    FlareActor(
-                      'assets/flare/DayAndNight.flr',
-                      animation: (animation == 0)
-                          ? 'day_idle'
-                          : (animation == 1)
-                              ? 'switch_to_night'
-                              : (animation == 2)
-                                  ? 'switch_to_day'
-                                  : 'night_idle',
-                      callback: (value) {
-                        if (value == 'switch_to_night') {
-                          setState(() {
-                            animation = 3;
-                          });
-                        } else {
-                          setState(() {
-                            animation = 0;
-                          });
-                        }
-                      },
-                      fit: BoxFit.fill,
-                    ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: SolidBottomSheet(
-                          controller: _solidController,
-                          maxHeight: MediaQuery.of(context).size.height / 2,
-                          headerBar: StatefulBuilder(
-                            builder: (context, sheetSetState) {
-                              _solidController.isOpenStream.listen((event) {
-                                if (event) {
-                                  bodyStatusCubit.changeStatus(true);
-                                  sheetSetState(() =>
-                                      _arrowAnimation = 'downArrowAnimation');
-                                } else {
-                                  bodyStatusCubit.changeStatus(false);
-                                  sheetSetState(() =>
-                                      _arrowAnimation = 'upArrowAnimation');
-                                }
-                              });
-                              return SizedBox(
-                                key: swipeSheetKey,
-                                height: 100,
-                                child: FlareActor(
-                                  'assets/flare/arrow_up_down.flr',
-                                  animation: _arrowAnimation,
-                                ),
-                              );
-                            },
-                          ),
-                          body: CubitBuilder<BodyStatusCubit, bool>(
-                            builder: (context, state) {
-                              print('cubit State inside builder => $state');
-                              return state
-                                  ? BottomSheetTime(timeCycle: timeCycle)
-                                  : Container();
-                            },
-                          )),
-                    ),
-                    BlocConsumer<BangBloc, BangState>(
-                      listener: (context, state) {
-                        if (state is BangLoaded) {
-                          _refreshController.refreshCompleted();
-                        }
-                      },
-                      builder: (context, state) {
-                        if (state is BangLoaded) {
-                          return SingleChildScrollView(
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 14, bottom: 18),
-                                  child: Text(
-                                    'Time Remaining Until ${timeCycle.untilDayOrNight}',
-                                    style: GoogleFonts.farro(
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: CountdownPage(bang: state.bang),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-                        return SizedBox();
-                      },
-                    )
-                  ],
-                );
-              } else {
-                return BlocBuilder<BangBloc, BangState>(
-                  builder: (context, state) {
-                    if (state is BangLoaded) {
-                      return CountdownPage(bang: state.bang);
+        key: _fullScreenKey,
+        body: FutureBuilder<bool>(
+          future: _isLocalFuture,
+          builder: (context, isLocalSnapshot) {
+            if (isLocalSnapshot.hasData) {
+              return SmartRefresher(
+                onRefresh: () => _onRefresh(bangBloc),
+                physics: isLocalSnapshot.data
+                    ? NeverScrollableScrollPhysics()
+                    : null,
+                controller: _refreshController,
+                header: WaterDropHeader(waterDropColor: Colors.blue),
+                child: BlocConsumer<TimeCycleBloc, TimeCycleState>(
+                  listener: (context, state) {
+                    if (state is TimeCycleLoaded) {
+                      if (state.timeCycle.timeIs == TimeIs.day) {
+                        _animation = 2;
+                      } else {
+                        _animation = 1;
+                      }
                     }
-                    return SizedBox();
                   },
-                );
-              }
-            },
-          ),
+                  builder: (context, state) {
+                    if (state is TimeCycleLoaded) {
+                      // final mediaQuerySize = MediaQuery.of(context).size;
+                      final timeCycle = state.timeCycle;
+                      return Stack(
+                        children: <Widget>[
+                          FlareActor(
+                            'assets/flare/DayAndNight.flr',
+                            animation: (_animation == 0)
+                                ? 'day_idle'
+                                : (_animation == 1)
+                                    ? 'switch_to_night'
+                                    : (_animation == 2)
+                                        ? 'switch_to_day'
+                                        : 'night_idle',
+                            callback: (value) {
+                              if (value == 'switch_to_night') {
+                                setState(() => _animation = 3);
+                              } else {
+                                setState(() => _animation = 0);
+                              }
+                            },
+                            fit: BoxFit.fill,
+                          ),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: SolidBottomSheet(
+                                controller: _solidController,
+                                maxHeight:
+                                    MediaQuery.of(context).size.height / 2,
+                                headerBar: StatefulBuilder(
+                                  builder: (context, sheetSetState) {
+                                    _solidController.isOpenStream
+                                        .listen((event) {
+                                      if (event) {
+                                        bodyStatusCubit.changeStatus(true);
+                                        sheetSetState(() => _arrowAnimation =
+                                            'downArrowAnimation');
+                                      } else {
+                                        bodyStatusCubit.changeStatus(false);
+                                        sheetSetState(() => _arrowAnimation =
+                                            'upArrowAnimation');
+                                      }
+                                    });
+                                    return SizedBox(
+                                      key: _swipeSheetKey,
+                                      height: 100,
+                                      child: FlareActor(
+                                        'assets/flare/arrow_up_down.flr',
+                                        animation: _arrowAnimation,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                body: CubitBuilder<BodyStatusCubit, bool>(
+                                  builder: (context, state) {
+                                    return state
+                                        ? BottomSheetTime(timeCycle: timeCycle)
+                                        : Container();
+                                  },
+                                )),
+                          ),
+                          BlocConsumer<BangBloc, BangState>(
+                            listener: (context, state) {
+                              if (state is BangLoaded) {
+                                _refreshController.refreshCompleted();
+                              }
+                            },
+                            builder: (context, state) {
+                              if (state is BangLoaded) {
+                                return SingleChildScrollView(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 14, bottom: 18),
+                                        child: FutureBuilder<bool>(
+                                            future: _isFirstTimeTutorialFuture,
+                                            builder:
+                                                (context, isFirstTimeSnapshot) {
+                                              return SimpleTooltip(
+                                                content: Material(
+                                                  child: Text(
+                                                    'swipe from here to get latest prayer times',
+                                                    style: GoogleFonts.farro(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                show: () {
+                                                  if (isLocalSnapshot.data) {
+                                                    return true;
+                                                  }
+                                                  if (isFirstTimeSnapshot
+                                                              .data ==
+                                                          null &&
+                                                      _afterSpotLight) {
+                                                    return true;
+                                                  }
+                                                  return false;
+                                                }(),
+                                                hideOnTooltipTap: true,
+                                                tooltipTap:
+                                                    _persisetTutorialDisplay,
+                                                tooltipDirection:
+                                                    TooltipDirection.down,
+                                                child: Text(
+                                                  'Time Remaining Until ${timeCycle.untilDayOrNight}',
+                                                  style: customFarroStyle(26),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              );
+                                            }),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topCenter,
+                                        child: CountdownPage(bang: state.bang),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                              return SizedBox();
+                            },
+                          )
+                        ],
+                      );
+                    } else {
+                      return BlocBuilder<BangBloc, BangState>(
+                        builder: (context, state) {
+                          if (state is BangLoaded) {
+                            return CountdownPage(bang: state.bang);
+                          }
+                          return SizedBox();
+                        },
+                      );
+                    }
+                  },
+                ),
+              );
+            }
+            return CircularProgressIndicator();
+          },
         ),
       ),
     );
