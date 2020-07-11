@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:get/get.dart' as getPackage;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
@@ -7,6 +8,7 @@ import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
+import 'cubit/body_status_cubit.dart';
 import 'pages/onboarding_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:islamtime/repository/location_repository.dart';
@@ -55,11 +57,14 @@ void main() async {
           create: (_) => TimeCycleBloc(),
         ),
       ],
-      child: getPackage.GetMaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: locationPrefs != null
-            ? HomePage(showDialog: false, userLocation: locationPrefs)
-            : OnBoardingPage(),
+      child: CubitProvider(
+        create: (_) => BodyStatusCubit(),
+        child: getPackage.GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: locationPrefs != null
+              ? HomePage(showDialog: false, userLocation: locationPrefs)
+              : OnBoardingPage(),
+        ),
       ),
     ),
   );

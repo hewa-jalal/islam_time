@@ -170,11 +170,9 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       context,
       targets: targets,
       colorShadow: Colors.grey[400],
-      // textSkip: 'Skip',
+      textSkip: 'Ok',
       clickSkip: () {},
-      clickTarget: (target) {
-        Get.to(SettingPage());
-      },
+      clickTarget: (target) => Get.to(SettingPage()),
     )..show();
   }
 

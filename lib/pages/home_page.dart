@@ -4,9 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
+import 'package:islamtime/cubit/body_status_cubit.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
@@ -44,7 +46,6 @@ class _HomePageState extends State<HomePage> {
   int prefsMethodNumber;
   List<int> prefsTuning;
   String locationPrefs;
-  bool _sheetEvent = false;
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -75,7 +76,7 @@ class _HomePageState extends State<HomePage> {
       targets: _targets,
       colorShadow: Colors.grey[400],
       textSkip: 'Ok',
-      clickSkip: () => _solidController.show(),
+      clickSkip: () {},
       textStyleSkip: TextStyle(
         fontSize: 20,
         color: Colors.black,
@@ -150,6 +151,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final bangBloc = BlocProvider.of<BangBloc>(context);
+    final bodyStatusCubit = context.cubit<BodyStatusCubit>();
     print('isOpenedController ${_solidController.isOpened}');
     return SafeArea(
       child: Scaffold(
@@ -200,43 +202,39 @@ class _HomePageState extends State<HomePage> {
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: SolidBottomSheet(
-                        controller: _solidController,
-                        maxHeight: MediaQuery.of(context).size.height / 2,
-                        headerBar: StatefulBuilder(
-                          builder: (context, sheetSetState) {
-                            _solidController.isOpenStream.listen((event) {
-                              if (event) {
-                                sheetSetState(() =>
-                                    _arrowAnimation = 'downArrowAnimation');
-                              } else {
-                                sheetSetState(
-                                    () => _arrowAnimation = 'upArrowAnimation');
-                              }
-                            });
-                            return SizedBox(
-                              key: swipeSheetKey,
-                              height: 100,
-                              child: FlareActor(
-                                'assets/flare/arrow_up_down.flr',
-                                animation: _arrowAnimation,
-                              ),
-                            );
-                          },
-                        ),
-                        body: StatefulBuilder(
-                          builder: (context, bodySetState) {
-                            if (_solidController.isOpened) {
-                              bodySetState(() {
-                                return BottomSheetTime(timeCycle: timeCycle);
+                          controller: _solidController,
+                          maxHeight: MediaQuery.of(context).size.height / 2,
+                          headerBar: StatefulBuilder(
+                            builder: (context, sheetSetState) {
+                              _solidController.isOpenStream.listen((event) {
+                                if (event) {
+                                  bodyStatusCubit.changeStatus(true);
+                                  sheetSetState(() =>
+                                      _arrowAnimation = 'downArrowAnimation');
+                                } else {
+                                  bodyStatusCubit.changeStatus(false);
+                                  sheetSetState(() =>
+                                      _arrowAnimation = 'upArrowAnimation');
+                                }
                               });
-                            } else {
-                              bodySetState(() {
-                                return SizedBox();
-                              });
-                            }
-                          },
-                        ),
-                      ),
+                              return SizedBox(
+                                key: swipeSheetKey,
+                                height: 100,
+                                child: FlareActor(
+                                  'assets/flare/arrow_up_down.flr',
+                                  animation: _arrowAnimation,
+                                ),
+                              );
+                            },
+                          ),
+                          body: CubitBuilder<BodyStatusCubit, bool>(
+                            builder: (context, state) {
+                              print('cubit State inside builder => $state');
+                              return state
+                                  ? BottomSheetTime(timeCycle: timeCycle)
+                                  : Container();
+                            },
+                          )),
                     ),
                     BlocConsumer<BangBloc, BangState>(
                       listener: (context, state) {

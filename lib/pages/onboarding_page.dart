@@ -4,8 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intro_views_flutter/Models/page_view_model.dart';
 import 'package:intro_views_flutter/intro_views_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'location_page.dart';
 
@@ -21,7 +19,6 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       [page, page2],
       showSkipButton: false,
       onTapDoneButton: () => Get.off(LocationPage()),
-      
     );
   }
 

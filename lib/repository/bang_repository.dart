@@ -131,9 +131,10 @@ class LocalBangRepository implements BangRepository {
     int maghrabH = int.parse(splitedMaghrabTime[0]);
     int maghrabM = int.parse(splitedMaghrabTime[1]);
 
-    // TODO: remove the hard-coded 2020
-    DateTime spedaBang = DateTime(2020, month, day, spedaH, spedaM);
-    DateTime maghrabBang = DateTime(2020, month, day, maghrabH, maghrabM);
+    DateTime spedaBang =
+        DateTime(DateTime.now().year, month, day, spedaH, spedaM);
+    DateTime maghrabBang =
+        DateTime(DateTime.now().year, month, day, maghrabH, maghrabM);
 
     print('MUST SEEEEEEEEEEEE speda => $spedaBang, maghrab => $maghrabBang');
 
@@ -185,9 +186,8 @@ class LocalBangRepository implements BangRepository {
       Duration(hours: spedaBang.hour, minutes: spedaBang.minute),
     );
 
-    // TODO: change the hard-coded 2020 year
     return [
-      DateTime(2020, month, day, thirdHours, thirdMin),
+      DateTime(DateTime.now().year, month, day, thirdHours, thirdMin),
       midNightEnd,
       dayTime,
       maghrabBang,
