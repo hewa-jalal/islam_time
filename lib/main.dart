@@ -5,6 +5,7 @@ import 'package:get/get.dart' as getPackage;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
+import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
@@ -57,8 +58,15 @@ void main() async {
           create: (_) => TimeCycleBloc(),
         ),
       ],
-      child: CubitProvider(
-        create: (_) => BodyStatusCubit(),
+      child: MultiCubitProvider(
+        providers: [
+          CubitProvider<BodyStatusCubit>(
+            create: (_) => BodyStatusCubit(),
+          ),
+          CubitProvider<AfterSpotLightCubit>(
+            create: (_) => AfterSpotLightCubit(),
+          ),
+        ],
         child: getPackage.GetMaterialApp(
           debugShowCheckedModeBanner: false,
           home: locationPrefs != null

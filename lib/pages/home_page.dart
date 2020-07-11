@@ -8,11 +8,13 @@ import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
+import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/cubit/body_status_cubit.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
+import 'package:islamtime/models/time_cycle.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_tooltip/simple_tooltip.dart';
@@ -41,7 +43,6 @@ class _HomePageState extends State<HomePage> {
   int _animation;
 
   GlobalKey _swipeSheetKey = GlobalKey();
-  GlobalKey _fullScreenKey = GlobalKey();
   List<TargetFocus> _targets = List();
 
   double prefsLat;
@@ -53,7 +54,6 @@ class _HomePageState extends State<HomePage> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   Future<bool> _isFirstTimeTutorialFuture;
-  bool _afterSpotLight = false;
 
   SolidController _solidController = SolidController();
 
@@ -87,8 +87,6 @@ class _HomePageState extends State<HomePage> {
         color: Colors.black,
       ),
       paddingFocus: -100,
-      clickTarget: (target) => _afterSpotLight = true,
-      finish: () => setState(() => _afterSpotLight = true),
     )..show();
   }
 
@@ -165,9 +163,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final bangBloc = BlocProvider.of<BangBloc>(context);
     final bodyStatusCubit = context.cubit<BodyStatusCubit>();
+    final afterSpotLightCubit = CubitProvider.of<AfterSpotLightCubit>(context);
     return SafeArea(
       child: Scaffold(
-        key: _fullScreenKey,
         body: FutureBuilder<bool>(
           future: _isLocalFuture,
           builder: (context, isLocalSnapshot) {
@@ -216,44 +214,45 @@ class _HomePageState extends State<HomePage> {
                           Align(
                             alignment: Alignment.bottomCenter,
                             child: SolidBottomSheet(
-                                controller: _solidController,
-                                maxHeight:
-                                    MediaQuery.of(context).size.height / 2,
-                                headerBar: StatefulBuilder(
-                                  builder: (context, sheetSetState) {
-                                    _solidController.isOpenStream
-                                        .listen((event) {
-                                      if (event) {
-                                        bodyStatusCubit.changeStatus(true);
-                                        sheetSetState(() => _arrowAnimation =
-                                            'downArrowAnimation');
-                                      } else {
-                                        bodyStatusCubit.changeStatus(false);
-                                        sheetSetState(() => _arrowAnimation =
-                                            'upArrowAnimation');
-                                      }
-                                    });
-                                    return SizedBox(
-                                      key: _swipeSheetKey,
-                                      height: 100,
-                                      child: FlareActor(
-                                        'assets/flare/arrow_up_down.flr',
-                                        animation: _arrowAnimation,
-                                      ),
-                                    );
-                                  },
-                                ),
-                                body: CubitBuilder<BodyStatusCubit, bool>(
-                                  builder: (context, state) {
-                                    return state
-                                        ? BottomSheetTime(timeCycle: timeCycle)
-                                        : Container();
-                                  },
-                                )),
+                              controller: _solidController,
+                              maxHeight: MediaQuery.of(context).size.height / 2,
+                              headerBar: StatefulBuilder(
+                                builder: (context, sheetSetState) {
+                                  _solidController.isOpenStream.listen((event) {
+                                    if (event) {
+                                      bodyStatusCubit.changeStatus(true);
+                                      sheetSetState(() => _arrowAnimation =
+                                          'downArrowAnimation');
+                                    } else {
+                                      bodyStatusCubit.changeStatus(false);
+                                      sheetSetState(() =>
+                                          _arrowAnimation = 'upArrowAnimation');
+                                    }
+                                  });
+                                  return SizedBox(
+                                    key: _swipeSheetKey,
+                                    height: 100,
+                                    child: FlareActor(
+                                      'assets/flare/arrow_up_down.flr',
+                                      animation: _arrowAnimation,
+                                    ),
+                                  );
+                                },
+                              ),
+                              body: CubitBuilder<BodyStatusCubit, bool>(
+                                builder: (context, state) {
+                                  return state
+                                      ? BottomSheetTime(timeCycle: timeCycle)
+                                      : Container();
+                                },
+                              ),
+                            ),
                           ),
                           BlocConsumer<BangBloc, BangState>(
                             listener: (context, state) {
                               if (state is BangLoaded) {
+                                afterSpotLightCubit.changeStatus();
+                                _persisetTutorialDisplay();
                                 _refreshController.refreshCompleted();
                               }
                             },
@@ -266,42 +265,19 @@ class _HomePageState extends State<HomePage> {
                                         padding: const EdgeInsets.only(
                                             top: 14, bottom: 18),
                                         child: FutureBuilder<bool>(
-                                            future: _isFirstTimeTutorialFuture,
+                                            future: _getTutorialDisplay(),
                                             builder:
                                                 (context, isFirstTimeSnapshot) {
-                                              return SimpleTooltip(
-                                                content: Material(
-                                                  child: Text(
-                                                    'swipe from here to get latest prayer times',
-                                                    style: GoogleFonts.farro(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                                show: () {
-                                                  if (isLocalSnapshot.data) {
-                                                    return true;
-                                                  }
-                                                  if (isFirstTimeSnapshot
-                                                              .data ==
-                                                          null &&
-                                                      _afterSpotLight) {
-                                                    return true;
-                                                  }
-                                                  return false;
-                                                }(),
-                                                hideOnTooltipTap: true,
-                                                tooltipTap:
-                                                    _persisetTutorialDisplay,
-                                                tooltipDirection:
-                                                    TooltipDirection.down,
-                                                child: Text(
-                                                  'Time Remaining Until ${timeCycle.untilDayOrNight}',
-                                                  style: customFarroStyle(26),
-                                                  textAlign: TextAlign.center,
-                                                ),
+                                              return CubitBuilder<
+                                                  AfterSpotLightCubit, bool>(
+                                                builder: (context, state) {
+                                                  return buildSimpleTooltip(
+                                                    isLocalSnapshot,
+                                                    isFirstTimeSnapshot,
+                                                    state,
+                                                    timeCycle,
+                                                  );
+                                                },
                                               );
                                             }),
                                       ),
@@ -335,6 +311,41 @@ class _HomePageState extends State<HomePage> {
             return CircularProgressIndicator();
           },
         ),
+      ),
+    );
+  }
+
+  SimpleTooltip buildSimpleTooltip(
+      AsyncSnapshot<bool> isLocalSnapshot,
+      AsyncSnapshot<bool> isFirstTimeSnapshot,
+      bool state,
+      TimeCycle timeCycle) {
+    print('''isLocalSnapshot => ${isLocalSnapshot.data} 
+                isFirstTimeSnapshot => ${isFirstTimeSnapshot.data}
+                state => $state''');
+    return SimpleTooltip(
+      content: Material(
+        child: Text(
+          'swipe from here to get latest prayer times',
+          style: customFarroStyle(),
+        ),
+      ),
+      show: () {
+        if (isLocalSnapshot.data) {
+          return false;
+        }
+        if (isFirstTimeSnapshot.data == null && state) {
+          return true;
+        }
+        return false;
+      }(),
+      hideOnTooltipTap: true,
+      tooltipTap: _persisetTutorialDisplay,
+      tooltipDirection: TooltipDirection.down,
+      child: Text(
+        'Time Remaining Until ${timeCycle.untilDayOrNight}',
+        style: customFarroStyle(26),
+        textAlign: TextAlign.center,
       ),
     );
   }

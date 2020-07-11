@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/prayer_tile_widget.dart';
 import 'package:islamtime/models/time_cycle.dart';
@@ -81,13 +83,21 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   }
 
   void _showTutorial() {
+    final afterSpotLightCubit = CubitProvider.of<AfterSpotLightCubit>(context);
     TutorialCoachMark(
       context,
       targets: _targets,
       colorShadow: Colors.grey[400],
       textSkip: 'Ok',
       clickSkip: () {},
-      finish: () => _persisetTutorialDisplay(),
+      finish: () {
+        afterSpotLightCubit.changeStatus();
+        _persisetTutorialDisplay();
+      },
+      clickTarget: (_) {
+        afterSpotLightCubit.changeStatus();
+        _persisetTutorialDisplay();
+      },
     )..show();
   }
 
