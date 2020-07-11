@@ -36,6 +36,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.1"
+  auto_size_text:
+    dependency: "direct main"
+    description:
+      name: auto_size_text
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   awesome_dialog:
     dependency: "direct main"
     description:
@@ -175,7 +182,7 @@ packages:
       name: cubit
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0"
+    version: "0.1.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -252,12 +259,12 @@ packages:
     source: hosted
     version: "5.0.0"
   flutter_cubit:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_cubit
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0"
+    version: "0.1.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -408,6 +415,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
+  intro_views_flutter:
+    dependency: "direct main"
+    description:
+      name: intro_views_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.8.1"
   io:
     dependency: transitive
     description:
@@ -791,6 +805,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.1+2"
+  tutorial_coach_mark:
+    dependency: "direct main"
+    description:
+      name: tutorial_coach_mark
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   typed_data:
     dependency: transitive
     description:

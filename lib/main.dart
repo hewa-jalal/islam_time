@@ -7,10 +7,10 @@ import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
+import 'pages/onboarding_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:islamtime/repository/location_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'pages/location_page.dart';
 
 // class SimpleBlocDelegate extends BlocDelegate {
 //   @override
@@ -59,8 +59,7 @@ void main() async {
         debugShowCheckedModeBanner: false,
         home: locationPrefs != null
             ? HomePage(showDialog: false, userLocation: locationPrefs)
-            : LocationPage(),
-        // home: LocationPage(),
+            : OnBoardingPage(),
       ),
     ),
   );

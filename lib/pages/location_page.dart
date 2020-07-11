@@ -16,6 +16,8 @@ class LocationPage extends StatefulWidget {
 }
 
 class _LocationPageState extends State<LocationPage> {
+  GlobalKey key1 = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -34,14 +36,16 @@ class _LocationPageState extends State<LocationPage> {
                   ),
                 );
               } else {
-                getUserLocation(context).then((value) {
-                  Get.off(
-                    HomePage(
-                      userLocation: value,
-                      showDialog: true,
-                    ),
-                  );
-                });
+                getUserLocation(context).then(
+                  (value) {
+                    Get.off(
+                      HomePage(
+                        userLocation: value,
+                        showDialog: true,
+                      ),
+                    );
+                  },
+                );
               }
             }
           },
@@ -67,6 +71,11 @@ class _LocationPageState extends State<LocationPage> {
                           fontWeight: FontWeight.w900),
                     ),
                   ),
+                ),
+                FlatButton(
+                  child: Text('button'),
+                  onPressed: () {},
+                  key: key1,
                 ),
               ],
             );

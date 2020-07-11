@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,13 +10,30 @@ import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/setting_page.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutorial_coach_mark/animated_focus_light.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class BottomSheetTime extends StatelessWidget {
+class BottomSheetTime extends StatefulWidget {
   final TimeCycle timeCycle;
   const BottomSheetTime({
     Key key,
     @required this.timeCycle,
   }) : super(key: key);
+
+  @override
+  _BottomSheetTimeState createState() => _BottomSheetTimeState();
+}
+
+class _BottomSheetTimeState extends State<BottomSheetTime> {
+  GlobalKey settingButtonKey = GlobalKey();
+  List<TargetFocus> targets = List();
+
+  @override
+  void initState() {
+    super.initState();
+    _initTargets();
+    SchedulerBinding.instance.addPostFrameCallback((_) => _afterLayout(_));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +85,6 @@ class BottomSheetTime extends StatelessWidget {
                                 String location =
                                     '${splitSnapshot[0]}, ${splitSnapshot[1]}';
                                 bool isLocal = splitSnapshot[2] == 'true';
-                                print('BOTTOM SHEET split => $splitSnapshot');
-                                print('BOTTOM SHEET islocal => $isLocal');
                                 return Row(
                                   children: <Widget>[
                                     Text(
@@ -83,6 +99,7 @@ class BottomSheetTime extends StatelessWidget {
                                     Padding(
                                       padding: const EdgeInsets.only(left: 10),
                                       child: FlatButton(
+                                        key: settingButtonKey,
                                         child: Icon(
                                           isLocal
                                               ? Icons.add_location
@@ -110,7 +127,7 @@ class BottomSheetTime extends StatelessWidget {
                     ),
                     Divider(color: Colors.black, height: 20, thickness: 2),
                     prayerTilesList(state),
-                  ], 
+                  ],
                 );
               } else {
                 return CircularProgressIndicator(
@@ -127,6 +144,44 @@ class BottomSheetTime extends StatelessWidget {
   Future<String> getLocation() async {
     final prefs = await SharedPreferences.getInstance();
     return '${prefs.getString('location')},${prefs.getBool(IS_LOCAL_KEY)}';
+  }
+
+  void _initTargets() async {
+    targets.add(
+      TargetFocus(
+        identify: 'Target 1',
+        keyTarget: settingButtonKey,
+        shape: ShapeLightFocus.Circle,
+        contents: [
+          ContentTarget(
+            align: AlignContent.top,
+            child: Text(
+              'Tap here to tune prayers times or get a new location',
+              style: GoogleFonts.autourOne(fontSize: 30),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTutorial() {
+    TutorialCoachMark(
+      context,
+      targets: targets,
+      colorShadow: Colors.grey[400],
+      // textSkip: 'Skip',
+      clickSkip: () {},
+      clickTarget: (target) {
+        Get.to(SettingPage());
+      },
+    )..show();
+  }
+
+  void _afterLayout(_) {
+    Future.delayed(Duration(milliseconds: 800), () {
+      _showTutorial();
+    });
   }
 
   void _showLocationConfirmDialog(BuildContext context, BangBloc bloc) async {

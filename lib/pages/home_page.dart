@@ -13,6 +13,10 @@ import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_she
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
+import 'package:tutorial_coach_mark/animated_focus_light.dart';
+import 'package:tutorial_coach_mark/content_target.dart';
+import 'package:tutorial_coach_mark/target_focus.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class HomePage extends StatefulWidget {
   final String userLocation;
@@ -32,11 +36,15 @@ class _HomePageState extends State<HomePage> {
   String _arrowAnimation = 'upArrowAnimation';
   int animation;
 
+  GlobalKey swipeSheetKey = GlobalKey();
+  List<TargetFocus> _targets = List();
+
   double prefsLat;
   double prefsLng;
   int prefsMethodNumber;
   List<int> prefsTuning;
   String locationPrefs;
+  bool _sheetEvent = false;
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -45,17 +53,104 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    super.initState();
     animation = 0;
     if (widget.showDialog) {
       SchedulerBinding.instance
           .addPostFrameCallback((_) => _showLocationDialog(context));
     }
+    _initTargets();
+    SchedulerBinding.instance.addPostFrameCallback((_) => _afterLayout(_));
+    super.initState();
+  }
+
+  void _afterLayout(_) {
+    Future.delayed(Duration(milliseconds: 100), () {
+      _showTutorial();
+    });
+  }
+
+  void _showTutorial() {
+    TutorialCoachMark(
+      context,
+      targets: _targets,
+      colorShadow: Colors.grey[400],
+      textSkip: 'Ok',
+      clickSkip: () => _solidController.show(),
+      textStyleSkip: TextStyle(
+        fontSize: 20,
+        color: Colors.black,
+      ),
+      paddingFocus: -100,
+      clickTarget: (target) {},
+    )..show();
+  }
+
+  void _initTargets() async {
+    _targets.add(
+      TargetFocus(
+        identify: 'Target 1',
+        keyTarget: swipeSheetKey,
+        shape: ShapeLightFocus.Circle,
+        contents: [
+          ContentTarget(
+            align: AlignContent.top,
+            child: Container(
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    'Swipe to get more details',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 20.0),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Future<void> _getSharedPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefsLat = prefs.getDouble('lat');
+    prefsLng = prefs.getDouble('lng');
+    prefsMethodNumber = prefs.getInt('methodNumber');
+    locationPrefs = prefs.getString('location');
+
+    List<String> tuningString = prefs.getStringList('tuning');
+    List<int> tuningInt = tuningString.map((e) => int.parse(e)).toList();
+
+    prefsTuning = tuningInt;
+  }
+
+  void _showLocationDialog(BuildContext context) async {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.INFO,
+      animType: AnimType.SCALE,
+      body: Center(
+        child: Text(
+          'Your Location is ${widget.userLocation}',
+          style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
+      btnOkOnPress: () {},
+    )..show();
+  }
+
+  Future<void> _onRefresh(BangBloc bloc) async {
+    await _getSharedPrefs();
+    bloc.add(FetchBangWithSettings(
+        methodNumber: prefsMethodNumber, tuning: prefsTuning));
   }
 
   @override
   Widget build(BuildContext context) {
     final bangBloc = BlocProvider.of<BangBloc>(context);
+    print('isOpenedController ${_solidController.isOpened}');
     return SafeArea(
       child: Scaffold(
         body: SmartRefresher(
@@ -119,6 +214,7 @@ class _HomePageState extends State<HomePage> {
                               }
                             });
                             return SizedBox(
+                              key: swipeSheetKey,
                               height: 100,
                               child: FlareActor(
                                 'assets/flare/arrow_up_down.flr',
@@ -127,7 +223,19 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                         ),
-                        body: BottomSheetTime(timeCycle: timeCycle),
+                        body: StatefulBuilder(
+                          builder: (context, bodySetState) {
+                            if (_solidController.isOpened) {
+                              bodySetState(() {
+                                return BottomSheetTime(timeCycle: timeCycle);
+                              });
+                            } else {
+                              bodySetState(() {
+                                return SizedBox();
+                              });
+                            }
+                          },
+                        ),
                       ),
                     ),
                     BlocConsumer<BangBloc, BangState>(
@@ -181,44 +289,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  void _showLocationDialog(BuildContext context) async {
-    AwesomeDialog(
-      context: context,
-      dialogType: DialogType.INFO,
-      animType: AnimType.SCALE,
-      body: Center(
-        child: Text(
-          'Your Location is ${widget.userLocation}',
-          style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ),
-      btnOkOnPress: () {},
-    )..show();
-  }
-
-  Future<void> _onRefresh(BangBloc bloc) async {
-    await _getSharedPrefs();
-    bloc.add(FetchBangWithSettings(
-        methodNumber: prefsMethodNumber, tuning: prefsTuning));
-  }
-
-  Future<void> _getSharedPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefsLat = prefs.getDouble('lat');
-    prefsLng = prefs.getDouble('lng');
-    prefsMethodNumber = prefs.getInt('methodNumber');
-    locationPrefs = prefs.getString('location');
-
-    List<String> tuningString = prefs.getStringList('tuning');
-    List<int> tuningInt = tuningString.map((e) => int.parse(e)).toList();
-
-    prefsTuning = tuningInt;
-
-    print(''' lat prefs $prefsLat} 
-              lng prefs $prefsLng}
-              methodNumber prefs $prefsMethodNumber}
-              tuning prefs $tuningInt''');
   }
 }

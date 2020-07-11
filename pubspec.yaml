@@ -39,6 +39,7 @@ dependencies:
   solid_bottom_sheet: ^0.1.9
   getflutter: ^1.0.11
   awesome_dialog: ^1.1.2
+  tutorial_coach_mark: ^0.3.0
   http: ^0.12.1
   chopper: ^3.0.3
   json_annotation: ^3.0.1
@@ -49,6 +50,11 @@ dependencies:
   analyzer: ^0.39.11
   hydrated_bloc: ^5.0.0
   date_format: ^1.0.8
+  intro_views_flutter: ^2.8.1
+  auto_size_text: ^2.1.0
+  flutter_cubit: ^0.1.1
+
+
 
 
 dev_dependencies:
