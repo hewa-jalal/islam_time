@@ -59,7 +59,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   }
 
   void _initTargets() async {
-    _isLocalFuture.then((value) {
+    _getIsLocal().then((value) {
       _isLocal = value;
       _targets.add(
         TargetFocus(

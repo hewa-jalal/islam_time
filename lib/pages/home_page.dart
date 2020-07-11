@@ -50,18 +50,14 @@ class _HomePageState extends State<HomePage> {
   int prefsMethodNumber;
   List<int> prefsTuning;
   String locationPrefs;
-  Future<bool> _isLocalFuture;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  Future<bool> _isFirstTimeTutorialFuture;
 
   SolidController _solidController = SolidController();
 
   @override
   void initState() {
     _animation = 0;
-    _isLocalFuture = _getIsLocal();
-    _isFirstTimeTutorialFuture = _getTutorialDisplay();
     if (widget.showDialog) {
       SchedulerBinding.instance
           .addPostFrameCallback((_) => _showLocationDialog(context));
@@ -145,8 +141,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _onRefresh(BangBloc bloc) async {
     await _getSharedPrefs();
-    bloc.add(FetchBangWithSettings(
-        methodNumber: prefsMethodNumber, tuning: prefsTuning));
+    bloc.add(
+      FetchBangWithSettings(
+          methodNumber: prefsMethodNumber, tuning: prefsTuning),
+    );
   }
 
   Future<void> _persisetTutorialDisplay() async {
@@ -167,7 +165,7 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Scaffold(
         body: FutureBuilder<bool>(
-          future: _isLocalFuture,
+          future: _getIsLocal(),
           builder: (context, isLocalSnapshot) {
             if (isLocalSnapshot.hasData) {
               return SmartRefresher(
@@ -193,61 +191,8 @@ class _HomePageState extends State<HomePage> {
                       final timeCycle = state.timeCycle;
                       return Stack(
                         children: <Widget>[
-                          FlareActor(
-                            'assets/flare/DayAndNight.flr',
-                            animation: (_animation == 0)
-                                ? 'day_idle'
-                                : (_animation == 1)
-                                    ? 'switch_to_night'
-                                    : (_animation == 2)
-                                        ? 'switch_to_day'
-                                        : 'night_idle',
-                            callback: (value) {
-                              if (value == 'switch_to_night') {
-                                setState(() => _animation = 3);
-                              } else {
-                                setState(() => _animation = 0);
-                              }
-                            },
-                            fit: BoxFit.fill,
-                          ),
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: SolidBottomSheet(
-                              controller: _solidController,
-                              maxHeight: MediaQuery.of(context).size.height / 2,
-                              headerBar: StatefulBuilder(
-                                builder: (context, sheetSetState) {
-                                  _solidController.isOpenStream.listen((event) {
-                                    if (event) {
-                                      bodyStatusCubit.changeStatus(true);
-                                      sheetSetState(() => _arrowAnimation =
-                                          'downArrowAnimation');
-                                    } else {
-                                      bodyStatusCubit.changeStatus(false);
-                                      sheetSetState(() =>
-                                          _arrowAnimation = 'upArrowAnimation');
-                                    }
-                                  });
-                                  return SizedBox(
-                                    key: _swipeSheetKey,
-                                    height: 100,
-                                    child: FlareActor(
-                                      'assets/flare/arrow_up_down.flr',
-                                      animation: _arrowAnimation,
-                                    ),
-                                  );
-                                },
-                              ),
-                              body: CubitBuilder<BodyStatusCubit, bool>(
-                                builder: (context, state) {
-                                  return state
-                                      ? BottomSheetTime(timeCycle: timeCycle)
-                                      : Container();
-                                },
-                              ),
-                            ),
-                          ),
+                          buildFlareActor(),
+                          buildBottomSheet(context, bodyStatusCubit, timeCycle),
                           BlocConsumer<BangBloc, BangState>(
                             listener: (context, state) {
                               if (state is BangLoaded) {
@@ -265,21 +210,22 @@ class _HomePageState extends State<HomePage> {
                                         padding: const EdgeInsets.only(
                                             top: 14, bottom: 18),
                                         child: FutureBuilder<bool>(
-                                            future: _getTutorialDisplay(),
-                                            builder:
-                                                (context, isFirstTimeSnapshot) {
-                                              return CubitBuilder<
-                                                  AfterSpotLightCubit, bool>(
-                                                builder: (context, state) {
-                                                  return buildSimpleTooltip(
-                                                    isLocalSnapshot,
-                                                    isFirstTimeSnapshot,
-                                                    state,
-                                                    timeCycle,
-                                                  );
-                                                },
-                                              );
-                                            }),
+                                          future: _getTutorialDisplay(),
+                                          builder:
+                                              (context, isFirstTimeSnapshot) {
+                                            return CubitBuilder<
+                                                AfterSpotLightCubit, bool>(
+                                              builder: (context, state) {
+                                                return buildSimpleTooltip(
+                                                  isLocalSnapshot,
+                                                  isFirstTimeSnapshot,
+                                                  state,
+                                                  timeCycle,
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
                                       ),
                                       Align(
                                         alignment: Alignment.topCenter,
@@ -310,6 +256,61 @@ class _HomePageState extends State<HomePage> {
             }
             return CircularProgressIndicator();
           },
+        ),
+      ),
+    );
+  }
+
+  FlareActor buildFlareActor() {
+    return FlareActor(
+      'assets/flare/DayAndNight.flr',
+      animation: (_animation == 0)
+          ? 'day_idle'
+          : (_animation == 1)
+              ? 'switch_to_night'
+              : (_animation == 2) ? 'switch_to_day' : 'night_idle',
+      callback: (value) {
+        if (value == 'switch_to_night') {
+          setState(() => _animation = 3);
+        } else {
+          setState(() => _animation = 0);
+        }
+      },
+      fit: BoxFit.fill,
+    );
+  }
+
+  Align buildBottomSheet(BuildContext context, BodyStatusCubit bodyStatusCubit,
+      TimeCycle timeCycle) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SolidBottomSheet(
+        controller: _solidController,
+        maxHeight: MediaQuery.of(context).size.height / 2,
+        headerBar: StatefulBuilder(
+          builder: (context, sheetSetState) {
+            _solidController.isOpenStream.listen((event) {
+              if (event) {
+                bodyStatusCubit.changeStatus(true);
+                sheetSetState(() => _arrowAnimation = 'downArrowAnimation');
+              } else {
+                bodyStatusCubit.changeStatus(false);
+                sheetSetState(() => _arrowAnimation = 'upArrowAnimation');
+              }
+            });
+            return SizedBox(
+              key: _swipeSheetKey,
+              height: 100,
+              child: FlareActor(
+                'assets/flare/arrow_up_down.flr',
+                animation: _arrowAnimation,
+              ),
+            );
+          },
+        ),
+        body: CubitBuilder<BodyStatusCubit, bool>(
+          builder: (context, state) =>
+              state ? BottomSheetTime(timeCycle: timeCycle) : Container(),
         ),
       ),
     );
