@@ -58,23 +58,33 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         Padding(
           padding: const EdgeInsets.only(top: 6),
           child: AutoSizeText(
-              'as for muslims the day starts at Fajr (sharp sunrise)',
-              maxLines: 3),
+            'as for muslims the day starts at Fajr (sharp sunrise)',
+            maxLines: 3,
+          ),
         ),
         AutoSizeText(
-            'This statement could very well be authenticated by the words of Allah(swt) in the holy Quran:',
-            maxLines: 3),
+          'This statement could very well be authenticated by the words of Allah(swt) in the holy Quran:',
+          maxLines: 3,
+        ),
         AutoSizeText(
-            'Guard strictly (all) your prayers, especially the middle prayer and stand before Allah in a devout.',
-            maxLines: 3),
-        Center(child: AutoSizeText('Quran- 2:238', maxLines: 1)),
+          'Guard strictly (all) your prayers, especially the middle prayer and stand before Allah in a devout.',
+          maxLines: 3,
+        ),
+        Center(
+          child: AutoSizeText(
+            'Quran- 2:238',
+            maxLines: 1,
+          ),
+        ),
       ],
     ),
-    mainImage: Icon(Icons.check_circle, size: 200, color: Colors.green[800]),
+    mainImage: Icon(
+      Icons.check_circle,
+      size: 200,
+      color: Colors.green[800],
+    ),
     body: Text(''),
     pageColor: Colors.teal[900],
-    textStyle: GoogleFonts.heebo(
-      fontSize: 26,
-    ),
+    textStyle: GoogleFonts.heebo(fontSize: 26),
   );
 }

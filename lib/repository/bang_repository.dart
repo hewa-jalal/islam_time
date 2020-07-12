@@ -65,7 +65,7 @@ class LocalBangRepository implements BangRepository {
       String rojHalat = toAmPm(splitLine[3]);
       String nevro = toAmPm(splitLine[4]);
       String evar = toAmPm(splitLine[5]);
-      String makhrab = toAmPm(splitLine[6]);
+      String maghrab = toAmPm(splitLine[6]);
       String aesha = toAmPm(splitLine[7]);
       List<DateTime> dates =
           getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
@@ -75,7 +75,7 @@ class LocalBangRepository implements BangRepository {
         rojHalat: rojHalat,
         nevro: nevro,
         evar: evar,
-        maghrab: makhrab,
+        maghrab: maghrab,
         aesha: aesha,
         theThird: dates[0],
         lastThird: dates[1],
@@ -98,9 +98,6 @@ class LocalBangRepository implements BangRepository {
 
     String formattedMonth = month.toString().padLeft(2, '0');
     String formattedDay = day.toString().padLeft(2, '0');
-
-    // String formattedMonth = month < 10 ? '0$month' : '$month';
-    // String formattedDay = day < 10 ? '0$day' : '$day';
 
     return '$formattedMonth-$formattedDay';
   }
@@ -155,21 +152,21 @@ class LocalBangRepository implements BangRepository {
     int thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
     // int midSecond = thirdDuration.inSeconds;
 
-    DateTime midNightStart = maghrabBang.add(
+    DateTime firstThird = maghrabBang.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
       ),
     );
 
-    DateTime midNightEnd = midNightStart.add(
+    DateTime midNight = firstThird.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
       ),
     );
 
-    DateTime lastThird = midNightEnd.add(
+    DateTime lastThird = midNight.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
@@ -178,19 +175,18 @@ class LocalBangRepository implements BangRepository {
 
     print('''##### 
             the difference $thirdHours:$thirdMin
-            midNightStart $midNightStart
-            midNightEnd $midNightEnd
+            midNightStart $firstThird
+            midNightEnd $midNight
             lastThird $lastThird
             ####
             ''');
 
-    DateTime dayTime = maghrabBang.subtract(
-      Duration(hours: spedaBang.hour, minutes: spedaBang.minute)
-    );
+    DateTime dayTime = maghrabBang
+        .subtract(Duration(hours: spedaBang.hour, minutes: spedaBang.minute));
 
     return [
       DateTime(DateTime.now().year, month, day, thirdHours, thirdMin),
-      midNightEnd,
+      midNight,
       dayTime,
       maghrabBang,
       spedaBang,

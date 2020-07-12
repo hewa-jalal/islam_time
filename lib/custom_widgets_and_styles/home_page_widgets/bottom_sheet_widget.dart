@@ -4,10 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/prayer_tile_widget.dart';
+import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/setting_page.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -127,17 +129,18 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
           child: BlocBuilder<BangBloc, BangState>(
             builder: (context, state) {
               if (state is BangLoaded) {
+                final bang = state.bang;
                 return Column(
                   children: <Widget>[
                     Row(
                       children: <Widget>[
                         Text(
-                          'Hijri ${state.bang.formattedHijriDate}',
+                          'Hijri ${bang.formattedHijriDate}',
                           style: customFarroStyle(),
                         ),
                         Spacer(),
                         Text(
-                          state.bang.date,
+                          bang.date,
                           style: customFarroStyle(),
                         ),
                       ],
@@ -179,7 +182,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                       ),
                     ),
                     Divider(color: Colors.black, height: 20, thickness: 2),
-                    _buildPrayerTilesList(state),
+                    _buildPrayerTilesColumn(bang),
                   ],
                 );
               } else {
@@ -241,23 +244,21 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   }
 }
 
-Column _buildPrayerTilesList(state) => Column(
+Column _buildPrayerTilesColumn(Bang bang) => Column(
       children: <Widget>[
+        PrayerTile(prayerTime: bang.speda, prayerName: 'Fajr', iconTime: 'sun'),
         PrayerTile(
-            prayerTime: state.bang.speda, prayerName: 'Fajr', iconTime: 'sun'),
+            prayerTime: bang.rojHalat, prayerName: 'Sunrise', iconTime: 'sun'),
+        PrayerTile(prayerTime: bang.nevro, prayerName: 'Zuhr', iconTime: 'sun'),
+        PrayerTile(prayerTime: bang.evar, prayerName: 'Asr', iconTime: 'sun'),
         PrayerTile(
-            prayerTime: state.bang.rojHalat,
-            prayerName: 'Sunrise',
-            iconTime: 'sun'),
+            prayerTime: bang.maghrab, prayerName: 'Maghrib', iconTime: 'moon'),
         PrayerTile(
-            prayerTime: state.bang.nevro, prayerName: 'Zuhr', iconTime: 'sun'),
+            prayerTime: bang.aesha, prayerName: 'Isha', iconTime: 'moon'),
         PrayerTile(
-            prayerTime: state.bang.evar, prayerName: 'Asr', iconTime: 'sun'),
-        PrayerTile(
-            prayerTime: state.bang.maghrab,
-            prayerName: 'Maghrib',
-            iconTime: 'moon'),
-        PrayerTile(
-            prayerTime: state.bang.aesha, prayerName: 'Isha', iconTime: 'moon'),
+          prayerTime: DateFormat('HH:mm').format(bang.lastThird),
+          prayerName: 'Midnight',
+          iconTime: 'moon',
+        ),
       ],
     );
