@@ -31,6 +31,7 @@ class PrayerTile extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: customLatoPrayerStyle(
                   fontWeight: FontWeight.w600,
+                  context: context,
                 ),
               ),
             ),
@@ -42,6 +43,7 @@ class PrayerTile extends StatelessWidget {
                 style: customLatoPrayerStyle(
                   letterSpacing: 8,
                   fontWeight: FontWeight.bold,
+                  context: context,
                 ),
               ),
             ),

@@ -10,11 +10,13 @@ import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/cubit/body_status_cubit.dart';
+import 'package:islamtime/cubit/theme_cubit/theme_cubit.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:islamtime/models/time_cycle.dart';
+import 'package:islamtime/ui/global/theme/app_themes.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_tooltip/simple_tooltip.dart';
@@ -194,6 +196,16 @@ class _HomePageState extends State<HomePage> {
                       return Stack(
                         children: <Widget>[
                           buildFlareActor(),
+                          Center(
+                            child: IconButton(
+                              icon: FlutterLogo(),
+                              onPressed: () {
+                                print('theme OnPressed');
+                                CubitProvider.of<ThemeCubit>(context)
+                                    .changeToDark();
+                              },
+                            ),
+                          ),
                           buildBottomSheet(context, bodyStatusCubit, timeCycle),
                           BlocConsumer<BangBloc, BangState>(
                             listener: (context, state) {
@@ -323,9 +335,6 @@ class _HomePageState extends State<HomePage> {
       AsyncSnapshot<bool> isFirstTimeSnapshot,
       bool state,
       TimeCycle timeCycle) {
-    print('''isLocalSnapshot => ${isLocalSnapshot.data} 
-                isFirstTimeSnapshot => ${isFirstTimeSnapshot.data}
-                state => $state''');
     return SimpleTooltip(
       content: Material(
         child: Text(
@@ -347,7 +356,6 @@ class _HomePageState extends State<HomePage> {
       tooltipDirection: TooltipDirection.down,
       child: Text(
         'Time Remaining Until ${timeCycle.untilDayOrNight}',
-        style: customFarroStyle(26),
         textAlign: TextAlign.center,
       ),
     );

@@ -10,6 +10,7 @@ import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'cubit/body_status_cubit.dart';
+import 'cubit/theme_cubit/theme_cubit.dart';
 import 'pages/onboarding_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:islamtime/repository/location_repository.dart';
@@ -66,12 +67,21 @@ void main() async {
           CubitProvider<AfterSpotLightCubit>(
             create: (_) => AfterSpotLightCubit(),
           ),
+          CubitProvider<ThemeCubit>(
+            create: (_) => ThemeCubit(),
+          ),
         ],
-        child: getPackage.GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: locationPrefs != null
-              ? HomePage(showDialog: false, userLocation: locationPrefs)
-              : OnBoardingPage(),
+        child: CubitBuilder<ThemeCubit, ThemeStateCu>(
+          builder: (context, state) {
+            print('main cubit builder called');
+            return getPackage.GetMaterialApp(
+              theme: state.themeData,
+              debugShowCheckedModeBanner: false,
+              home: locationPrefs != null
+                  ? HomePage(showDialog: false, userLocation: locationPrefs)
+                  : OnBoardingPage(),
+            );
+          },
         ),
       ),
     ),

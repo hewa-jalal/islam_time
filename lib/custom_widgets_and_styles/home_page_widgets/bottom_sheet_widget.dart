@@ -183,7 +183,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                       ),
                     ),
                     Divider(color: Colors.black, height: 20, thickness: 2),
-                    _buildPrayerTilesColumn(bang, timeCycle),
+                    _buildPrayerTilesColumn(bang),
                   ],
                 );
               } else {
@@ -245,21 +245,44 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   }
 }
 
-Column _buildPrayerTilesColumn(Bang bang, TimeCycle timeCycle) => Column(
-      children: <Widget>[
-        PrayerTile(prayerTime: bang.speda, prayerName: 'Fajr', iconTime: 'sun'),
-        PrayerTile(
-            prayerTime: bang.rojHalat, prayerName: 'Sunrise', iconTime: 'sun'),
-        PrayerTile(prayerTime: bang.nevro, prayerName: 'Zuhr', iconTime: 'sun'),
-        PrayerTile(prayerTime: bang.evar, prayerName: 'Asr', iconTime: 'sun'),
-        PrayerTile(
-            prayerTime: bang.maghrab, prayerName: 'Maghrib', iconTime: 'moon'),
-        PrayerTile(
-            prayerTime: bang.aesha, prayerName: 'Isha', iconTime: 'moon'),
-        PrayerTile(
-          prayerTime: DateFormat('HH:mm').format(bang.lastThird),
-          prayerName: 'Midnight',
-          iconTime: 'moon',
-        ),
-      ],
-    );
+Column _buildPrayerTilesColumn(Bang bang) {
+  return Column(
+    children: <Widget>[
+      PrayerTile(
+        prayerTime: bang.speda,
+        prayerName: 'Fajr',
+        iconTime: 'sun',
+      ),
+      PrayerTile(
+        prayerTime: bang.rojHalat,
+        prayerName: 'Sunrise',
+        iconTime: 'sun',
+      ),
+      PrayerTile(
+        prayerTime: bang.nevro,
+        prayerName: 'Zuhr',
+        iconTime: 'sun',
+      ),
+      PrayerTile(
+        prayerTime: bang.evar,
+        prayerName: 'Asr',
+        iconTime: 'sun',
+      ),
+      PrayerTile(
+        prayerTime: bang.maghrab,
+        prayerName: 'Maghrib',
+        iconTime: 'moon',
+      ),
+      PrayerTile(
+        prayerTime: bang.aesha,
+        prayerName: 'Isha',
+        iconTime: 'moon',
+      ),
+      PrayerTile(
+        prayerTime: DateFormat('HH:mm').format(bang.lastThird),
+        prayerName: 'Midnight',
+        iconTime: 'moon',
+      ),
+    ],
+  );
+}
