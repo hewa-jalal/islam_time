@@ -26,9 +26,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
     super.initState();
     citiesFiles = getFiles();
     controller.addListener(() {
-      setState(() {
-        filter = controller.text;
-      });
+      setState(() => filter = controller.text);
     });
   }
 
@@ -53,7 +51,9 @@ class _SelectCityPageState extends State<SelectCityPage> {
               title: TextField(
                 controller: controller,
                 decoration: InputDecoration.collapsed(
-                    fillColor: Colors.white, hintText: 'Enter a city name'),
+                  fillColor: Colors.white,
+                  hintText: 'Enter a city name',
+                ),
               ),
             ),
             body: BlocListener<BangBloc, BangState>(
@@ -70,7 +70,6 @@ class _SelectCityPageState extends State<SelectCityPage> {
               child: FutureBuilder(
                 future: citiesFiles,
                 builder: (context, snapshot) {
-                  // ignore: close_sinks
                   final bangBloc = BlocProvider.of<BangBloc>(context);
                   if (snapshot.hasData) {
                     return Column(
@@ -169,7 +168,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
   }
 
   void saveLocationPrefs(String cityName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('location', 'Iraq, $cityName');
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('location', 'Iraq, $cityName');
   }
 }

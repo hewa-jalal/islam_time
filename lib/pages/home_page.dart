@@ -42,18 +42,18 @@ class _HomePageState extends State<HomePage> {
   String _arrowAnimation = 'upArrowAnimation';
   int _animation;
 
-  GlobalKey _swipeSheetKey = GlobalKey();
-  List<TargetFocus> _targets = List();
+  final GlobalKey _swipeSheetKey = GlobalKey();
+  final List<TargetFocus> _targets = List();
 
   double prefsLat;
   double prefsLng;
   int prefsMethodNumber;
   List<int> prefsTuning;
   String locationPrefs;
-  RefreshController _refreshController =
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  SolidController _solidController = SolidController();
+  final SolidController _solidController = SolidController();
 
   @override
   void initState() {
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
     )..show();
   }
 
-  void _initTargets() async {
+  void _initTargets() {
     _targets.add(
       TargetFocus(
         identify: 'Target 1',
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
     prefsTuning = tuningInt;
   }
 
-  void _showLocationDialog(BuildContext context) async {
+  void _showLocationDialog(BuildContext context) {
     AwesomeDialog(
       context: context,
       dialogType: DialogType.INFO,

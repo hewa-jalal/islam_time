@@ -136,8 +136,6 @@ class LocalBangRepository implements BangRepository {
     DateTime maghrabBang =
         DateTime(DateTime.now().year, month, day, maghrabH, maghrabM);
 
-    print('MUST SEEEEEEEEEEEE speda => $spedaBang, maghrab => $maghrabBang');
-
     // get the full differnce between speda and maghrab bang
     DateTime spedaAndMaghrabDiff = spedaBang.subtract(
       Duration(
@@ -156,10 +154,6 @@ class LocalBangRepository implements BangRepository {
     int thirdHours = thirdDuration.inHours;
     int thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
     // int midSecond = thirdDuration.inSeconds;
-
-    print(
-        'the difference third =========> $thirdHours:$thirdMin <==============');
-    print('full difference +++++ $spedaAndMaghrabDiff +++++');
 
     DateTime midNightStart = maghrabBang.add(
       Duration(
@@ -182,8 +176,16 @@ class LocalBangRepository implements BangRepository {
       ),
     );
 
+    print('''##### 
+            the difference $thirdHours:$thirdMin
+            midNightStart $midNightStart
+            midNightEnd $midNightEnd
+            lastThird $lastThird
+            ####
+            ''');
+
     DateTime dayTime = maghrabBang.subtract(
-      Duration(hours: spedaBang.hour, minutes: spedaBang.minute),
+      Duration(hours: spedaBang.hour, minutes: spedaBang.minute)
     );
 
     return [

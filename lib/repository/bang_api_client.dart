@@ -20,7 +20,7 @@ class BangApiClient {
   }) async {
     final url = _baseUrl +
         'latitude=$lat&longitude=$lng&method=$method&month=$month&year=$year&tune=0,${tuning[0]},${tuning[1]},${tuning[2]},${tuning[3]},${tuning[4]},0,${tuning[5]}';
-    final response = await this.httpClient.get(url);
+    final response = await httpClient.get(url);
     if (response.statusCode != 200) {
       throw Exception('error getting bangs');
     }

@@ -8,6 +8,7 @@ import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/pages/select_city_page.dart';
 import 'package:islamtime/pages/home_page.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationPage extends StatefulWidget {
@@ -83,7 +84,7 @@ class _LocationPageState extends State<LocationPage> {
   Future<String> getUserLocation(context) async {
     // ignore: close_sinks
     final bangBloc = BlocProvider.of<BangBloc>(context);
-    
+
     final prefs = await SharedPreferences.getInstance();
     String locationPrefs = prefs.getString('location');
 
@@ -105,10 +106,10 @@ class _LocationPageState extends State<LocationPage> {
     }
 
     if (userCountry.toLowerCase().contains('iraq')) {
-      prefs.setBool(IS_LOCAL_KEY, true);
+      await prefs.setBool(IS_LOCAL_KEY, true);
       Get.off(SelectCityPage());
     } else {
-      prefs.setBool(IS_LOCAL_KEY, false);
+      await prefs.setBool(IS_LOCAL_KEY, false);
       bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
     }
     return '$userCountry, $userCity';

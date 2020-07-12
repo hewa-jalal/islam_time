@@ -20,7 +20,7 @@ class _SettingPageState extends State<SettingPage> {
 
   List<Widget> get appBarActions {
     return ([
-      Center(child: Text("Tabs:")),
+      Center(child: Text('Tabs:')),
       Switch(
         activeColor: Colors.white,
         value: asTabs,
