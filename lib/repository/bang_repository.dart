@@ -66,7 +66,7 @@ class LocalBangRepository implements BangRepository {
       String nevro = toAmPm(splitLine[4]);
       String evar = toAmPm(splitLine[5]);
       String maghrab = toAmPm(splitLine[6]);
-      String aesha = toAmPm(splitLine[7]);
+      String aesha = toAmPm(splitLine[7]).replaceAll(')', '').trim();
       List<DateTime> dates =
           getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
 
@@ -142,7 +142,7 @@ class LocalBangRepository implements BangRepository {
       ),
     );
 
-    // ** get a third of the time
+    // get a third of the time
     int thirdOfDifferenceSeconds =
         (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 3);
     Duration thirdDuration = Duration(

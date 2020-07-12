@@ -25,14 +25,10 @@ class _SelectCityPageState extends State<SelectCityPage> {
   void initState() {
     super.initState();
     citiesFiles = getFiles();
-    controller.addListener(() {
-      setState(() => filter = controller.text);
-    });
+    controller.addListener(() => setState(() => filter = controller.text));
   }
 
-  Future<List<String>> getFiles() async {
-    return await _initFiles(context);
-  }
+  Future<List<String>> getFiles() async => await _initFiles(context);
 
   @override
   void dispose() {
@@ -52,7 +48,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
                 controller: controller,
                 decoration: InputDecoration.collapsed(
                   fillColor: Colors.white,
-                  hintText: 'Enter a city name',
+                  hintText: 'Enter a city name for Iraq',
                 ),
               ),
             ),
@@ -86,24 +82,26 @@ class _SelectCityPageState extends State<SelectCityPage> {
                               Iterable iter = regex.allMatches(item);
                               for (var element in iter) {
                                 cities.add(
-                                    item.substring(element.start, element.end));
+                                  item.substring(element.start, element.end),
+                                );
                               }
                               if (filter == null || filter == '') {
                                 return InkWell(
                                   onTap: () {
                                     userCity = cities[index];
-                                    saveLocationPrefs(userCity);
-                                    setState(() {
-                                      isLoading = true;
-                                    });
+                                    _saveLocationPrefs(userCity);
+                                    setState(() => isLoading = true);
                                     bangBloc.add(
                                       GetBang(
-                                          cityName: cities[index],
-                                          countryName: 'Iraq'),
+                                        cityName: cities[index],
+                                        countryName: 'Iraq',
+                                      ),
                                     );
                                   },
                                   child: ListTile(
-                                    title: Text(cities[index]),
+                                    title: Text(
+                                      cities[index],
+                                    ),
                                   ),
                                 );
                               } else {
@@ -113,18 +111,19 @@ class _SelectCityPageState extends State<SelectCityPage> {
                                     ? InkWell(
                                         onTap: () {
                                           userCity = cities[index];
-                                          saveLocationPrefs(userCity);
-                                          setState(() {
-                                            isLoading = true;
-                                          });
+                                          _saveLocationPrefs(userCity);
+                                          setState(() => isLoading = true);
                                           bangBloc.add(
                                             GetBang(
-                                                cityName: cities[index],
-                                                countryName: 'Iraq'),
+                                              cityName: cities[index],
+                                              countryName: 'Iraq',
+                                            ),
                                           );
                                         },
                                         child: ListTile(
-                                          title: Text(cities[index]),
+                                          title: Text(
+                                            cities[index],
+                                          ),
                                         ),
                                       )
                                     : Container();
@@ -134,9 +133,8 @@ class _SelectCityPageState extends State<SelectCityPage> {
                         ),
                       ],
                     );
-                  } else {
-                    return CircularProgressIndicator();
                   }
+                  return CircularProgressIndicator();
                 },
               ),
             ),
@@ -160,14 +158,12 @@ class _SelectCityPageState extends State<SelectCityPage> {
 
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
-    final filePaths = manifestMap.keys
-        .where((String key) => key.contains('fixed_prayer_time/Iraq/'))
-        .where((String key) => key.contains('.txt'))
-        .toList();
+    final filePaths =
+        manifestMap.keys.where((String key) => key.contains('.txt')).toList();
     return filePaths;
   }
 
-  void saveLocationPrefs(String cityName) async {
+  void _saveLocationPrefs(String cityName) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('location', 'Iraq, $cityName');
   }

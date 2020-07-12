@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/method_number.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -13,29 +14,12 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool asTabs = false;
   MethodNumber selectedNumber = MethodNumber(3);
   List<int> methodNumbersList = [0, 0, 0, 0, 0, 0];
   final List<DropdownMenuItem> items = [];
 
-  List<Widget> get appBarActions {
-    return ([
-      Center(child: Text('Tabs:')),
-      Switch(
-        activeColor: Colors.white,
-        value: asTabs,
-        onChanged: (value) {
-          setState(() {
-            asTabs = value;
-          });
-        },
-      )
-    ]);
-  }
-
   @override
   Widget build(BuildContext context) {
-    // ignore: close_sinks
     final bloc = BlocProvider.of<BangBloc>(context);
     return BlocConsumer<BangBloc, BangState>(
       listener: (context, state) {
@@ -65,21 +49,23 @@ class _SettingPageState extends State<SettingPage> {
                           color: Colors.blueGrey[700],
                           child: SearchableDropdown.single(
                             menuBackgroundColor: Colors.blueGrey[700],
-                            items: MethodNumber.list.map((exNum) {
-                              return DropdownMenuItem(
-                                child: Text(
-                                  exNum.numberString,
-                                  style: GoogleFonts.robotoCondensed(
-                                    fontSize: 20,
-                                    color: Colors.white,
+                            items: MethodNumber.list.map(
+                              (exNum) {
+                                return DropdownMenuItem(
+                                  child: Text(
+                                    exNum.numberString,
+                                    style: GoogleFonts.robotoCondensed(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                                value: exNum,
-                              );
-                            }).toList(),
+                                  value: exNum,
+                                );
+                              },
+                            ).toList(),
                             onChanged: (value) => selectedNumber = value,
                             value: selectedNumber,
-                            hint: 'select a method',
+                            hint: 'Select a method',
                             isExpanded: true,
                           ),
                         ),
@@ -97,54 +83,9 @@ class _SettingPageState extends State<SettingPage> {
                             ),
                           ),
                         ),
-                        _buildMehtodNumberTiles(),
+                        _buildMehtodNumberTiles(state.bang),
                         Spacer(),
-                        Row(
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 20, horizontal: 8),
-                                child: RaisedButton(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text('Get a new location',
-                                        style: GoogleFonts.roboto(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  color: Colors.blueGrey[700],
-                                  onPressed: () => bloc.add(FetchBang()),
-                                ),
-                              ),
-                            ),
-                            Spacer(),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 20, horizontal: 8),
-                                child: RaisedButton(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text('Ok',
-                                        style: GoogleFonts.roboto(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  color: Colors.blueGrey[700],
-                                  onPressed: () => bloc.add(
-                                    FetchBangWithSettings(
-                                      methodNumber: selectedNumber.number,
-                                      tuning: methodNumbersList,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        buildButtonsRow(bloc),
                       ],
                     ),
                   ),
@@ -152,42 +93,102 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
           );
-        } else {
-          return Container(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-            color: Colors.blueGrey[700],
-          );
         }
+        return Container(
+          color: Colors.blueGrey[700],
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
       },
     );
   }
 
-  Column _buildMehtodNumberTiles() {
+  Row buildButtonsRow(BangBloc bloc) {
+    return Row(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+            child: RaisedButton(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  'Get a new location',
+                  style: GoogleFonts.roboto(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.amber[300],
+                  ),
+                ),
+              ),
+              color: Colors.blueGrey[700],
+              onPressed: () => bloc.add(FetchBang()),
+            ),
+          ),
+        ),
+        Spacer(),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+            child: RaisedButton(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  'Ok',
+                  style: GoogleFonts.roboto(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.amber[300],
+                  ),
+                ),
+              ),
+              color: Colors.blueGrey[700],
+              onPressed: () => bloc.add(
+                FetchBangWithSettings(
+                  methodNumber: selectedNumber.number,
+                  tuning: methodNumbersList,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Column _buildMehtodNumberTiles(Bang bang) {
     return Column(
       children: <Widget>[
         MethodNumberTile(
           prayerName: 'Fajr',
+          prayerTime: bang.speda,
           onChange: (val) => methodNumbersList[0] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerTime: bang.rojHalat,
           prayerName: 'Sunrise',
           onChange: (val) => methodNumbersList[1] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerTime: bang.nevro,
           prayerName: 'Zuhr',
           onChange: (val) => methodNumbersList[2] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerTime: bang.evar,
           prayerName: 'Asr',
           onChange: (val) => methodNumbersList[3] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerTime: bang.maghrab,
           prayerName: 'Maghrib',
           onChange: (val) => methodNumbersList[4] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerTime: bang.aesha,
           prayerName: 'Isha',
           isEnd: true,
           onChange: (val) => methodNumbersList[5] = int.parse(val),

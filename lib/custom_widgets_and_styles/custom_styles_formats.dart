@@ -26,6 +26,14 @@ TextStyle customFarroStyle([double size = 16]) => GoogleFonts.farro(
       fontWeight: FontWeight.bold,
     );
 
+TextStyle customLatoPrayerStyle(
+        {double letterSpacing = 0, @required FontWeight fontWeight}) =>
+    GoogleFonts.lato(
+      fontSize: 30,
+      fontWeight: fontWeight,
+      letterSpacing: letterSpacing,
+    );
+
 Color hexToColor(String code) {
   return Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 }

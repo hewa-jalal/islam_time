@@ -143,7 +143,9 @@ class _HomePageState extends State<HomePage> {
     await _getSharedPrefs();
     bloc.add(
       FetchBangWithSettings(
-          methodNumber: prefsMethodNumber, tuning: prefsTuning),
+        methodNumber: prefsMethodNumber,
+        tuning: prefsTuning,
+      ),
     );
   }
 

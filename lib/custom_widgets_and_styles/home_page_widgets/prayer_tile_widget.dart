@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import '../custom_styles_formats.dart';
 
 class PrayerTile extends StatelessWidget {
   final String prayerTime;
@@ -28,9 +29,8 @@ class PrayerTile extends StatelessWidget {
               child: Text(
                 prayerName,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.lato(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w400,
+                style: customLatoPrayerStyle(
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -39,10 +39,9 @@ class PrayerTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 26),
               child: Text(
                 prayerTime,
-                style: GoogleFonts.lato(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
+                style: customLatoPrayerStyle(
                   letterSpacing: 8,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

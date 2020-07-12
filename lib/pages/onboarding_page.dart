@@ -28,7 +28,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         Padding(
           padding: const EdgeInsets.only(top: 6),
           child: Text(
-              'Most of the Muslim Population, around the Globe are of the opinion that the Muslims day starts at Magrib (sunset) time.'),
+            'Most of the Muslim Population, around the Globe are of the opinion that the Muslims day starts at Magrib (sunset) time.',
+          ),
         ),
         Center(
           child: Padding(
@@ -43,12 +44,14 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         )
       ],
     ),
-    mainImage: Icon(Icons.clear, size: 200, color: Colors.red[900]),
+    mainImage: Icon(
+      Icons.clear,
+      size: 200,
+      color: Colors.red[900],
+    ),
     body: Text(''),
     pageColor: Colors.red[500],
-    textStyle: GoogleFonts.heebo(
-      fontSize: 26,
-    ),
+    textStyle: GoogleFonts.heebo(fontSize: 26),
   );
 
   final page2 = PageViewModel(

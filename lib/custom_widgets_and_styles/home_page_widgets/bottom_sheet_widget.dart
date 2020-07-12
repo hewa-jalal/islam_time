@@ -34,13 +34,13 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   bool _firstTimeTutorial = false;
   bool _isLocal = false;
   Future<String> _locationFuture;
-  Future<bool> _isLocalFuture;
+
+  TimeCycle get timeCycle => widget.timeCycle;
 
   @override
   void initState() {
     super.initState();
     _locationFuture = _getLocation();
-    _isLocalFuture = _getIsLocal();
     _initTargets();
     SchedulerBinding.instance.addPostFrameCallback((_) => _afterLayout(_));
   }
@@ -155,7 +155,8 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                             builder: (_, snapshot) {
                               if (!snapshot.hasData) {
                                 return CircularProgressIndicator(
-                                    backgroundColor: Colors.teal);
+                                  backgroundColor: Colors.teal,
+                                );
                               } else {
                                 return Row(
                                   children: <Widget>[
@@ -182,7 +183,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                       ),
                     ),
                     Divider(color: Colors.black, height: 20, thickness: 2),
-                    _buildPrayerTilesColumn(bang),
+                    _buildPrayerTilesColumn(bang, timeCycle),
                   ],
                 );
               } else {
@@ -244,7 +245,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   }
 }
 
-Column _buildPrayerTilesColumn(Bang bang) => Column(
+Column _buildPrayerTilesColumn(Bang bang, TimeCycle timeCycle) => Column(
       children: <Widget>[
         PrayerTile(prayerTime: bang.speda, prayerName: 'Fajr', iconTime: 'sun'),
         PrayerTile(

@@ -5,12 +5,14 @@ import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 class MethodNumberTile extends StatelessWidget {
   final bool isEnd;
   final String prayerName;
+  final String prayerTime;
   final Function onChange;
   const MethodNumberTile({
     Key key,
     this.isEnd = false,
     @required this.prayerName,
     @required this.onChange,
+    @required this.prayerTime,
   }) : super(key: key);
 
   @override
@@ -19,9 +21,15 @@ class MethodNumberTile extends StatelessWidget {
       color: Colors.blueGrey[700],
       child: ListTile(
         dense: true,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Text(prayerName, style: customTextStyle()),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Text(prayerName, style: customFarroStyle(24)),
+            ),
+            Text(prayerTime, style: customFarroStyle(24)),
+          ],
         ),
         trailing: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
