@@ -5,15 +5,21 @@ import 'package:islamtime/ui/global/theme/app_themes.dart';
 
 part 'theme_state.dart';
 
-class ThemeCubit extends Cubit<ThemeStateCu> {
+class ThemeCubit extends Cubit<ThemeChanged> {
   ThemeCubit()
       : super(
-          ThemeStateCu(
+          ThemeChanged(
             themeData: appThemeData[AppTheme.light],
           ),
         );
 
-  void changeToDark() => emit(
-        ThemeStateCu(themeData: appThemeData[AppTheme.dark]),
+  void changeTheme(AppTheme appTheme) => emit(
+        ThemeChanged(themeData: appThemeData[appTheme]),
       );
+
+  @override
+  void onTransition(Transition<ThemeChanged> transition) {
+    print('onTransition $transition');
+    super.onTransition(transition);
+  }
 }

@@ -26,21 +26,37 @@ TextStyle customFarroStyle([double size = 16]) => GoogleFonts.farro(
       fontWeight: FontWeight.bold,
     );
 
-TextStyle customLatoPrayerStyle({
+TextStyle customFarroPrayerStyle({
   double letterSpacing = 0,
   @required FontWeight fontWeight,
   @required BuildContext context,
-}) =>
-    GoogleFonts.lato(
-      fontSize: 30,
-      fontWeight: fontWeight,
-      letterSpacing: letterSpacing,
-      color: Theme.of(context).textTheme.bodyText1.color,
-    );
-
-Color hexToColor(String code) {
-  return Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
+  @required double size,
+}) {
+  final themeData = Theme.of(context);
+  return GoogleFonts.farro(
+    fontSize: size,
+    fontWeight: fontWeight,
+    letterSpacing: letterSpacing,
+    color: themeData.textTheme.bodyText1.color,
+    shadows: themeData.textTheme.bodyText1.color == Colors.white
+        ? <Shadow>[
+            Shadow(
+              offset: Offset(2.0, 2.0),
+              blurRadius: 6.0,
+              color: Colors.black,
+            ),
+            Shadow(
+              offset: Offset(2.0, 2.0),
+              blurRadius: 6.0,
+              color: Colors.black,
+            ),
+          ]
+        : null,
+  );
 }
+
+Color hexToColor(String code) =>
+    Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 
 RichText customRichText(String hijriDate) {
   return RichText(

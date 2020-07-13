@@ -193,6 +193,7 @@ class _HomePageState extends State<HomePage> {
                     if (state is TimeCycleLoaded) {
                       // final mediaQuerySize = MediaQuery.of(context).size;
                       final timeCycle = state.timeCycle;
+                      checkTheme(state.timeCycle, context);
                       return Stack(
                         children: <Widget>[
                           buildFlareActor(),
@@ -201,8 +202,9 @@ class _HomePageState extends State<HomePage> {
                               icon: FlutterLogo(),
                               onPressed: () {
                                 print('theme OnPressed');
-                                CubitProvider.of<ThemeCubit>(context)
-                                    .changeToDark();
+                                final cubitTheme =
+                                    CubitProvider.of<ThemeCubit>(context);
+                                cubitTheme.changeTheme(AppTheme.dark);
                               },
                             ),
                           ),
@@ -294,8 +296,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Align buildBottomSheet(BuildContext context, BodyStatusCubit bodyStatusCubit,
-      TimeCycle timeCycle) {
+  Align buildBottomSheet(
+    BuildContext context,
+    BodyStatusCubit bodyStatusCubit,
+    TimeCycle timeCycle,
+  ) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: SolidBottomSheet(
@@ -357,7 +362,21 @@ class _HomePageState extends State<HomePage> {
       child: Text(
         'Time Remaining Until ${timeCycle.untilDayOrNight}',
         textAlign: TextAlign.center,
+        style: customFarroPrayerStyle(
+          fontWeight: FontWeight.bold,
+          context: context,
+          size: 24,
+        ),
       ),
     );
+  }
+
+  void checkTheme(TimeCycle timeCycle, BuildContext context) {
+    final cubitTheme = CubitProvider.of<ThemeCubit>(context);
+    print('timeIs checkTheme() => ${timeCycle.timeIs}');
+
+    timeCycle.timeIs == TimeIs.day
+        ? cubitTheme.changeTheme(AppTheme.light)
+        : cubitTheme.changeTheme(AppTheme.dark);
   }
 }

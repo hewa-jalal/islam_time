@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/time_cycle.dart';
+
+import 'custom_styles_formats.dart';
 
 enum TimeIs { night, day }
 
@@ -134,10 +135,11 @@ class _CountdownPageState extends State<CountdownPage> {
     checkLastThird();
     return Text(
       formatDuration(remainingTime ?? duration),
-      style: GoogleFonts.farro(
-        fontSize: 44,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 6.0,
+      style: customFarroPrayerStyle(
+        fontWeight: FontWeight.bold,
+        context: context,
+        size: 42,
+        letterSpacing: 10,
       ),
     );
   }

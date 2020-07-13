@@ -33,7 +33,7 @@ dependencies:
   intl: ^0.16.1
   flutter_bloc: ^5.0.0
   equatable: ^1.2.0
-  device_preview: ^0.4.5
+  device_preview: ^0.4.7
   solid_bottom_sheet: ^0.1.9
   simple_tooltip: ^0.1.12
   awesome_dialog: ^1.1.2

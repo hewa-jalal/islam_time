@@ -71,9 +71,9 @@ void main() async {
             create: (_) => ThemeCubit(),
           ),
         ],
-        child: CubitBuilder<ThemeCubit, ThemeStateCu>(
+        child: CubitBuilder<ThemeCubit, ThemeChanged>(
           builder: (context, state) {
-            print('main cubit builder called');
+            print('main cubit theme builder called');
             return getPackage.GetMaterialApp(
               theme: state.themeData,
               debugShowCheckedModeBanner: false,

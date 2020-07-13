@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../custom_styles_formats.dart';
 
 class PrayerTile extends StatelessWidget {
@@ -22,28 +21,34 @@ class PrayerTile extends StatelessWidget {
         contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         leading: Image.asset('assets/images/$iconTime.png'),
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left: 4),
               child: Text(
                 prayerName,
                 textAlign: TextAlign.center,
-                style: customLatoPrayerStyle(
+                style: customFarroPrayerStyle(
                   fontWeight: FontWeight.w600,
                   context: context,
+                  size: 32,
                 ),
               ),
             ),
             Spacer(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 26),
-              child: Text(
-                prayerTime,
-                style: customLatoPrayerStyle(
-                  letterSpacing: 8,
-                  fontWeight: FontWeight.bold,
-                  context: context,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  prayerTime,
+                  style: customFarroPrayerStyle(
+                    fontWeight: FontWeight.w600,
+                    context: context,
+                    size: 32,
+                  ),
                 ),
               ),
             ),

@@ -136,12 +136,20 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                       children: <Widget>[
                         Text(
                           'Hijri ${bang.formattedHijriDate}',
-                          style: customFarroStyle(),
+                          style: customFarroPrayerStyle(
+                            size: 16,
+                            fontWeight: FontWeight.bold,
+                            context: context,
+                          ),
                         ),
                         Spacer(),
                         Text(
                           bang.date,
-                          style: customFarroStyle(),
+                          style: customFarroPrayerStyle(
+                            size: 16,
+                            fontWeight: FontWeight.bold,
+                            context: context,
+                          ),
                         ),
                       ],
                     ),
@@ -157,26 +165,25 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                                 return CircularProgressIndicator(
                                   backgroundColor: Colors.teal,
                                 );
-                              } else {
-                                return Row(
-                                  children: <Widget>[
-                                    FlatButton(
-                                      child: Icon(Icons.clear_all),
-                                      onPressed: () => clearSp(),
-                                    ),
-                                    Text(
-                                      'Prayer Times for \n  ${snapshot.data}',
-                                      style: GoogleFonts.farro(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold,
-                                        height: 1.4,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    buildSettingChoiceButton(context, bloc),
-                                  ],
-                                );
                               }
+                              return Row(
+                                children: <Widget>[
+                                  FlatButton(
+                                    child: Icon(Icons.clear_all),
+                                    onPressed: () => clearSp(),
+                                  ),
+                                  Text(
+                                    'Prayer Times for \n  ${snapshot.data}',
+                                    style: customFarroPrayerStyle(
+                                      size: 22,
+                                      fontWeight: FontWeight.bold,
+                                      context: context,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  _buildSettingChoiceButton(context, bloc),
+                                ],
+                              );
                             },
                           ),
                         ],
@@ -198,7 +205,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     );
   }
 
-  Padding buildSettingChoiceButton(BuildContext context, BangBloc bloc) {
+  Padding _buildSettingChoiceButton(BuildContext context, BangBloc bloc) {
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: FlatButton(

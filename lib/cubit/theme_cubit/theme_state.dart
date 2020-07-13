@@ -1,8 +1,8 @@
 part of 'theme_cubit.dart';
 
-class ThemeStateCu extends Equatable {
+class ThemeChanged extends Equatable {
   final ThemeData themeData;
-  const ThemeStateCu({@required this.themeData});
+  const ThemeChanged({@required this.themeData});
 
   @override
   List<Object> get props => [themeData];
