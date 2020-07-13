@@ -13,6 +13,8 @@ import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/setting_page.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:islamtime/services/connection_service.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -121,6 +123,9 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   @override
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<BangBloc>(context);
+    final connectionStatus = Provider.of<ConnectivityStatus>(context);
+    var isNotConnected = connectionStatus == ConnectivityStatus.Offline;
+
     return Container(
       color: Colors.grey.withOpacity(0.4),
       child: SingleChildScrollView(
@@ -181,7 +186,11 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  _buildSettingChoiceButton(context, bloc),
+                                  _buildSettingChoiceButton(
+                                    context,
+                                    bloc,
+                                    isNotConnected,
+                                  ),
                                 ],
                               );
                             },
@@ -205,7 +214,11 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     );
   }
 
-  Padding _buildSettingChoiceButton(BuildContext context, BangBloc bloc) {
+  Padding _buildSettingChoiceButton(
+    BuildContext context,
+    BangBloc bloc,
+    bool isNotConnected,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: FlatButton(
@@ -215,9 +228,15 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
           color: Colors.blue,
           size: 50,
         ),
-        onPressed: () => _isLocal
-            ? _showLocationConfirmDialog(context, bloc)
-            : Get.to(SettingPage()),
+        onPressed: () {
+          if (_isLocal) {
+            _showLocationConfirmDialog(context, bloc);
+          } else if (isNotConnected) {
+            showOfflineDialog(context);
+          } else {
+            Get.to(SettingPage());
+          }
+        },
       ),
     );
   }

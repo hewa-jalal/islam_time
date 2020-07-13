@@ -76,8 +76,6 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
       }
     } else if (event is FetchBangWithSettings) {
       Position position = await locationRepository.getUserLocation();
-      print('methodNumber => => => ${event.methodNumber}');
-      print('tuning => => => ${event.tuning}');
       _saveSettingsToPrefs(
         lat: position.latitude,
         lng: position.longitude,
@@ -85,15 +83,19 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
         tuning: event.tuning,
         isLocal: false,
       );
-      final Bang bang = await bangRepository.fetchBang(
-        lat: position.latitude,
-        lng: position.longitude,
-        month: DateTime.now().month,
-        year: DateTime.now().year,
-        method: event.methodNumber,
-        tuning: event.tuning,
-      );
-      yield BangLoaded(bang);
+      try {
+        final Bang bang = await bangRepository.fetchBang(
+          lat: position.latitude,
+          lng: position.longitude,
+          month: DateTime.now().month,
+          year: DateTime.now().year,
+          method: event.methodNumber,
+          tuning: event.tuning,
+        );
+        yield BangLoaded(bang);
+      } catch (_) {
+        yield BangError();
+      }
     }
   }
 

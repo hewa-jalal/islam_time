@@ -16,7 +16,9 @@ import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:islamtime/models/time_cycle.dart';
+import 'package:islamtime/services/connection_service.dart';
 import 'package:islamtime/ui/global/theme/app_themes.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_tooltip/simple_tooltip.dart';
@@ -141,14 +143,24 @@ class _HomePageState extends State<HomePage> {
     )..show();
   }
 
-  Future<void> _onRefresh(BangBloc bloc) async {
+  Future<void> _onRefresh(
+    BangBloc bloc,
+    BuildContext context,
+    bool isNotConnected,
+  ) async {
     await _getSharedPrefs();
-    bloc.add(
-      FetchBangWithSettings(
-        methodNumber: prefsMethodNumber,
-        tuning: prefsTuning,
-      ),
-    );
+    if (isNotConnected) {
+      print('no internet in HomePage');
+      _refreshController.refreshCompleted();
+      showOfflineDialog(context);
+    } else {
+      bloc.add(
+        FetchBangWithSettings(
+          methodNumber: prefsMethodNumber,
+          tuning: prefsTuning,
+        ),
+      );
+    }
   }
 
   Future<void> _persisetTutorialDisplay() async {
@@ -166,6 +178,10 @@ class _HomePageState extends State<HomePage> {
     final bangBloc = BlocProvider.of<BangBloc>(context);
     final bodyStatusCubit = context.cubit<BodyStatusCubit>();
     final afterSpotLightCubit = CubitProvider.of<AfterSpotLightCubit>(context);
+    final connectionStatus = Provider.of<ConnectivityStatus>(context);
+    var isNotConnected = connectionStatus == ConnectivityStatus.Offline;
+    print('connectionStatus in HomePage $connectionStatus');
+
     return SafeArea(
       child: Scaffold(
         body: FutureBuilder<bool>(
@@ -173,7 +189,7 @@ class _HomePageState extends State<HomePage> {
           builder: (context, isLocalSnapshot) {
             if (isLocalSnapshot.hasData) {
               return SmartRefresher(
-                onRefresh: () => _onRefresh(bangBloc),
+                onRefresh: () => _onRefresh(bangBloc, context, isNotConnected),
                 physics: isLocalSnapshot.data
                     ? NeverScrollableScrollPhysics()
                     : null,
@@ -373,7 +389,6 @@ class _HomePageState extends State<HomePage> {
 
   void checkTheme(TimeCycle timeCycle, BuildContext context) {
     final cubitTheme = CubitProvider.of<ThemeCubit>(context);
-    print('timeIs checkTheme() => ${timeCycle.timeIs}');
 
     timeCycle.timeIs == TimeIs.day
         ? cubitTheme.changeTheme(AppTheme.light)

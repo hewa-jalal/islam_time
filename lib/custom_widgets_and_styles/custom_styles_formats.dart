@@ -1,7 +1,28 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:jiffy/jiffy.dart';
+
+void showOfflineDialog(BuildContext context) async {
+  AwesomeDialog(
+    context: context,
+    dialogType: DialogType.WARNING,
+    animType: AnimType.SCALE,
+    body: Center(
+      child: Text(
+        'Please make sure you are connecetd to the internet before going into settings',
+        style: customFarroPrayerStyle(
+          fontWeight: FontWeight.w400,
+          context: context,
+          size: 20,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    ),
+    btnOkOnPress: () {},
+  )..show();
+}
 
 const String IS_LOCAL_KEY = 'isLocal';
 const String IS_FIRST_TIME_KEY = 'isFirstTime';

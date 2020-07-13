@@ -9,6 +9,8 @@ import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
+import 'package:islamtime/services/connection_service.dart';
+import 'package:provider/provider.dart';
 import 'cubit/body_status_cubit.dart';
 import 'cubit/theme_cubit/theme_cubit.dart';
 import 'pages/onboarding_page.dart';
@@ -71,17 +73,21 @@ void main() async {
             create: (_) => ThemeCubit(),
           ),
         ],
-        child: CubitBuilder<ThemeCubit, ThemeChanged>(
-          builder: (context, state) {
-            print('main cubit theme builder called');
-            return getPackage.GetMaterialApp(
-              theme: state.themeData,
-              debugShowCheckedModeBanner: false,
-              home: locationPrefs != null
-                  ? HomePage(showDialog: false, userLocation: locationPrefs)
-                  : OnBoardingPage(),
-            );
-          },
+        child: StreamProvider<ConnectivityStatus>(
+          create: (context) =>
+              ConnectivityService().connectionStatusController.stream,
+          child: CubitBuilder<ThemeCubit, ThemeChanged>(
+            builder: (context, state) {
+              print('main cubit theme builder called');
+              return getPackage.GetMaterialApp(
+                theme: state.themeData,
+                debugShowCheckedModeBanner: false,
+                home: locationPrefs != null
+                    ? HomePage(showDialog: false, userLocation: locationPrefs)
+                    : OnBoardingPage(),
+              );
+            },
+          ),
         ),
       ),
     ),

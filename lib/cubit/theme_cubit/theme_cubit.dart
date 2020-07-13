@@ -16,10 +16,4 @@ class ThemeCubit extends Cubit<ThemeChanged> {
   void changeTheme(AppTheme appTheme) => emit(
         ThemeChanged(themeData: appThemeData[appTheme]),
       );
-
-  @override
-  void onTransition(Transition<ThemeChanged> transition) {
-    print('onTransition $transition');
-    super.onTransition(transition);
-  }
 }
