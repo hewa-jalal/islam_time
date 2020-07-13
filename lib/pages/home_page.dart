@@ -43,21 +43,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _arrowAnimation = 'upArrowAnimation';
-  int _animation;
-
-  final GlobalKey _swipeSheetKey = GlobalKey();
-  final List<TargetFocus> _targets = List();
-
+  String locationPrefs;
   double prefsLat;
   double prefsLng;
   int prefsMethodNumber;
   List<int> prefsTuning;
-  String locationPrefs;
+
+  int _animation;
+  String _arrowAnimation = 'upArrowAnimation';
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   final SolidController _solidController = SolidController();
+  final GlobalKey _swipeSheetKey = GlobalKey();
+  final List<TargetFocus> _targets = List();
 
   @override
   void initState() {
@@ -150,7 +149,6 @@ class _HomePageState extends State<HomePage> {
   ) async {
     await _getSharedPrefs();
     if (isNotConnected) {
-      print('no internet in HomePage');
       _refreshController.refreshCompleted();
       showOfflineDialog(context);
     } else {
@@ -168,9 +166,112 @@ class _HomePageState extends State<HomePage> {
     prefs.setBool(IS_FIRST_TIME_KEY, true);
   }
 
+  // TODO: maybe combine into other method
   Future<bool> _getTutorialDisplay() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(IS_FIRST_TIME_KEY);
+  }
+
+  FlareActor buildFlareActor() {
+    return FlareActor(
+      'assets/flare/DayAndNight.flr',
+      animation: (_animation == 0)
+          ? 'day_idle'
+          : (_animation == 1)
+              ? 'switch_to_night'
+              : (_animation == 2) ? 'switch_to_day' : 'night_idle',
+      callback: (value) {
+        if (value == 'switch_to_night') {
+          setState(() => _animation = 3);
+        } else {
+          setState(() => _animation = 0);
+        }
+      },
+      fit: BoxFit.fill,
+    );
+  }
+
+  Align _buildBottomSheet(
+    BuildContext context,
+    BodyStatusCubit bodyStatusCubit,
+    TimeCycle timeCycle,
+  ) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SolidBottomSheet(
+        controller: _solidController,
+        maxHeight: MediaQuery.of(context).size.height / 2,
+        headerBar: StatefulBuilder(
+          builder: (context, sheetSetState) {
+            _solidController.isOpenStream.listen((event) {
+              if (event) {
+                bodyStatusCubit.changeStatus(true);
+                sheetSetState(() => _arrowAnimation = 'downArrowAnimation');
+              } else {
+                bodyStatusCubit.changeStatus(false);
+                sheetSetState(() => _arrowAnimation = 'upArrowAnimation');
+              }
+            });
+            return SizedBox(
+              key: _swipeSheetKey,
+              height: 100,
+              child: FlareActor(
+                'assets/flare/arrow_up_down.flr',
+                animation: _arrowAnimation,
+              ),
+            );
+          },
+        ),
+        body: CubitBuilder<BodyStatusCubit, bool>(
+          builder: (context, state) =>
+              state ? BottomSheetTime(timeCycle: timeCycle) : Container(),
+        ),
+      ),
+    );
+  }
+
+  SimpleTooltip _buildSimpleTooltip(
+      AsyncSnapshot<bool> isLocalSnapshot,
+      AsyncSnapshot<bool> isFirstTimeSnapshot,
+      bool state,
+      TimeCycle timeCycle) {
+    return SimpleTooltip(
+      content: Material(
+        child: Text(
+          'swipe from here to get latest prayer times',
+          style: customFarroStyle(),
+        ),
+      ),
+      show: () {
+        if (isLocalSnapshot.data) {
+          return false;
+        }
+        if (isFirstTimeSnapshot.data == null && state) {
+          return true;
+        }
+        return false;
+      }(),
+      hideOnTooltipTap: true,
+      tooltipTap: _persisetTutorialDisplay,
+      tooltipDirection: TooltipDirection.down,
+      child: Text(
+        'Time Remaining Until ${timeCycle.untilDayOrNight}',
+        textAlign: TextAlign.center,
+        style: customFarroPrayerStyle(
+          fontWeight: FontWeight.bold,
+          context: context,
+          size: 24,
+        ),
+      ),
+    );
+  }
+
+  void _checkTheme(TimeCycle timeCycle, BuildContext context) {
+    final cubitTheme = CubitProvider.of<ThemeCubit>(context);
+
+    timeCycle.timeIs == TimeIs.day
+        ? cubitTheme.changeTheme(AppTheme.light)
+        : cubitTheme.changeTheme(AppTheme.dark);
   }
 
   @override
@@ -180,7 +281,6 @@ class _HomePageState extends State<HomePage> {
     final afterSpotLightCubit = CubitProvider.of<AfterSpotLightCubit>(context);
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
     var isNotConnected = connectionStatus == ConnectivityStatus.Offline;
-    print('connectionStatus in HomePage $connectionStatus');
 
     return SafeArea(
       child: Scaffold(
@@ -209,7 +309,7 @@ class _HomePageState extends State<HomePage> {
                     if (state is TimeCycleLoaded) {
                       // final mediaQuerySize = MediaQuery.of(context).size;
                       final timeCycle = state.timeCycle;
-                      checkTheme(state.timeCycle, context);
+                      _checkTheme(state.timeCycle, context);
                       return Stack(
                         children: <Widget>[
                           buildFlareActor(),
@@ -224,7 +324,8 @@ class _HomePageState extends State<HomePage> {
                               },
                             ),
                           ),
-                          buildBottomSheet(context, bodyStatusCubit, timeCycle),
+                          _buildBottomSheet(
+                              context, bodyStatusCubit, timeCycle),
                           BlocConsumer<BangBloc, BangState>(
                             listener: (context, state) {
                               if (state is BangLoaded) {
@@ -248,7 +349,7 @@ class _HomePageState extends State<HomePage> {
                                             return CubitBuilder<
                                                 AfterSpotLightCubit, bool>(
                                               builder: (context, state) {
-                                                return buildSimpleTooltip(
+                                                return _buildSimpleTooltip(
                                                   isLocalSnapshot,
                                                   isFirstTimeSnapshot,
                                                   state,
@@ -291,107 +392,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  FlareActor buildFlareActor() {
-    return FlareActor(
-      'assets/flare/DayAndNight.flr',
-      animation: (_animation == 0)
-          ? 'day_idle'
-          : (_animation == 1)
-              ? 'switch_to_night'
-              : (_animation == 2) ? 'switch_to_day' : 'night_idle',
-      callback: (value) {
-        if (value == 'switch_to_night') {
-          setState(() => _animation = 3);
-        } else {
-          setState(() => _animation = 0);
-        }
-      },
-      fit: BoxFit.fill,
-    );
-  }
-
-  Align buildBottomSheet(
-    BuildContext context,
-    BodyStatusCubit bodyStatusCubit,
-    TimeCycle timeCycle,
-  ) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: SolidBottomSheet(
-        controller: _solidController,
-        maxHeight: MediaQuery.of(context).size.height / 2,
-        headerBar: StatefulBuilder(
-          builder: (context, sheetSetState) {
-            _solidController.isOpenStream.listen((event) {
-              if (event) {
-                bodyStatusCubit.changeStatus(true);
-                sheetSetState(() => _arrowAnimation = 'downArrowAnimation');
-              } else {
-                bodyStatusCubit.changeStatus(false);
-                sheetSetState(() => _arrowAnimation = 'upArrowAnimation');
-              }
-            });
-            return SizedBox(
-              key: _swipeSheetKey,
-              height: 100,
-              child: FlareActor(
-                'assets/flare/arrow_up_down.flr',
-                animation: _arrowAnimation,
-              ),
-            );
-          },
-        ),
-        body: CubitBuilder<BodyStatusCubit, bool>(
-          builder: (context, state) =>
-              state ? BottomSheetTime(timeCycle: timeCycle) : Container(),
-        ),
-      ),
-    );
-  }
-
-  SimpleTooltip buildSimpleTooltip(
-      AsyncSnapshot<bool> isLocalSnapshot,
-      AsyncSnapshot<bool> isFirstTimeSnapshot,
-      bool state,
-      TimeCycle timeCycle) {
-    return SimpleTooltip(
-      content: Material(
-        child: Text(
-          'swipe from here to get latest prayer times',
-          style: customFarroStyle(),
-        ),
-      ),
-      show: () {
-        if (isLocalSnapshot.data) {
-          return false;
-        }
-        if (isFirstTimeSnapshot.data == null && state) {
-          return true;
-        }
-        return false;
-      }(),
-      hideOnTooltipTap: true,
-      tooltipTap: _persisetTutorialDisplay,
-      tooltipDirection: TooltipDirection.down,
-      child: Text(
-        'Time Remaining Until ${timeCycle.untilDayOrNight}',
-        textAlign: TextAlign.center,
-        style: customFarroPrayerStyle(
-          fontWeight: FontWeight.bold,
-          context: context,
-          size: 24,
-        ),
-      ),
-    );
-  }
-
-  void checkTheme(TimeCycle timeCycle, BuildContext context) {
-    final cubitTheme = CubitProvider.of<ThemeCubit>(context);
-
-    timeCycle.timeIs == TimeIs.day
-        ? cubitTheme.changeTheme(AppTheme.light)
-        : cubitTheme.changeTheme(AppTheme.dark);
   }
 }

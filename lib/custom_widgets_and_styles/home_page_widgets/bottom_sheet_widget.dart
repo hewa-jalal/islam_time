@@ -20,24 +20,23 @@ import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class BottomSheetTime extends StatefulWidget {
-  final TimeCycle timeCycle;
   const BottomSheetTime({
     Key key,
     @required this.timeCycle,
   }) : super(key: key);
+
+  final TimeCycle timeCycle;
 
   @override
   _BottomSheetTimeState createState() => _BottomSheetTimeState();
 }
 
 class _BottomSheetTimeState extends State<BottomSheetTime> {
-  GlobalKey _settingButtonKey = GlobalKey();
-  List<TargetFocus> _targets = List();
   bool _firstTimeTutorial = false;
   bool _isLocal = false;
   Future<String> _locationFuture;
-
-  TimeCycle get timeCycle => widget.timeCycle;
+  GlobalKey _settingButtonKey = GlobalKey();
+  List<TargetFocus> _targets = List();
 
   @override
   void initState() {
@@ -46,6 +45,8 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     _initTargets();
     SchedulerBinding.instance.addPostFrameCallback((_) => _afterLayout(_));
   }
+
+  TimeCycle get timeCycle => widget.timeCycle;
 
   Future<String> _getLocation() async {
     final prefs = await SharedPreferences.getInstance();
@@ -118,6 +119,104 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   Future<void> _persisetTutorialDisplay() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool(IS_FIRST_TIME_KEY, true);
+  }
+
+  Padding _buildSettingChoiceButton(
+    BuildContext context,
+    BangBloc bloc,
+    bool isNotConnected,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: FlatButton(
+        key: _settingButtonKey,
+        child: Icon(
+          _isLocal ? Icons.add_location : Icons.settings,
+          color: Colors.blue,
+          size: 50,
+        ),
+        onPressed: () {
+          if (_isLocal) {
+            _showLocationConfirmDialog(context, bloc);
+          } else if (isNotConnected) {
+            showOfflineDialog(context);
+          } else {
+            Get.to(SettingPage());
+          }
+        },
+      ),
+    );
+  }
+
+  void _showLocationConfirmDialog(BuildContext context, BangBloc bloc) async {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.WARNING,
+      animType: AnimType.SCALE,
+      body: Center(
+        child: Wrap(
+          direction: Axis.horizontal,
+          children: <Widget>[
+            Text(
+              'you have fixed prayer times for you location, are you sure you want to change your location',
+              style:
+                  GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              'and get prayer times from the internet?',
+              style:
+                  GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+      btnOkOnPress: () => bloc.add(FetchBang()),
+      btnCancelOnPress: () {},
+    )..show();
+  }
+
+  Column _buildPrayerTilesColumn(Bang bang) {
+    return Column(
+      children: <Widget>[
+        PrayerTile(
+          prayerTime: bang.speda,
+          prayerName: 'Fajr',
+          iconTime: 'sun',
+        ),
+        PrayerTile(
+          prayerTime: bang.rojHalat,
+          prayerName: 'Sunrise',
+          iconTime: 'sun',
+        ),
+        PrayerTile(
+          prayerTime: bang.nevro,
+          prayerName: 'Zuhr',
+          iconTime: 'sun',
+        ),
+        PrayerTile(
+          prayerTime: bang.evar,
+          prayerName: 'Asr',
+          iconTime: 'sun',
+        ),
+        PrayerTile(
+          prayerTime: bang.maghrab,
+          prayerName: 'Maghrib',
+          iconTime: 'moon',
+        ),
+        PrayerTile(
+          prayerTime: bang.aesha,
+          prayerName: 'Isha',
+          iconTime: 'moon',
+        ),
+        PrayerTile(
+          prayerTime: DateFormat('HH:mm').format(bang.lastThird),
+          prayerName: 'Midnight',
+          iconTime: 'moon',
+        ),
+      ],
+    );
   }
 
   @override
@@ -213,102 +312,4 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       ),
     );
   }
-
-  Padding _buildSettingChoiceButton(
-    BuildContext context,
-    BangBloc bloc,
-    bool isNotConnected,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10),
-      child: FlatButton(
-        key: _settingButtonKey,
-        child: Icon(
-          _isLocal ? Icons.add_location : Icons.settings,
-          color: Colors.blue,
-          size: 50,
-        ),
-        onPressed: () {
-          if (_isLocal) {
-            _showLocationConfirmDialog(context, bloc);
-          } else if (isNotConnected) {
-            showOfflineDialog(context);
-          } else {
-            Get.to(SettingPage());
-          }
-        },
-      ),
-    );
-  }
-
-  void _showLocationConfirmDialog(BuildContext context, BangBloc bloc) async {
-    AwesomeDialog(
-      context: context,
-      dialogType: DialogType.WARNING,
-      animType: AnimType.SCALE,
-      body: Center(
-        child: Wrap(
-          direction: Axis.horizontal,
-          children: <Widget>[
-            Text(
-              'you have fixed prayer times for you location, are you sure you want to change your location',
-              style:
-                  GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              'and get prayer times from the internet?',
-              style:
-                  GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-      btnOkOnPress: () => bloc.add(FetchBang()),
-      btnCancelOnPress: () {},
-    )..show();
-  }
-}
-
-Column _buildPrayerTilesColumn(Bang bang) {
-  return Column(
-    children: <Widget>[
-      PrayerTile(
-        prayerTime: bang.speda,
-        prayerName: 'Fajr',
-        iconTime: 'sun',
-      ),
-      PrayerTile(
-        prayerTime: bang.rojHalat,
-        prayerName: 'Sunrise',
-        iconTime: 'sun',
-      ),
-      PrayerTile(
-        prayerTime: bang.nevro,
-        prayerName: 'Zuhr',
-        iconTime: 'sun',
-      ),
-      PrayerTile(
-        prayerTime: bang.evar,
-        prayerName: 'Asr',
-        iconTime: 'sun',
-      ),
-      PrayerTile(
-        prayerTime: bang.maghrab,
-        prayerName: 'Maghrib',
-        iconTime: 'moon',
-      ),
-      PrayerTile(
-        prayerTime: bang.aesha,
-        prayerName: 'Isha',
-        iconTime: 'moon',
-      ),
-      PrayerTile(
-        prayerTime: DateFormat('HH:mm').format(bang.lastThird),
-        prayerName: 'Midnight',
-        iconTime: 'moon',
-      ),
-    ],
-  );
 }

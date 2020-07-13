@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
@@ -79,12 +80,14 @@ void main() async {
           child: CubitBuilder<ThemeCubit, ThemeChanged>(
             builder: (context, state) {
               print('main cubit theme builder called');
-              return getPackage.GetMaterialApp(
-                theme: state.themeData,
-                debugShowCheckedModeBanner: false,
-                home: locationPrefs != null
-                    ? HomePage(showDialog: false, userLocation: locationPrefs)
-                    : OnBoardingPage(),
+              return DevicePreview(
+                builder: (_) => getPackage.GetMaterialApp(
+                  theme: state.themeData,
+                  debugShowCheckedModeBanner: false,
+                  home: locationPrefs != null
+                      ? HomePage(showDialog: false, userLocation: locationPrefs)
+                      : OnBoardingPage(),
+                ),
               );
             },
           ),
