@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_screenutil/screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
@@ -121,30 +122,26 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     prefs.setBool(IS_FIRST_TIME_KEY, true);
   }
 
-  Padding _buildSettingChoiceButton(
+  InkWell _buildSettingChoiceButton(
     BuildContext context,
     BangBloc bloc,
     bool isNotConnected,
   ) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      child: FlatButton(
-        key: _settingButtonKey,
-        child: Icon(
-          _isLocal ? Icons.add_location : Icons.settings,
-          color: Colors.blue,
-          size: 50,
-        ),
-        onPressed: () {
-          if (_isLocal) {
-            _showLocationConfirmDialog(context, bloc);
-          } else if (isNotConnected) {
-            showOfflineDialog(context);
-          } else {
-            Get.to(SettingPage());
-          }
-        },
+    return InkWell(
+      key: _settingButtonKey,
+      child: Icon(
+        _isLocal ? Icons.add_location : Icons.settings,
+        color: Colors.blue,
       ),
+      onTap: () {
+        if (_isLocal) {
+          _showLocationConfirmDialog(context, bloc);
+        } else if (isNotConnected) {
+          showOfflineDialog(context);
+        } else {
+          Get.to(SettingPage());
+        }
+      },
     );
   }
 
@@ -211,7 +208,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
           iconTime: 'moon',
         ),
         PrayerTile(
-          prayerTime: DateFormat('HH:mm').format(bang.lastThird),
+          prayerTime: intl.DateFormat('HH:mm').format(bang.lastThird),
           prayerName: 'Midnight',
           iconTime: 'moon',
         ),
@@ -259,42 +256,38 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        children: <Widget>[
-                          Spacer(),
-                          FutureBuilder<String>(
-                            future: _locationFuture,
-                            builder: (_, snapshot) {
-                              if (!snapshot.hasData) {
-                                return CircularProgressIndicator(
-                                  backgroundColor: Colors.teal,
-                                );
-                              }
-                              return Row(
+                      child: FutureBuilder<String>(
+                        future: _locationFuture,
+                        builder: (_, snapshotLocation) {
+                          if (!snapshotLocation.hasData) {
+                            return CircularProgressIndicator();
+                          }
+                          return Stack(
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  FlatButton(
-                                    child: Icon(Icons.clear_all),
-                                    onPressed: () => clearSp(),
-                                  ),
                                   Text(
-                                    'Prayer Times for \n  ${snapshot.data}',
+                                    'Prayers for \n ${snapshotLocation.data}',
+                                    textAlign: TextAlign.center,
                                     style: customFarroPrayerStyle(
-                                      size: 22,
                                       fontWeight: FontWeight.bold,
                                       context: context,
+                                      size: 14,
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  _buildSettingChoiceButton(
-                                    context,
-                                    bloc,
-                                    isNotConnected,
                                   ),
                                 ],
-                              );
-                            },
-                          ),
-                        ],
+                              ),
+                              Positioned.fill(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: _buildSettingChoiceButton(
+                                      context, bloc, isNotConnected),
+                                ),
+                              )
+                            ],
+                          );
+                        },
                       ),
                     ),
                     Divider(color: Colors.black, height: 20, thickness: 2),

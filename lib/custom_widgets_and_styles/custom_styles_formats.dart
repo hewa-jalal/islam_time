@@ -79,20 +79,21 @@ TextStyle customFarroPrayerStyle({
 Color hexToColor(String code) =>
     Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 
-RichText customRichText(String hijriDate) {
+RichText customRichText(String text, BuildContext context) {
   return RichText(
+    textAlign: TextAlign.end,
     text: TextSpan(
       children: <TextSpan>[
         TextSpan(
-          text: 'Hijri ',
-          style: GoogleFonts.farro(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          text: 'Prayer times for',
+          style: customFarroPrayerStyle(
+              fontWeight: FontWeight.bold, context: context, size: 10),
         ),
+        TextSpan(text: '\n'),
         TextSpan(
-          text: hijriDate,
-          style: customTextStyle(isBold: true),
+          text: text,
+          style: customFarroPrayerStyle(
+              fontWeight: FontWeight.bold, context: context, size: 10),
         ),
       ],
     ),

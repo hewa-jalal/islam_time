@@ -200,6 +200,7 @@ class _HomePageState extends State<HomePage> {
       alignment: Alignment.bottomCenter,
       child: SolidBottomSheet(
         controller: _solidController,
+        showOnAppear: true,
         maxHeight: MediaQuery.of(context).size.height / 2,
         headerBar: StatefulBuilder(
           builder: (context, sheetSetState) {

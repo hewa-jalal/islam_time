@@ -2,6 +2,7 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_screenutil/screenutil.dart';
 import 'package:get/get.dart' as getPackage;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
@@ -14,6 +15,7 @@ import 'package:islamtime/services/connection_service.dart';
 import 'package:provider/provider.dart';
 import 'cubit/body_status_cubit.dart';
 import 'cubit/theme_cubit/theme_cubit.dart';
+import 'custom_widgets_and_styles/custom_styles_formats.dart';
 import 'pages/onboarding_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:islamtime/repository/location_repository.dart';
@@ -79,15 +81,13 @@ void main() async {
               ConnectivityService().connectionStatusController.stream,
           child: CubitBuilder<ThemeCubit, ThemeChanged>(
             builder: (context, state) {
-              print('main cubit theme builder called');
-              return DevicePreview(
-                builder: (_) => getPackage.GetMaterialApp(
-                  theme: state.themeData,
-                  debugShowCheckedModeBanner: false,
-                  home: locationPrefs != null
-                      ? HomePage(showDialog: false, userLocation: locationPrefs)
-                      : OnBoardingPage(),
-                ),
+              ScreenUtil.init();
+              return getPackage.GetMaterialApp(
+                theme: state.themeData,
+                debugShowCheckedModeBanner: false,
+                home: locationPrefs != null
+                    ? HomePage(showDialog: false, userLocation: locationPrefs)
+                    : OnBoardingPage(),
               );
             },
           ),
