@@ -17,6 +17,7 @@ import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/services/connection_service.dart';
+import 'package:islamtime/size_config.dart';
 import 'package:islamtime/ui/global/theme/app_themes.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -201,7 +202,7 @@ class _HomePageState extends State<HomePage> {
       child: SolidBottomSheet(
         controller: _solidController,
         showOnAppear: true,
-        maxHeight: MediaQuery.of(context).size.height / 2,
+        maxHeight: SizeConfig.screenHeight / 2,
         headerBar: StatefulBuilder(
           builder: (context, sheetSetState) {
             _solidController.isOpenStream.listen((event) {
@@ -261,7 +262,7 @@ class _HomePageState extends State<HomePage> {
         style: customFarroPrayerStyle(
           fontWeight: FontWeight.bold,
           context: context,
-          size: 24,
+          size: SizeConfig.safeBlockHorizontal * 7.2,
         ),
       ),
     );
@@ -282,6 +283,7 @@ class _HomePageState extends State<HomePage> {
     final afterSpotLightCubit = CubitProvider.of<AfterSpotLightCubit>(context);
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
     var isNotConnected = connectionStatus == ConnectivityStatus.Offline;
+    SizeConfig().init(context);
 
     return SafeArea(
       child: Scaffold(
@@ -318,7 +320,6 @@ class _HomePageState extends State<HomePage> {
                             child: IconButton(
                               icon: FlutterLogo(),
                               onPressed: () {
-                                print('theme OnPressed');
                                 final cubitTheme =
                                     CubitProvider.of<ThemeCubit>(context);
                                 cubitTheme.changeTheme(AppTheme.dark);

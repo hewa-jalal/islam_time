@@ -12,6 +12,7 @@ import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/services/connection_service.dart';
+import 'package:islamtime/size_config.dart';
 import 'package:provider/provider.dart';
 import 'cubit/body_status_cubit.dart';
 import 'cubit/theme_cubit/theme_cubit.dart';
@@ -81,7 +82,6 @@ void main() async {
               ConnectivityService().connectionStatusController.stream,
           child: CubitBuilder<ThemeCubit, ThemeChanged>(
             builder: (context, state) {
-              ScreenUtil.init();
               return getPackage.GetMaterialApp(
                 theme: state.themeData,
                 debugShowCheckedModeBanner: false,

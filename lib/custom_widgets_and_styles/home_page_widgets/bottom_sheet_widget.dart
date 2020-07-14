@@ -20,6 +20,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+import '../../size_config.dart';
+
 class BottomSheetTime extends StatefulWidget {
   const BottomSheetTime({
     Key key,
@@ -238,7 +240,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                         Text(
                           'Hijri ${bang.formattedHijriDate}',
                           style: customFarroPrayerStyle(
-                            size: 16,
+                            size: SizeConfig.safeBlockHorizontal * 4.0,
                             fontWeight: FontWeight.bold,
                             context: context,
                           ),
@@ -247,7 +249,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                         Text(
                           bang.date,
                           style: customFarroPrayerStyle(
-                            size: 16,
+                            size: SizeConfig.safeBlockHorizontal * 4.0,
                             fontWeight: FontWeight.bold,
                             context: context,
                           ),
@@ -273,7 +275,8 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                                     style: customFarroPrayerStyle(
                                       fontWeight: FontWeight.bold,
                                       context: context,
-                                      size: 14,
+                                      size:
+                                          SizeConfig.safeBlockHorizontal * 4.6,
                                     ),
                                   ),
                                 ],

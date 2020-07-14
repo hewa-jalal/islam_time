@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../size_config.dart';
 import '../custom_styles_formats.dart';
 
 class PrayerTile extends StatelessWidget {
@@ -33,7 +34,7 @@ class PrayerTile extends StatelessWidget {
                 style: customFarroPrayerStyle(
                   fontWeight: FontWeight.w600,
                   context: context,
-                  size: 26,
+                  size: SizeConfig.safeBlockHorizontal * 6.0,
                 ),
               ),
             ),
@@ -50,7 +51,7 @@ class PrayerTile extends StatelessWidget {
                       style: customFarroPrayerStyle(
                         fontWeight: FontWeight.w600,
                         context: context,
-                        size: 26,
+                        size: SizeConfig.safeBlockHorizontal * 6.0,
                       ),
                     ),
                   ),
