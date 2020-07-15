@@ -1,96 +1,113 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
+import 'dart:ui';
+
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
-import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/home_page_widgets.dart';
-import 'package:islamtime/models/bang.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
+import 'package:islamtime/pages/select_city_page.dart';
 import 'package:islamtime/pages/home_page.dart';
+import 'package:islamtime/services/connection_service.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LocationPage extends StatelessWidget {
+import '../size_config.dart';
+
+class LocationPage extends StatefulWidget {
+  @override
+  _LocationPageState createState() => _LocationPageState();
+}
+
+class _LocationPageState extends State<LocationPage> {
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
+    final connectionStatus = Provider.of<ConnectivityStatus>(context);
+    final isNotConnected = connectionStatus == ConnectivityStatus.Offline;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey,
         body: BlocConsumer<BangBloc, BangState>(
-          listener: (context, state) {
-            // if (state is BangLoaded) {
-            //   Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (_) => HomePage(bang: state.bang),
-            //     ),
-            //   );
-            // }
-          },
-          builder: (context, state) {
-            if (state is BangInitial) {
-              return GestureDetector(
-                onTap: () => getUserLocation(context),
-                child: FlareActor(
-                  'assets/flare/location_place_holder.flr',
-                  animation: 'jump',
-                ),
-              );
-            } else if (state is BangLoaded) {
-              getUserLocation(context).then(
-                (userLocationAddress) => showLocationDialog(userLocationAddress, context, state.bang),
-              );
-              return FlareActor(
-                'assets/flare/location_place_holder.flr',
-                animation: 'jump',
-              );
+          listener: (context, state) async {
+            final prefs = await SharedPreferences.getInstance();
+            String locationPrefs = prefs.get('location');
+            if (state is BangLoaded) {
+              if (locationPrefs != null) {
+                Get.off(
+                  HomePage(
+                    userLocation: locationPrefs,
+                    showDialog: true,
+                  ),
+                );
+              } else {
+                getUserLocation(context).then(
+                  (value) {
+                    Get.off(
+                      HomePage(
+                        userLocation: value,
+                        showDialog: true,
+                      ),
+                    );
+                  },
+                );
+              }
             }
           },
+          builder: (context, state) {
+            return AbsorbPointer(
+              absorbing: _isLoading,
+              child: Stack(
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () => isNotConnected
+                        ? showOfflineDialog(context, false)
+                        : getUserLocation(context),
+                    child: FlareActor(
+                      'assets/flare/location_place_holder.flr',
+                      animation: 'jump',
+                    ),
+                  ),
+                  Positioned.fill(
+                    top: 30,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Text(
+                        'Tap the screen to get your location',
+                        style: GoogleFonts.roboto(
+                          fontSize: SizeConfig.blockSizeHorizontal * 5.8,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ),
+                  _isLoading
+                      ? Center(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : Container(),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
-  }
-
-  Widget columnWithData(Bang bang) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text('Model State ${bang.speda}', style: TextStyle(fontSize: 36)),
-        Text('Model State ${bang.rojHalat}', style: TextStyle(fontSize: 36)),
-        Text('Model State ${bang.nevro}', style: TextStyle(fontSize: 36)),
-        Text('Model State ${bang.evar}', style: TextStyle(fontSize: 36)),
-        Text('Model State ${bang.maghrab}', style: TextStyle(fontSize: 36)),
-        Text('Model State ${bang.aesha}', style: TextStyle(fontSize: 36)),
-      ],
-    );
-  }
-
-  showLocationDialog(String userLocation, BuildContext context, Bang bang) {
-    AwesomeDialog(
-      context: context,
-      dialogType: DialogType.INFO,
-      animType: AnimType.SCALE,
-      body: Center(
-        child: Text(
-          'Your Location is $userLocation',
-          style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-      ),
-      btnCancelOnPress: () {},
-      btnOkOnPress: () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HomePage(bang: bang),
-          ),
-        );
-      },
-      btnCancelColor: Colors.blue,
-      btnCancelText: 'Not Corrcet?',
-    )..show();
   }
 
   Future<String> getUserLocation(context) async {
+    setState(() => _isLoading = true);
     final bangBloc = BlocProvider.of<BangBloc>(context);
+
+    final prefs = await SharedPreferences.getInstance();
+    String locationPrefs = prefs.getString('location');
 
     Position position = await Geolocator().getCurrentPosition();
     List<Placemark> placemarks = await Geolocator()
@@ -103,8 +120,19 @@ class LocationPage extends StatelessWidget {
     String userCity = splitedAddress[0];
     String userCountry = splitedAddress[1];
 
-    bangBloc.add(GetBang(countryName: userCountry, cityName: userCity));
+    if (locationPrefs != null) {
+      List<String> splitedPrefs = locationPrefs.split(',');
+      bangBloc.add(GetBang(
+          countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()));
+    }
 
+    if (userCountry.toLowerCase().contains('iraq')) {
+      await prefs.setBool(IS_LOCAL_KEY, true);
+      Get.off(SelectCityPage());
+    } else {
+      await prefs.setBool(IS_LOCAL_KEY, false);
+      bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
+    }
     return '$userCountry, $userCity';
   }
 }

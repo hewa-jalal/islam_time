@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/time_cycle.dart';
+
+import '../size_config.dart';
+import 'custom_styles_formats.dart';
 
 enum TimeIs { night, day }
 
@@ -130,20 +132,15 @@ class _CountdownPageState extends State<CountdownPage> {
 
   @override
   Widget build(BuildContext context) {
-    // print('now => ${DateTime.now()}');
-    // print('maghrab => ${bang.maghrabDateTime}');
-    // print('speda => ${bang.spedaDateTime}');
-    // print('lastThird => ${bang.lastThird}');
     checkDayNight();
     checkLastThird();
-    // print('isLastThird => $_isLastThird');
-    // print('timeIs => $_timeIs');
     return Text(
       formatDuration(remainingTime ?? duration),
-      style: GoogleFonts.farro(
-        fontSize: 50,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 6.0,
+      style: customFarroPrayerStyle(
+        fontWeight: FontWeight.bold,
+        context: context,
+        size: SizeConfig.safeBlockHorizontal * 11,
+        letterSpacing: 10,
       ),
     );
   }
@@ -223,27 +220,6 @@ class _CountdownPageState extends State<CountdownPage> {
     }
   }
 
-  void addToBloc() {
-    if (_timeIs == TimeIs.day) {
-      // it's day so we need time until Night
-      isDayOrNightText = 'Night';
-    } else if (_timeIs == TimeIs.night) {
-      isDayOrNightText = 'Day';
-    } if (_isLastThird) {
-      isDayOrNightText = 'Last Third';
-    }
-
-    _timeCycleBloc.add(
-      GetTimeCycle(
-        timeCycle: TimeCycle(
-          timeIs: _timeIs,
-          isLastThird: _isLastThird,
-          untilDayOrNight: isDayOrNightText,
-        ),
-      ),
-    );
-  }
-
   void checkLastThird() {
     // midNightEnd is the beginning of lastThird
     // lastThird == MidNightEnd
@@ -286,5 +262,27 @@ class _CountdownPageState extends State<CountdownPage> {
     );
     duration =
         Duration(hours: nightDuration.hour, minutes: nightDuration.minute);
+  }
+
+  void addToBloc() {
+    if (_timeIs == TimeIs.day) {
+      // it's day so we need time until Night
+      isDayOrNightText = 'Night';
+    } else if (_timeIs == TimeIs.night) {
+      isDayOrNightText = 'Last Third';
+    }
+    if (_isLastThird) {
+      isDayOrNightText = 'Day';
+    }
+
+    _timeCycleBloc.add(
+      GetTimeCycle(
+        timeCycle: TimeCycle(
+          timeIs: _timeIs,
+          isLastThird: _isLastThird,
+          untilDayOrNight: isDayOrNightText,
+        ),
+      ),
+    );
   }
 }

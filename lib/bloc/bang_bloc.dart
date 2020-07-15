@@ -1,169 +1,148 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:geolocator/geolocator.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/models/bang.dart';
-import 'package:jiffy/jiffy.dart';
+import 'package:islamtime/repository/bang_repository.dart';
+import 'package:islamtime/repository/location_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'bang_event.dart';
 part 'bang_state.dart';
 
-class BangBloc extends Bloc<BangEvent, BangState> {
+// enum BangEvent {BangLoaded,  }
+
+class BangBloc extends HydratedBloc<BangEvent, BangState> {
+  final BangRepository bangRepository;
+  final LocationRepository locationRepository;
+
+  BangBloc({
+    @required this.bangRepository,
+    @required this.locationRepository,
+  }) : super(BangInitial());
+
   @override
-  BangState get initialState => BangInitial();
+  BangState fromJson(Map<String, dynamic> json) {
+    try {
+      final bang = Bang.fromJson(json);
+      return BangLoaded(bang);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic> toJson(BangState state) {
+    if (state is BangLoaded) {
+      return state.bang.toJson();
+    } else {
+      return null;
+    }
+  }
 
   @override
   Stream<BangState> mapEventToState(
     BangEvent event,
   ) async* {
-    if (event is GetBang) {
-      Bang bang = await getPrayerData(event.countryName, event.cityName);
-      yield BangLoaded(bang);
+    yield BangLoading();
+    if (event is FetchBang) {
+      try {
+        Position position = await locationRepository.getUserLocation();
+        _saveUserLocationToPrefs(position);
+        _saveSettingsToPrefs(
+          lat: position.latitude,
+          lng: position.longitude,
+          isLocal: false,
+        );
+        final Bang bang = await bangRepository.fetchBang(
+          lat: position.latitude,
+          lng: position.longitude,
+          month: DateTime.now().month,
+          year: DateTime.now().year,
+        );
+        yield BangLoaded(bang);
+      } catch (e) {
+        print('catch BangError() in FetchBang => ${e.toString()}');
+        yield BangError();
+      }
+    } else if (event is GetBang) {
+      try {
+        final Bang bang = await bangRepository.getPrayerData(
+            event.countryName, event.cityName);
+        yield BangLoaded(bang);
+      } catch (e) {
+        print('catch error in GetBang() ${e.toString()}');
+        add(FetchBang());
+      }
+    } else if (event is FetchBangWithSettings) {
+      Position position = await locationRepository.getUserLocation();
+      // print('''
+      // lat => ${position.latitude},
+      // lng => ${position.longitude},
+      // methodNumber => ${event.methodNumber},
+      // tuning => ${event.tuning}''');
+      _saveSettingsToPrefs(
+        lat: position.latitude,
+        lng: position.longitude,
+        methodNumber: event.methodNumber,
+        tuning: event.tuning,
+        isLocal: false,
+      );
+      try {
+        final Bang bang = await bangRepository.fetchBang(
+          lat: position.latitude,
+          lng: position.longitude,
+          month: DateTime.now().month,
+          year: DateTime.now().year,
+          method: event.methodNumber,
+          tuning: event.tuning,
+        );
+        yield BangLoaded(bang);
+      } catch (_) {
+        yield BangError();
+      }
     }
   }
 
-  Future<Bang> getPrayerData(String countryName, String cityName) async {
-    String fileString = await rootBundle
-        .loadString('assets/fixed_prayer_time/$countryName/Dihok.txt');
+  void _saveSettingsToPrefs({
+    double lat,
+    double lng,
+    int methodNumber = 3,
+    List<int> tuning = const [0, 0, 0, 0, 0, 0],
+    bool isLocal,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> stringTuning = tuning.map((e) => e.toString()).toList();
+    prefs.setDouble('lat', lat);
+    prefs.setDouble('lng', lng);
+    prefs.setInt('methodNumber', methodNumber);
+    prefs.setStringList('tuning', stringTuning);
+    prefs.setBool(IS_LOCAL_KEY, isLocal);
 
-    // split the files into individual lines
-    List<String> fileLines = fileString.split('\n');
-
-    // get the line that contains the matched date
-    String matchedDate =
-        fileLines.where((element) => element.contains(getDate())).toString();
-
-    // print('matched data => $matchedDate');
-
-    // split the line that has the data by ','
-    List<String> splitLine = matchedDate.split(',');
-
-    String speda = toAmPm(splitLine[2]);
-    String rojHalat = toAmPm(splitLine[3]);
-    String nevro = toAmPm(splitLine[4]);
-    String evar = toAmPm(splitLine[5]);
-    String makhrab = toAmPm(splitLine[6]);
-    String aesha = toAmPm(splitLine[7]);
-    List<DateTime> dates =
-        getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
-
-    Bang bang = Bang(
-      speda: speda,
-      rojHalat: rojHalat,
-      nevro: nevro,
-      evar: evar,
-      maghrab: makhrab,
-      aesha: aesha,
-      theThird: dates[0],
-      lastThird: dates[1],
-      dayTime: dates[2],
-      maghrabDateTime: dates[3],
-      spedaDateTime: dates[4],
-    );
-
-    return bang;
+    print(''' bloc => lat prefs ${prefs.getDouble('lat')} 
+              bloc => lng prefs ${prefs.getDouble('lng')}
+              bloc => methodNumber prefs ${prefs.getInt('methodNumber')}
+              bloc => tuning prefs ${prefs.getStringList('tuning')}
+              bloc => isLocal ${prefs.getBool(IS_LOCAL_KEY)}''');
   }
 
-  String getDate() {
-    int month = Jiffy().month;
-    int day = Jiffy().date;
+  void _saveUserLocationToPrefs(Position position) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<Placemark> placemarks = await Geolocator()
+        .placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placemark = placemarks[0];
 
-    String formattedMonth = month.toString().padLeft(2, '0');
-    String formattedDay = day.toString().padLeft(2, '0');
+    String formattedAddress = '${placemark.locality},${placemark.country}';
+    List<String> splitedAddress = formattedAddress.split(',');
 
-    // String formattedMonth = month < 10 ? '0$month' : '$month';
-    // String formattedDay = day < 10 ? '0$day' : '$day';
+    String userCity = splitedAddress[0];
+    String userCountry = splitedAddress[1];
 
-    return '$formattedMonth-$formattedDay';
-  }
+    prefs.setString('location', '$userCountry, $userCity');
 
-  String toAmPm(String time) {
-    List<String> splitedTime = time.split(':');
-    int hour = int.parse(splitedTime[0].trim());
-
-    TimeOfDay timeOfDay = TimeOfDay(hour: hour, minute: 0);
-
-    if (timeOfDay.hourOfPeriod < 10 && timeOfDay.hourOfPeriod != 00)
-      return '0${timeOfDay.hourOfPeriod}:${splitedTime[1]}';
-    if (timeOfDay.hourOfPeriod == 00) return '12:${splitedTime[1]}';
-
-    return '${timeOfDay.hourOfPeriod}:${splitedTime[1]}';
-  }
-
-  List<DateTime> getTheDifference(String date, String speda, String maghrab) {
-    List<String> splitedDate = date.split('-');
-    int month = int.parse(splitedDate[0]);
-    int day = int.parse(splitedDate[1]);
-
-    List<String> splitedSpedaTime = speda.split(':');
-    int spedaH = int.parse(splitedSpedaTime[0]);
-    int spedaM = int.parse(splitedSpedaTime[1]);
-
-    List<String> splitedMaghrabTime = maghrab.split(':');
-    int maghrabH = int.parse(splitedMaghrabTime[0]);
-    int maghrabM = int.parse(splitedMaghrabTime[1]);
-
-    // TODO: remove the hard-coded 2020
-    DateTime spedaBang = DateTime(2020, month, day, spedaH, spedaM);
-    DateTime maghrabBang = DateTime(2020, month, day, maghrabH, maghrabM);
-
-    // get the full differnce between speda and maghrab bang
-    DateTime spedaAndMaghrabDiff = spedaBang.subtract(
-      Duration(
-        days: maghrabBang.day,
-        hours: maghrabBang.hour,
-        minutes: maghrabBang.minute,
-      ),
-    );
-
-    // ** get a third of the time
-    int thirdOfDifferenceSeconds =
-        (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 3);
-    Duration thirdDuration = Duration(
-        seconds: thirdOfDifferenceSeconds,
-        minutes: (spedaAndMaghrabDiff.minute ~/ 3));
-    int thirdHours = thirdDuration.inHours;
-    int thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
-    // int midSecond = thirdDuration.inSeconds;
-
-    print(
-        'the difference third =========> $thirdHours:$thirdMin <==============');
-    print('full difference +++++ $spedaAndMaghrabDiff +++++');
-
-    DateTime midNightStart = maghrabBang.add(
-      Duration(
-        hours: thirdHours,
-        minutes: thirdMin,
-      ),
-    );
-
-    DateTime midNightEnd = midNightStart.add(
-      Duration(
-        hours: thirdHours,
-        minutes: thirdMin,
-      ),
-    );
-
-    DateTime lastThird = midNightEnd.add(
-      Duration(
-        hours: thirdHours,
-        minutes: thirdMin,
-      ),
-    );
-
-    DateTime dayTime = maghrabBang.subtract(
-      Duration(hours: spedaBang.hour, minutes: spedaBang.minute),
-    );
-
-    // TODO: change the hard-coded 2020 year
-    return [
-      DateTime(2020, month, day, thirdHours, thirdMin),
-      midNightEnd,
-      dayTime,
-      maghrabBang,
-      spedaBang,
-    ];
+    print('inside bloc userLocation => ${prefs.getString('location')}');
   }
 }

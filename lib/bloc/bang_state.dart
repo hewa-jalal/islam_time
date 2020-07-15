@@ -22,3 +22,8 @@ class BangLoaded extends BangState {
   @override
   List<Object> get props => [bang];
 }
+
+class BangError extends BangState {
+  @override
+  List<Object> get props => [];
+}

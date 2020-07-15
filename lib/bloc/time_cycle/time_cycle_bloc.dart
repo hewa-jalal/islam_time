@@ -9,9 +9,9 @@ part 'time_cycle_event.dart';
 part 'time_cycle_state.dart';
 
 class TimeCycleBloc extends Bloc<TimeCycleEvent, TimeCycleState> {
-  @override
-  TimeCycleState get initialState => TimeCycleInitial();
+  TimeCycleBloc() : super(TimeCycleInitial());
 
+  @override
   @override
   Stream<TimeCycleState> mapEventToState(
     TimeCycleEvent event,
