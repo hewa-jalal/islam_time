@@ -19,7 +19,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
   TextEditingController controller = TextEditingController();
   String filter;
   String userCity;
-  bool isLoading = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
     return Stack(
       children: <Widget>[
         AbsorbPointer(
-          absorbing: isLoading,
+          absorbing: _isLoading,
           child: Scaffold(
             appBar: AppBar(
               title: TextField(
@@ -90,7 +90,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
                                   onTap: () {
                                     userCity = cities[index];
                                     _saveLocationPrefs(userCity);
-                                    setState(() => isLoading = true);
+                                    setState(() => _isLoading = true);
                                     bangBloc.add(
                                       GetBang(
                                         cityName: cities[index],
@@ -112,7 +112,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
                                         onTap: () {
                                           userCity = cities[index];
                                           _saveLocationPrefs(userCity);
-                                          setState(() => isLoading = true);
+                                          setState(() => _isLoading = true);
                                           bangBloc.add(
                                             GetBang(
                                               cityName: cities[index],
@@ -140,7 +140,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
             ),
           ),
         ),
-        isLoading
+        _isLoading
             ? Center(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),

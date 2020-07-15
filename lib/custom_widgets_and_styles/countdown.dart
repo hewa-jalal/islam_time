@@ -139,7 +139,7 @@ class _CountdownPageState extends State<CountdownPage> {
       style: customFarroPrayerStyle(
         fontWeight: FontWeight.bold,
         context: context,
-        size: SizeConfig.safeBlockHorizontal * 12,
+        size: SizeConfig.safeBlockHorizontal * 11,
         letterSpacing: 10,
       ),
     );

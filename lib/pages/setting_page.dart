@@ -6,7 +6,9 @@ import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/method_number.dart';
 import 'package:islamtime/pages/home_page.dart';
+import 'package:islamtime/size_config.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -14,110 +16,64 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  MethodNumber selectedNumber = MethodNumber(3);
-  List<int> methodNumbersList = [0, 0, 0, 0, 0, 0];
   final List<DropdownMenuItem> items = [];
+  List<int> methodNumbersList = [0, 0, 0, 0, 0, 0];
+  MethodNumber selectedNumber = MethodNumber(3);
 
   @override
-  Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<BangBloc>(context);
-    return BlocConsumer<BangBloc, BangState>(
-      listener: (context, state) {
-        if (state is BangLoaded) {
-          Get.to(
-            HomePage(
-              showDialog: false,
-              userLocation: 'from setting',
-            ),
-          );
-        }
-      },
-      builder: (context, state) {
-        if (state is BangLoaded) {
-          return SafeArea(
-            child: Scaffold(
-              backgroundColor: Colors.grey[900],
-              body: SingleChildScrollView(
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          color: Colors.blueGrey[700],
-                          child: SearchableDropdown.single(
-                            menuBackgroundColor: Colors.blueGrey[700],
-                            items: MethodNumber.list.map(
-                              (exNum) {
-                                return DropdownMenuItem(
-                                  child: Text(
-                                    exNum.numberString,
-                                    style: GoogleFonts.robotoCondensed(
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  value: exNum,
-                                );
-                              },
-                            ).toList(),
-                            onChanged: (value) => selectedNumber = value,
-                            value: selectedNumber,
-                            hint: 'Select a method',
-                            isExpanded: true,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'Tune Prayer times',
-                              style: GoogleFonts.robotoCondensed(
-                                fontSize: 40,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        _buildMehtodNumberTiles(state.bang),
-                        Spacer(),
-                        buildButtonsRow(bloc),
-                      ],
-                    ),
+  void initState() {
+    _getPrefs();
+    super.initState();
+  }
+
+  Container _buildSearchableDropdown() {
+    return Container(
+      color: Colors.blueGrey[700],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SearchableDropdown.single(
+          menuBackgroundColor: Colors.blueGrey[700],
+          style: GoogleFonts.farro(
+            fontSize: SizeConfig.safeBlockHorizontal * 5.4,
+            color: Colors.white,
+          ),
+          items: MethodNumber.list.map(
+            (exNum) {
+              return DropdownMenuItem(
+                child: Text(
+                  exNum.numberString,
+                  style: GoogleFonts.robotoCondensed(
+                    fontSize: SizeConfig.safeBlockHorizontal * 5.4,
+                    color: Colors.white,
                   ),
                 ),
-              ),
-            ),
-          );
-        }
-        return Container(
-          color: Colors.blueGrey[700],
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      },
+                value: exNum,
+              );
+            },
+          ).toList(),
+          onChanged: (value) => selectedNumber = value,
+          value: selectedNumber,
+          hint: 'Select a method',
+          isExpanded: true,
+        ),
+      ),
     );
   }
 
-  Row buildButtonsRow(BangBloc bloc) {
+  Row _buildButtonsRow(BangBloc bloc) {
     return Row(
       children: <Widget>[
         Align(
           alignment: Alignment.bottomRight,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: RaisedButton(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
                   'Get a new location',
                   style: GoogleFonts.roboto(
-                    fontSize: 20,
+                    fontSize: SizeConfig.safeBlockHorizontal * 3.4,
                     fontWeight: FontWeight.bold,
                     color: Colors.amber[300],
                   ),
@@ -132,14 +88,14 @@ class _SettingPageState extends State<SettingPage> {
         Align(
           alignment: Alignment.bottomRight,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: RaisedButton(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
                   'Ok',
                   style: GoogleFonts.roboto(
-                    fontSize: 24,
+                    fontSize: SizeConfig.safeBlockHorizontal * 3.4,
                     fontWeight: FontWeight.bold,
                     color: Colors.amber[300],
                   ),
@@ -194,6 +150,65 @@ class _SettingPageState extends State<SettingPage> {
           onChange: (val) => methodNumbersList[5] = int.parse(val),
         ),
       ],
+    );
+  }
+
+  void _getPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    int p = prefs.getInt('methodNumber');
+    print('p inside settingpage => $p');
+    selectedNumber = MethodNumber(prefs.getInt('methodNumber')) ?? 3;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = BlocProvider.of<BangBloc>(context);
+    return BlocConsumer<BangBloc, BangState>(
+      listener: (context, state) {
+        if (state is BangLoaded) {
+          Get.to(
+            HomePage(
+              showDialog: false,
+              userLocation: 'from setting',
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is BangLoaded) {
+          return SafeArea(
+            child: Scaffold(
+              body: Container(
+                color: Colors.blueGrey[900],
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: <Widget>[
+                            _buildSearchableDropdown(),
+                            SizedBox(height: SizeConfig.safeBlockVertical * 2),
+                            _buildMehtodNumberTiles(state.bang),
+                          ],
+                        ),
+                      ),
+                      _buildButtonsRow(bloc),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+        return Container(
+          color: Colors.blueGrey[700],
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
     );
   }
 }

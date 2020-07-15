@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
+
+import '../size_config.dart';
 
 class MethodNumberTile extends StatelessWidget {
   final bool isEnd;
@@ -26,9 +27,21 @@ class MethodNumberTile extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Text(prayerName, style: customFarroStyle(24)),
+              child: Text(
+                prayerName,
+                style: GoogleFonts.farro(
+                  fontSize: SizeConfig.safeBlockHorizontal * 7.4,
+                  color: Colors.white,
+                ),
+              ),
             ),
-            Text(prayerTime, style: customFarroStyle(24)),
+            Text(
+              prayerTime,
+              style: GoogleFonts.farro(
+                fontSize: SizeConfig.safeBlockHorizontal * 7.4,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
         trailing: Padding(
@@ -42,6 +55,7 @@ class MethodNumberTile extends StatelessWidget {
             ),
             width: 80,
             child: TextField(
+              textAlignVertical: TextAlignVertical.center,
               maxLength: 2,
               maxLengthEnforced: true,
               keyboardType: TextInputType.number,
@@ -54,8 +68,8 @@ class MethodNumberTile extends StatelessWidget {
                     ? FocusScope.of(context).unfocus()
                     : FocusScope.of(context).nextFocus();
               },
-              style: GoogleFonts.roboto(
-                fontSize: 30,
+              style: GoogleFonts.farro(
+                fontSize: SizeConfig.safeBlockHorizontal * 7.4,
                 color: Colors.white,
               ),
               onChanged: onChange,

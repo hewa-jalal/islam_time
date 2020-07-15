@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
@@ -104,7 +105,10 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   Text(
                     'Swipe to get more details',
-                    style: customTextStyle(),
+                    style: GoogleFonts.roboto(
+                      fontSize: ScreenUtil().setSp(70),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -135,8 +139,9 @@ class _HomePageState extends State<HomePage> {
       animType: AnimType.SCALE,
       body: Center(
         child: Text(
-          'Your Location is ${widget.userLocation}',
-          style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold),
+          'Your Location is \n ${widget.userLocation}',
+          style: customRobotoStyle(5.4),
+          textAlign: TextAlign.center,
         ),
       ),
       btnOkOnPress: () => _showTutorial(),
@@ -167,13 +172,12 @@ class _HomePageState extends State<HomePage> {
     prefs.setBool(IS_FIRST_TIME_KEY, true);
   }
 
-  // TODO: maybe combine into other method
   Future<bool> _getTutorialDisplay() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(IS_FIRST_TIME_KEY);
   }
 
-  FlareActor buildFlareActor() {
+  FlareActor _buildFlareActor() {
     return FlareActor(
       'assets/flare/DayAndNight.flr',
       animation: (_animation == 0)
@@ -201,7 +205,6 @@ class _HomePageState extends State<HomePage> {
       alignment: Alignment.bottomCenter,
       child: SolidBottomSheet(
         controller: _solidController,
-        showOnAppear: true,
         maxHeight: SizeConfig.screenHeight / 2,
         headerBar: StatefulBuilder(
           builder: (context, sheetSetState) {
@@ -216,7 +219,7 @@ class _HomePageState extends State<HomePage> {
             });
             return SizedBox(
               key: _swipeSheetKey,
-              height: 100,
+              height: SizeConfig.safeBlockHorizontal * 20,
               child: FlareActor(
                 'assets/flare/arrow_up_down.flr',
                 animation: _arrowAnimation,
@@ -233,15 +236,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   SimpleTooltip _buildSimpleTooltip(
-      AsyncSnapshot<bool> isLocalSnapshot,
-      AsyncSnapshot<bool> isFirstTimeSnapshot,
-      bool state,
-      TimeCycle timeCycle) {
+    AsyncSnapshot<bool> isLocalSnapshot,
+    AsyncSnapshot<bool> isFirstTimeSnapshot,
+    bool state,
+    TimeCycle timeCycle,
+  ) {
     return SimpleTooltip(
       content: Material(
         child: Text(
           'swipe from here to get latest prayer times',
-          style: customFarroStyle(),
+          style: GoogleFonts.roboto(
+            fontSize: ScreenUtil().setSp(70),
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       show: () {
@@ -262,7 +269,7 @@ class _HomePageState extends State<HomePage> {
         style: customFarroPrayerStyle(
           fontWeight: FontWeight.bold,
           context: context,
-          size: SizeConfig.safeBlockHorizontal * 7.2,
+          size: SizeConfig.safeBlockHorizontal * 6.8,
         ),
       ),
     );
@@ -310,24 +317,26 @@ class _HomePageState extends State<HomePage> {
                   },
                   builder: (context, state) {
                     if (state is TimeCycleLoaded) {
-                      // final mediaQuerySize = MediaQuery.of(context).size;
                       final timeCycle = state.timeCycle;
                       _checkTheme(state.timeCycle, context);
                       return Stack(
                         children: <Widget>[
-                          buildFlareActor(),
+                          _buildFlareActor(),
                           Center(
                             child: IconButton(
                               icon: FlutterLogo(),
-                              onPressed: () {
-                                final cubitTheme =
-                                    CubitProvider.of<ThemeCubit>(context);
-                                cubitTheme.changeTheme(AppTheme.dark);
+                              onPressed: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.clear();
                               },
                             ),
                           ),
                           _buildBottomSheet(
-                              context, bodyStatusCubit, timeCycle),
+                            context,
+                            bodyStatusCubit,
+                            timeCycle,
+                          ),
                           BlocConsumer<BangBloc, BangState>(
                             listener: (context, state) {
                               if (state is BangLoaded) {
@@ -343,7 +352,9 @@ class _HomePageState extends State<HomePage> {
                                     children: <Widget>[
                                       Padding(
                                         padding: const EdgeInsets.only(
-                                            top: 14, bottom: 18),
+                                          top: 14.0,
+                                          bottom: 18.0,
+                                        ),
                                         child: FutureBuilder<bool>(
                                           future: _getTutorialDisplay(),
                                           builder:

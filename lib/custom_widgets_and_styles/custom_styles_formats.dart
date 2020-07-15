@@ -4,19 +4,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:jiffy/jiffy.dart';
 
-void showOfflineDialog(BuildContext context) async {
+import '../size_config.dart';
+
+void showOfflineDialog(BuildContext context, [bool isSetting = true]) async {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.WARNING,
     animType: AnimType.SCALE,
     body: Center(
       child: Text(
-        'Please make sure you are connecetd to the internet before going into settings',
-        style: customFarroPrayerStyle(
-          fontWeight: FontWeight.w400,
-          context: context,
-          size: 20,
-        ),
+        isSetting
+            ? 'Please make sure you are connecetd to the internet before going into settings'
+            : 'Please make sure you are connecetd to the internet so we can get correct prayers for your location',
+        style: customRobotoStyle(5),
         textAlign: TextAlign.center,
       ),
     ),
@@ -27,23 +27,14 @@ void showOfflineDialog(BuildContext context) async {
 const String IS_LOCAL_KEY = 'isLocal';
 const String IS_FIRST_TIME_KEY = 'isFirstTime';
 
-TextStyle customTextStyle({bool isBold = false}) => GoogleFonts.roboto(
-      fontSize: 40.0,
-      textStyle: TextStyle(
-        fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-        color: Colors.white,
-        shadows: <Shadow>[
-          Shadow(
-            offset: Offset(2.0, 2.0),
-            blurRadius: 10.0,
-            color: Color.fromARGB(255, 0, 0, 0),
-          ),
-        ],
-      ),
-    );
-
 TextStyle customFarroStyle([double size = 16]) => GoogleFonts.farro(
       fontSize: size,
+      fontWeight: FontWeight.bold,
+    );
+
+TextStyle customRobotoStyle(double size) => GoogleFonts.roboto(
+      fontSize: SizeConfig.blockSizeHorizontal * size,
+      color: Colors.black,
       fontWeight: FontWeight.bold,
     );
 

@@ -56,11 +56,6 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     return '${prefs.getString('location')}';
   }
 
-  Future<void> clearSp() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
-  }
-
   Future<bool> _getIsLocal() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.get(IS_LOCAL_KEY);
@@ -81,7 +76,10 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                 _isLocal
                     ? 'Tap here to get a new location'
                     : 'Tap here to tune prayers times or get a new location',
-                style: GoogleFonts.autourOne(fontSize: 30),
+                style: GoogleFonts.roboto(
+                  fontSize: ScreenUtil().setSp(70),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -134,6 +132,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       child: Icon(
         _isLocal ? Icons.add_location : Icons.settings,
         color: Colors.blue,
+        size: SizeConfig.blockSizeHorizontal * 11,
       ),
       onTap: () {
         if (_isLocal) {
@@ -153,22 +152,23 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       dialogType: DialogType.WARNING,
       animType: AnimType.SCALE,
       body: Center(
-        child: Wrap(
-          direction: Axis.horizontal,
-          children: <Widget>[
-            Text(
-              'you have fixed prayer times for you location, are you sure you want to change your location',
-              style:
-                  GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              'and get prayer times from the internet?',
-              style:
-                  GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Wrap(
+            direction: Axis.horizontal,
+            children: <Widget>[
+              Text(
+                'you have fixed prayer times for you location, are you sure you want to change your location',
+                style: customRobotoStyle(6),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                'and get prayer times from the internet?',
+                style: customRobotoStyle(6),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
       btnOkOnPress: () => bloc.add(FetchBang()),
@@ -222,7 +222,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<BangBloc>(context);
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
-    var isNotConnected = connectionStatus == ConnectivityStatus.Offline;
+    final isNotConnected = connectionStatus == ConnectivityStatus.Offline;
 
     return Container(
       color: Colors.grey.withOpacity(0.4),
@@ -230,7 +230,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
           child: BlocBuilder<BangBloc, BangState>(
-            builder: (context, state) {
+            builder: (contt, state) {
               if (state is BangLoaded) {
                 final bang = state.bang;
                 return Column(
@@ -284,8 +284,13 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                               Positioned.fill(
                                 child: Align(
                                   alignment: Alignment.centerRight,
-                                  child: _buildSettingChoiceButton(
-                                      context, bloc, isNotConnected),
+                                  child: Container(
+                                    child: _buildSettingChoiceButton(
+                                      context,
+                                      bloc,
+                                      isNotConnected,
+                                    ),
+                                  ),
                                 ),
                               )
                             ],

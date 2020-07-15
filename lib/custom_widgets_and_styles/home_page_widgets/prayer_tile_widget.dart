@@ -43,17 +43,12 @@ class PrayerTile extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 26),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Flexible(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      prayerTime,
-                      style: customFarroPrayerStyle(
-                        fontWeight: FontWeight.w600,
-                        context: context,
-                        size: SizeConfig.safeBlockHorizontal * 6.0,
-                      ),
-                    ),
+                child: Text(
+                  prayerTime,
+                  style: customFarroPrayerStyle(
+                    fontWeight: FontWeight.w600,
+                    context: context,
+                    size: SizeConfig.safeBlockHorizontal * 6.0,
                   ),
                 ),
               ),
