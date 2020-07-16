@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 
 import '../size_config.dart';
 
@@ -20,62 +20,54 @@ class MethodNumberTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.blueGrey[700],
-      child: ListTile(
-        dense: true,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: EdgeInsets.all(SizeConfig.safeBlockVertical * 2.2),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              child: Text(
-                prayerName,
-                style: GoogleFonts.farro(
-                  fontSize: SizeConfig.safeBlockHorizontal * 7.4,
-                  color: Colors.white,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  prayerName,
+                  style: customRobotoStyle(5.5, Colors.white),
+                ),
+                Text(
+                  prayerTime,
+                  style: customRobotoStyle(5.5, Colors.white),
+                ),
+              ],
+            ),
+            Spacer(),
+            Container(
+              width: SizeConfig.safeBlockHorizontal * 14,
+              height: SizeConfig.safeBlockHorizontal * 14,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.amber[500],
+                  width: 2,
                 ),
               ),
-            ),
-            Text(
-              prayerTime,
-              style: GoogleFonts.farro(
-                fontSize: SizeConfig.safeBlockHorizontal * 7.4,
-                color: Colors.white,
+              child: TextField(
+                textAlignVertical: TextAlignVertical.center,
+                maxLength: 2,
+                maxLengthEnforced: true,
+                keyboardType: TextInputType.number,
+                textInputAction:
+                    isEnd ? TextInputAction.done : TextInputAction.next,
+                decoration:
+                    InputDecoration(border: InputBorder.none, counterText: ''),
+                onSubmitted: (_) {
+                  isEnd
+                      ? FocusScope.of(context).unfocus()
+                      : FocusScope.of(context).nextFocus();
+                },
+                style: customRobotoStyle(6.4, Colors.white),
+                onChanged: onChange,
+                textAlign: TextAlign.center,
               ),
-            ),
+            )
           ],
-        ),
-        trailing: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 2,
-                color: Colors.amber[500],
-              ),
-            ),
-            width: 80,
-            child: TextField(
-              textAlignVertical: TextAlignVertical.center,
-              maxLength: 2,
-              maxLengthEnforced: true,
-              keyboardType: TextInputType.number,
-              textInputAction:
-                  isEnd ? TextInputAction.done : TextInputAction.next,
-              decoration:
-                  InputDecoration(border: InputBorder.none, counterText: ''),
-              onSubmitted: (_) {
-                isEnd
-                    ? FocusScope.of(context).unfocus()
-                    : FocusScope.of(context).nextFocus();
-              },
-              style: GoogleFonts.farro(
-                fontSize: SizeConfig.safeBlockHorizontal * 7.4,
-                color: Colors.white,
-              ),
-              onChanged: onChange,
-              textAlign: TextAlign.center,
-            ),
-          ),
         ),
       ),
     );
@@ -116,5 +108,33 @@ class MethodNumber {
     return (map.keys.map((num) {
       return (MethodNumber(num));
     })).toList();
+  }
+}
+
+class CustomListItem extends StatelessWidget {
+  const CustomListItem({
+    this.thumbnail,
+  });
+
+  final Widget thumbnail;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: thumbnail,
+          ),
+          const Icon(
+            Icons.more_vert,
+            size: 16.0,
+          ),
+        ],
+      ),
+    );
   }
 }

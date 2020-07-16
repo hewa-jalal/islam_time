@@ -70,7 +70,7 @@ class LocalBangRepository implements BangRepository {
       List<DateTime> dates =
           getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
 
-      Bang bang = Bang(
+      return Bang(
         speda: speda,
         rojHalat: rojHalat,
         nevro: nevro,
@@ -79,13 +79,14 @@ class LocalBangRepository implements BangRepository {
         aesha: aesha,
         theThird: dates[0],
         lastThird: dates[1],
-        dayTime: dates[2],
-        maghrabDateTime: dates[3],
-        spedaDateTime: dates[4],
-        formattedHijriDate: todayHijri,
+        midNightStart: dates[1],
+        midNightEnd: dates[2],
+        dayTime: dates[3],
+        maghrabDateTime: dates[4],
+        spedaDateTime: dates[5],
         date: todayGeorgean,
+        formattedHijriDate: todayHijri,
       );
-      return bang;
     } else {
       // so it goes to FetchBang() event
       throw Exception();
@@ -152,41 +153,48 @@ class LocalBangRepository implements BangRepository {
     int thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
     // int midSecond = thirdDuration.inSeconds;
 
-    DateTime firstThird = maghrabBang.add(
+    DateTime midNightStart = maghrabBang.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
       ),
     );
 
-    DateTime midNight = firstThird.add(
+    DateTime midNightEnd = midNightStart.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
       ),
     );
 
-    DateTime lastThird = midNight.add(
+    DateTime lastThird = midNightEnd.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
       ),
     );
-
-    print('''##### 
-            the difference $thirdHours:$thirdMin
-            midNightStart $firstThird
-            midNightEnd $midNight
-            lastThird $lastThird
-            ####
-            ''');
 
     DateTime dayTime = maghrabBang
         .subtract(Duration(hours: spedaBang.hour, minutes: spedaBang.minute));
 
+    print('''##### 
+            the difference $thirdHours:$thirdMin
+            midNightStart $midNightStart
+            midNightEnd $midNightEnd
+            lastThird $lastThird
+            ####
+            ''');
+
     return [
-      DateTime(DateTime.now().year, month, day, thirdHours, thirdMin),
-      midNight,
+      DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        thirdHours,
+        thirdMin,
+      ),
+      midNightStart,
+      midNightEnd,
       dayTime,
       maghrabBang,
       spedaBang,

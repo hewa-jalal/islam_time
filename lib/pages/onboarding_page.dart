@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intro_views_flutter/Models/page_view_model.dart';
 import 'package:intro_views_flutter/intro_views_flutter.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/size_config.dart';
 import 'location_page.dart';
 
@@ -19,6 +20,10 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
       [page1, page2],
       showSkipButton: false,
       onTapDoneButton: () => Get.off(LocationPage()),
+      doneText: Text(
+        'Done',
+        style: customRobotoStyle(6, Colors.white, FontWeight.normal),
+      ),
     );
   }
 
@@ -30,9 +35,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           padding: EdgeInsets.only(top: SizeConfig.safeBlockVertical * 1),
           child: Text(
             'Most of the Muslim Population, around the Globe are of the opinion that the Muslims day starts at Magrib (sunset) time.',
-            style: GoogleFonts.roboto(
-              fontSize: SizeConfig.safeBlockHorizontal * 6,
-            ),
+            style: customRobotoStyle(6, Colors.white, FontWeight.normal),
           ),
         ),
         Center(
@@ -42,9 +45,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
             ),
             child: Text(
               'but this is wrong',
-              style: GoogleFonts.roboto(
-                fontSize: SizeConfig.safeBlockHorizontal * 7,
-              ),
+              style: customRobotoStyle(7, Colors.white, FontWeight.normal),
             ),
           ),
         ),
@@ -52,9 +53,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Text(
             'The day starts at Magrib for the Jews and sharp midnight for the Christians',
-            style: GoogleFonts.roboto(
-              fontSize: SizeConfig.safeBlockHorizontal * 6,
-            ),
+            style: customRobotoStyle(6, Colors.white, FontWeight.normal),
           ),
         )
       ],
@@ -77,29 +76,21 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           padding: EdgeInsets.only(top: SizeConfig.safeBlockVertical * 1),
           child: AutoSizeText(
             'as for muslims the day starts at Fajr (sharp sunrise)',
-            style: GoogleFonts.roboto(
-              fontSize: SizeConfig.safeBlockHorizontal * 6,
-            ),
+            style: customRobotoStyle(6, Colors.white, FontWeight.normal),
           ),
         ),
         AutoSizeText(
           'This statement could very well be authenticated by the words of Allah(swt) in the holy Quran:',
-          style: GoogleFonts.roboto(
-            fontSize: SizeConfig.safeBlockHorizontal * 6,
-          ),
+          style: customRobotoStyle(6, Colors.white, FontWeight.normal),
         ),
         AutoSizeText(
-          'Guard strictly (all) your prayers, especially the middle prayer and stand before Allah in a devout.',
-          style: GoogleFonts.roboto(
-            fontSize: SizeConfig.safeBlockHorizontal * 6,
-          ),
+          ' " Guard strictly (all) your prayers, especially the middle prayer and stand before Allah in a devout. " ',
+          style: customRobotoStyle(6, Colors.white, FontWeight.normal),
         ),
         Center(
           child: AutoSizeText(
             'Quran- 2:238',
-            style: GoogleFonts.roboto(
-              fontSize: SizeConfig.safeBlockHorizontal * 6,
-            ),
+            style: customRobotoStyle(6, Colors.white, FontWeight.normal),
           ),
         ),
       ],
@@ -111,6 +102,6 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     ),
     body: Text(''),
     pageColor: Colors.teal[900],
-    textStyle: GoogleFonts.heebo(fontSize: 26),
+    textStyle: customRobotoStyle(3, Colors.white, FontWeight.normal),
   );
 }

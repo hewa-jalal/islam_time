@@ -32,10 +32,15 @@ TextStyle customFarroStyle([double size = 16]) => GoogleFonts.farro(
       fontWeight: FontWeight.bold,
     );
 
-TextStyle customRobotoStyle(double size) => GoogleFonts.roboto(
+TextStyle customRobotoStyle(
+  double size, [
+  Color color = Colors.black,
+  FontWeight fontWeight = FontWeight.bold,
+]) =>
+    GoogleFonts.roboto(
       fontSize: SizeConfig.blockSizeHorizontal * size,
-      color: Colors.black,
-      fontWeight: FontWeight.bold,
+      color: color,
+      fontWeight: fontWeight,
     );
 
 TextStyle customFarroPrayerStyle({

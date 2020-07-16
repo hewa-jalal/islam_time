@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
@@ -156,7 +157,7 @@ class _HomePageState extends State<HomePage> {
     await _getSharedPrefs();
     if (isNotConnected) {
       _refreshController.refreshCompleted();
-      showOfflineDialog(context);
+      showOfflineDialog(context, false);
     } else {
       bloc.add(
         FetchBangWithSettings(
@@ -263,7 +264,7 @@ class _HomePageState extends State<HomePage> {
       hideOnTooltipTap: true,
       tooltipTap: _persisetTutorialDisplay,
       tooltipDirection: TooltipDirection.down,
-      child: Text(
+      child: AutoSizeText(
         'Time Remaining Until ${timeCycle.untilDayOrNight}',
         textAlign: TextAlign.center,
         style: customFarroPrayerStyle(
@@ -271,6 +272,7 @@ class _HomePageState extends State<HomePage> {
           context: context,
           size: SizeConfig.safeBlockHorizontal * 6.8,
         ),
+        maxLines: 1,
       ),
     );
   }
@@ -322,16 +324,16 @@ class _HomePageState extends State<HomePage> {
                       return Stack(
                         children: <Widget>[
                           _buildFlareActor(),
-                          Center(
-                            child: IconButton(
-                              icon: FlutterLogo(),
-                              onPressed: () async {
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.clear();
-                              },
-                            ),
-                          ),
+                          // Center(
+                          //   child: IconButton(
+                          //     icon: FlutterLogo(),
+                          //     onPressed: () async {
+                          //       final prefs =
+                          //           await SharedPreferences.getInstance();
+                          //       prefs.clear();
+                          //     },
+                          //   ),
+                          // ),
                           _buildBottomSheet(
                             context,
                             bodyStatusCubit,

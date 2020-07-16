@@ -153,18 +153,18 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       animType: AnimType.SCALE,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 1),
           child: Wrap(
             direction: Axis.horizontal,
             children: <Widget>[
               Text(
                 'you have fixed prayer times for you location, are you sure you want to change your location',
-                style: customRobotoStyle(6),
+                style: customRobotoStyle(5),
                 textAlign: TextAlign.center,
               ),
               Text(
                 'and get prayer times from the internet?',
-                style: customRobotoStyle(6),
+                style: customRobotoStyle(5),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -210,8 +210,13 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
           iconTime: 'moon',
         ),
         PrayerTile(
-          prayerTime: intl.DateFormat('HH:mm').format(bang.lastThird),
+          prayerTime: intl.DateFormat('HH:mm').format(bang.midNightStart),
           prayerName: 'Midnight',
+          iconTime: 'moon',
+        ),
+        PrayerTile(
+          prayerTime: intl.DateFormat('HH:mm').format(bang.midNightEnd),
+          prayerName: 'Last Third',
           iconTime: 'moon',
         ),
       ],

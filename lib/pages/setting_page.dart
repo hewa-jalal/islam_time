@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/method_number.dart';
 import 'package:islamtime/pages/home_page.dart';
@@ -72,10 +73,9 @@ class _SettingPageState extends State<SettingPage> {
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
                   'Get a new location',
-                  style: GoogleFonts.roboto(
-                    fontSize: SizeConfig.safeBlockHorizontal * 3.4,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amber[300],
+                  style: customRobotoStyle(
+                    4.4,
+                    Colors.amber[300],
                   ),
                 ),
               ),
@@ -94,10 +94,9 @@ class _SettingPageState extends State<SettingPage> {
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
                   'Ok',
-                  style: GoogleFonts.roboto(
-                    fontSize: SizeConfig.safeBlockHorizontal * 3.4,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amber[300],
+                  style: customRobotoStyle(
+                    4.4,
+                    Colors.amber[300],
                   ),
                 ),
               ),
@@ -189,6 +188,16 @@ class _SettingPageState extends State<SettingPage> {
                           shrinkWrap: true,
                           children: <Widget>[
                             _buildSearchableDropdown(),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: SizeConfig.safeBlockVertical * 2.2,
+                                left: SizeConfig.safeBlockVertical * 0.2,
+                              ),
+                              child: Text(
+                                'Tune prayer times (in minutes)',
+                                style: customRobotoStyle(6.0, Colors.white),
+                              ),
+                            ),
                             SizedBox(height: SizeConfig.safeBlockVertical * 2),
                             _buildMehtodNumberTiles(state.bang),
                           ],

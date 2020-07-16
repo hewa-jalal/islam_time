@@ -21,6 +21,8 @@ class Bang extends Equatable {
   final DateTime spedaDateTime;
   final String date;
   final String formattedHijriDate;
+  final DateTime midNightStart;
+  final DateTime midNightEnd;
 
   Bang({
     @required this.speda,
@@ -36,6 +38,8 @@ class Bang extends Equatable {
     @required this.spedaDateTime,
     @required this.date,
     @required this.formattedHijriDate,
+    @required this.midNightStart,
+    @required this.midNightEnd,
   });
 
   @override
@@ -86,11 +90,13 @@ class Bang extends Equatable {
       evar: evar,
       maghrab: maghrab,
       aesha: aesha,
-      maghrabDateTime: dates[3],
-      dayTime: dates[2],
-      lastThird: dates[1],
       theThird: dates[0],
-      spedaDateTime: dates[4],
+      lastThird: dates[1],
+      midNightStart: dates[1],
+      midNightEnd: dates[2],
+      dayTime: dates[3],
+      maghrabDateTime: dates[4],
+      spedaDateTime: dates[5],
       date: date,
       formattedHijriDate: todayHijri,
     );
@@ -129,7 +135,9 @@ class Bang extends Equatable {
   }
 
   static List<DateTime> getTheDifference(
-      DateTime spedaBang, DateTime maghrabBang) {
+    DateTime spedaBang,
+    DateTime maghrabBang,
+  ) {
     // get the full differnce between speda and maghrab bang
     DateTime spedaAndMaghrabDiff = spedaBang.subtract(
       Duration(
@@ -170,15 +178,22 @@ class Bang extends Equatable {
       ),
     );
 
-    print('the last Third $lastThird');
+    print('midNightStart $midNightStart');
+    print('midNightEnd  $midNightEnd');
 
     DateTime dayTime = maghrabBang.subtract(
       Duration(hours: spedaBang.hour, minutes: spedaBang.minute),
     );
 
     return [
-      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,
-          thirdHours, thirdMin),
+      DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        thirdHours,
+        thirdMin,
+      ),
+      midNightStart,
       midNightEnd,
       dayTime,
       maghrabBang,
