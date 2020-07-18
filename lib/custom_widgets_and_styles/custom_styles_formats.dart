@@ -6,7 +6,7 @@ import 'package:jiffy/jiffy.dart';
 
 import '../size_config.dart';
 
-void showOfflineDialog(BuildContext context, [bool isSetting = true]) async {
+void showOfflineDialog(BuildContext context, {bool isSetting = true}) async {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.WARNING,

@@ -40,7 +40,7 @@ void main() async {
   Bloc.observer = SimpleBlocDelegate();
   HydratedBloc.storage = await HydratedStorage.build();
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  final prefs = await SharedPreferences.getInstance();
   String locationPrefs = prefs.getString('location');
 
   print('vscodeeee');

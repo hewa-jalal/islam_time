@@ -157,7 +157,7 @@ class _HomePageState extends State<HomePage> {
     await _getSharedPrefs();
     if (isNotConnected) {
       _refreshController.refreshCompleted();
-      showOfflineDialog(context, false);
+      showOfflineDialog(context, isSetting: true);
     } else {
       bloc.add(
         FetchBangWithSettings(

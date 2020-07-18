@@ -31,6 +31,12 @@ Bang _$BangFromJson(Map<String, dynamic> json) {
         : DateTime.parse(json['spedaDateTime'] as String),
     date: json['date'] as String,
     formattedHijriDate: json['formattedHijriDate'] as String,
+    midNightStart: json['midNightStart'] == null
+        ? null
+        : DateTime.parse(json['midNightStart'] as String),
+    midNightEnd: json['midNightEnd'] == null
+        ? null
+        : DateTime.parse(json['midNightEnd'] as String),
   );
 }
 
@@ -48,4 +54,6 @@ Map<String, dynamic> _$BangToJson(Bang instance) => <String, dynamic>{
       'spedaDateTime': instance.spedaDateTime?.toIso8601String(),
       'date': instance.date,
       'formattedHijriDate': instance.formattedHijriDate,
+      'midNightStart': instance.midNightStart?.toIso8601String(),
+      'midNightEnd': instance.midNightEnd?.toIso8601String(),
     };

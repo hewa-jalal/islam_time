@@ -64,7 +64,7 @@ class _LocationPageState extends State<LocationPage> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () => isNotConnected
-                        ? showOfflineDialog(context, false)
+                        ? showOfflineDialog(context, isSetting: false)
                         : getUserLocation(context),
                     child: FlareActor(
                       'assets/flare/location_place_holder.flr',
