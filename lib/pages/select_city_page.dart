@@ -24,11 +24,11 @@ class _SelectCityPageState extends State<SelectCityPage> {
   @override
   void initState() {
     super.initState();
-    citiesFiles = getFiles();
+    citiesFiles = _getFiles();
     controller.addListener(() => setState(() => filter = controller.text));
   }
 
-  Future<List<String>> getFiles() async => await _initFiles(context);
+  Future<List<String>> _getFiles() async => await _initFiles(context);
 
   @override
   void dispose() {
@@ -77,9 +77,9 @@ class _SelectCityPageState extends State<SelectCityPage> {
                           child: ListView.builder(
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
-                              final String item = snapshot.data[index];
+                              final item = snapshot.data[index];
                               final regex = RegExp(r'\w+(?=\.)');
-                              Iterable iter = regex.allMatches(item);
+                              final iter = regex.allMatches(item);
                               for (var element in iter) {
                                 cities.add(
                                   item.substring(element.start, element.end),

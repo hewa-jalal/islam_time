@@ -38,8 +38,8 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   bool _firstTimeTutorial = false;
   bool _isLocal = false;
   Future<String> _locationFuture;
-  GlobalKey _settingButtonKey = GlobalKey();
-  List<TargetFocus> _targets = List();
+  final _settingButtonKey = GlobalKey();
+  final List<TargetFocus> _targets = [];
 
   @override
   void initState() {
@@ -244,8 +244,8 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                       children: <Widget>[
                         Text(
                           'Hijri ${bang.formattedHijriDate}',
-                          style: customFarroPrayerStyle(
-                            size: SizeConfig.safeBlockHorizontal * 4.0,
+                          style: customFarroDynamicStyle(
+                            size: 4.0,
                             fontWeight: FontWeight.bold,
                             context: context,
                           ),
@@ -253,8 +253,8 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                         Spacer(),
                         Text(
                           bang.date,
-                          style: customFarroPrayerStyle(
-                            size: SizeConfig.safeBlockHorizontal * 4.0,
+                          style: customFarroDynamicStyle(
+                            size: 4.0,
                             fontWeight: FontWeight.bold,
                             context: context,
                           ),
@@ -277,11 +277,10 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                                   Text(
                                     'Prayers for \n ${snapshotLocation.data}',
                                     textAlign: TextAlign.center,
-                                    style: customFarroPrayerStyle(
+                                    style: customFarroDynamicStyle(
                                       fontWeight: FontWeight.bold,
                                       context: context,
-                                      size:
-                                          SizeConfig.safeBlockHorizontal * 4.6,
+                                      size: 4.6,
                                     ),
                                   ),
                                 ],

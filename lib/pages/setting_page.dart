@@ -11,6 +11,8 @@ import 'package:islamtime/size_config.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'athkar_page.dart';
+
 class SettingPage extends StatefulWidget {
   @override
   _SettingPageState createState() => _SettingPageState();
@@ -177,6 +179,32 @@ class _SettingPageState extends State<SettingPage> {
         if (state is BangLoaded) {
           return SafeArea(
             child: Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  'Settings',
+                  style: customRobotoStyle(
+                    5.4,
+                    Colors.white,
+                  ),
+                ),
+                backgroundColor: Colors.blueGrey[700],
+                actions: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 1.0),
+                    child: FlatButton(
+                      child: Text(
+                        'Last Third Athkar',
+                        style: customRobotoStyle(
+                          3.0,
+                          Colors.white,
+                        ),
+                      ),
+                      onPressed: () => Get.to(AthkarPage()),
+                      color: Colors.blue[900],
+                    ),
+                  ),
+                ],
+              ),
               body: Container(
                 color: Colors.blueGrey[900],
                 child: Padding(

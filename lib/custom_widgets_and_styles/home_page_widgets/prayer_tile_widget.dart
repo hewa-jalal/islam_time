@@ -31,10 +31,10 @@ class PrayerTile extends StatelessWidget {
               child: Text(
                 prayerName,
                 textAlign: TextAlign.center,
-                style: customFarroPrayerStyle(
+                style: customFarroDynamicStyle(
                   fontWeight: FontWeight.w600,
                   context: context,
-                  size: SizeConfig.safeBlockHorizontal * 6.0,
+                  size: 6.0,
                 ),
               ),
             ),
@@ -45,10 +45,10 @@ class PrayerTile extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   prayerTime,
-                  style: customFarroPrayerStyle(
+                  style: customFarroDynamicStyle(
                     fontWeight: FontWeight.w600,
                     context: context,
-                    size: SizeConfig.safeBlockHorizontal * 6.0,
+                    size: 6.0,
                   ),
                 ),
               ),

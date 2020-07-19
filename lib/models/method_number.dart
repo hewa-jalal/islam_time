@@ -78,30 +78,31 @@ class MethodNumber {
   int number;
 
   static final Map<int, String> map = {
-    0: "Shia Ithna-Ansari",
-    1: "University of Islamic Sciences, Karachi",
-    2: "Islamic Society of North America",
-    3: "Muslim World League",
-    4: "Umm Al-Qura University, Makkah",
-    5: "Egyptian General Authority of Survey",
-    6: "Institute of Geophysics, University of Tehran",
-    7: "Gulf Region",
-    8: "Kuwait",
-    9: "Qatar",
-    10: "Majlis Ugama Islam Singapura, Singapore",
-    11: "Union Organization islamic de France",
-    12: "Diyanet İşleri Başkanlığı, Turkey",
-    13: "Spiritual Administration of Muslims of Russia",
+    0: 'Shia Ithna-Ansari',
+    1: 'University of Islamic Sciences, Karachi',
+    2: 'Islamic Society of North America',
+    3: 'Muslim World League',
+    4: 'Umm Al-Qura University, Makkah',
+    5: 'Egyptian General Authority of Survey',
+    6: 'Institute of Geophysics, University of Tehran',
+    7: 'Gulf Region',
+    8: 'Kuwait',
+    9: 'Qatar',
+    10: 'Majlis Ugama Islam Singapura, Singapore',
+    11: 'Union Organization islamic de France',
+    12: 'Diyanet İşleri Başkanlığı, Turkey',
+    13: 'Spiritual Administration of Muslims of Russia',
   };
 
   String get numberString {
-    return (map.containsKey(number) ? map[number] : "unknown");
+    return (map.containsKey(number) ? map[number] : 'unknown');
   }
 
   MethodNumber(this.number);
 
+  @override
   String toString() {
-    return ("${map[number]}");
+    return ('${map[number]}');
   }
 
   static List<MethodNumber> get list {

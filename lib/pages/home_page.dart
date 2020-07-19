@@ -1,12 +1,16 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_animator/flutter_animator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
@@ -18,6 +22,7 @@ import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:islamtime/models/time_cycle.dart';
+import 'package:islamtime/pages/athkar_page.dart';
 import 'package:islamtime/services/connection_service.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:islamtime/ui/global/theme/app_themes.dart';
@@ -59,7 +64,7 @@ class _HomePageState extends State<HomePage> {
 
   final SolidController _solidController = SolidController();
   final GlobalKey _swipeSheetKey = GlobalKey();
-  final List<TargetFocus> _targets = List();
+  final List<TargetFocus> _targets = [];
 
   @override
   void initState() {
@@ -267,10 +272,10 @@ class _HomePageState extends State<HomePage> {
       child: AutoSizeText(
         'Time Remaining Until ${timeCycle.untilDayOrNight}',
         textAlign: TextAlign.center,
-        style: customFarroPrayerStyle(
+        style: customFarroDynamicStyle(
           fontWeight: FontWeight.bold,
           context: context,
-          size: SizeConfig.safeBlockHorizontal * 6.8,
+          size: 6.8,
         ),
         maxLines: 1,
       ),
@@ -385,7 +390,10 @@ class _HomePageState extends State<HomePage> {
                               }
                               return SizedBox();
                             },
-                          )
+                          ),
+                          timeCycle.isLastThird
+                              ? _buildAthkarAvatar()
+                              : Container(),
                         ],
                       );
                     } else {
@@ -404,6 +412,38 @@ class _HomePageState extends State<HomePage> {
             }
             return CircularProgressIndicator();
           },
+        ),
+      ),
+    );
+  }
+
+  Positioned _buildAthkarAvatar() {
+    return Positioned.fill(
+      top: SizeConfig.blockSizeVertical * 20.0,
+      right: SizeConfig.blockSizeHorizontal * 1.6,
+      child: Align(
+        alignment: Alignment.topRight,
+        child: CircleAvatar(
+          radius: SizeConfig.blockSizeVertical * 5.4,
+          backgroundColor: Colors.black,
+          child: InkWell(
+            onTap: () => Get.to(AthkarPage()),
+            child: CircleAvatar(
+              radius: SizeConfig.blockSizeVertical * 5.0,
+              backgroundColor: Colors.blueGrey[700],
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(
+                  '''the last third athkar''',
+                  style: customRobotoStyle(
+                    4.2,
+                    Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

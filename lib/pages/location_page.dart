@@ -107,9 +107,9 @@ class _LocationPageState extends State<LocationPage> {
     final bangBloc = BlocProvider.of<BangBloc>(context);
 
     final prefs = await SharedPreferences.getInstance();
-    String locationPrefs = prefs.getString('location');
+    final locationPrefs = prefs.getString('location');
 
-    Position position = await Geolocator().getCurrentPosition();
+    final position = await Geolocator().getCurrentPosition();
     List<Placemark> placemarks = await Geolocator()
         .placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark placemark = placemarks[0];

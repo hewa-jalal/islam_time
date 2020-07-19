@@ -14,8 +14,8 @@ void showOfflineDialog(BuildContext context, {bool isSetting = true}) async {
     body: Center(
       child: Text(
         isSetting
-            ? 'Please make sure you are connecetd to the internet before going into settings'
-            : 'Please make sure you are connecetd to the internet so we can get correct prayers for your location',
+            ? 'Please make sure you are connected to the internet before going into settings'
+            : 'Please make sure you are connected to the internet so we can get correct prayers for your location',
         style: customRobotoStyle(5),
         textAlign: TextAlign.center,
       ),
@@ -26,11 +26,6 @@ void showOfflineDialog(BuildContext context, {bool isSetting = true}) async {
 
 const String IS_LOCAL_KEY = 'isLocal';
 const String IS_FIRST_TIME_KEY = 'isFirstTime';
-
-TextStyle customFarroStyle([double size = 16]) => GoogleFonts.farro(
-      fontSize: size,
-      fontWeight: FontWeight.bold,
-    );
 
 TextStyle customRobotoStyle(
   double size, [
@@ -43,7 +38,7 @@ TextStyle customRobotoStyle(
       fontWeight: fontWeight,
     );
 
-TextStyle customFarroPrayerStyle({
+TextStyle customFarroDynamicStyle({
   double letterSpacing = 0,
   @required FontWeight fontWeight,
   @required BuildContext context,
@@ -51,7 +46,7 @@ TextStyle customFarroPrayerStyle({
 }) {
   final themeData = Theme.of(context);
   return GoogleFonts.farro(
-    fontSize: size,
+    fontSize: SizeConfig.safeBlockHorizontal * size,
     fontWeight: fontWeight,
     letterSpacing: letterSpacing,
     color: themeData.textTheme.bodyText1.color,
@@ -75,26 +70,26 @@ TextStyle customFarroPrayerStyle({
 Color hexToColor(String code) =>
     Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 
-RichText customRichText(String text, BuildContext context) {
-  return RichText(
-    textAlign: TextAlign.end,
-    text: TextSpan(
-      children: <TextSpan>[
-        TextSpan(
-          text: 'Prayer times for',
-          style: customFarroPrayerStyle(
-              fontWeight: FontWeight.bold, context: context, size: 10),
-        ),
-        TextSpan(text: '\n'),
-        TextSpan(
-          text: text,
-          style: customFarroPrayerStyle(
-              fontWeight: FontWeight.bold, context: context, size: 10),
-        ),
-      ],
-    ),
-  );
-}
+// RichText customRichText(String text, BuildContext context) {
+//   return RichText(
+//     textAlign: TextAlign.end,
+//     text: TextSpan(
+//       children: <TextSpan>[
+//         TextSpan(
+//           text: 'Prayer times for',
+//           style: customFarroDynamicStyle(
+//               fontWeight: FontWeight.bold, context: context, size: 10),
+//         ),
+//         TextSpan(text: '\n'),
+//         TextSpan(
+//           text: text,
+//           style: customFarroDynamicStyle(
+//               fontWeight: FontWeight.bold, context: context, size: 10),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
 var _tempHijri = HijriCalendar.now();
 String todayHijri = _tempHijri.toFormat('MMMM dd yyyy');

@@ -50,14 +50,14 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
     yield BangLoading();
     if (event is FetchBang) {
       try {
-        Position position = await locationRepository.getUserLocation();
+        final position = await locationRepository.getUserLocation();
         _saveUserLocationToPrefs(position);
         _saveSettingsToPrefs(
           lat: position.latitude,
           lng: position.longitude,
           isLocal: false,
         );
-        final Bang bang = await bangRepository.fetchBang(
+        final bang = await bangRepository.fetchBang(
           lat: position.latitude,
           lng: position.longitude,
           month: DateTime.now().month,
@@ -70,7 +70,7 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
       }
     } else if (event is GetBang) {
       try {
-        final Bang bang = await bangRepository.getPrayerData(
+        final bang = await bangRepository.getPrayerData(
             event.countryName, event.cityName);
         yield BangLoaded(bang);
       } catch (e) {
@@ -78,7 +78,7 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
         add(FetchBang());
       }
     } else if (event is FetchBangWithSettings) {
-      Position position = await locationRepository.getUserLocation();
+      final position = await locationRepository.getUserLocation();
       // print('''
       // lat => ${position.latitude},
       // lng => ${position.longitude},

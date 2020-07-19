@@ -136,10 +136,10 @@ class _CountdownPageState extends State<CountdownPage> {
     checkLastThird();
     return Text(
       formatDuration(remainingTime ?? duration),
-      style: customFarroPrayerStyle(
+      style: customFarroDynamicStyle(
         fontWeight: FontWeight.bold,
         context: context,
-        size: SizeConfig.safeBlockHorizontal * 11,
+        size: 11.0,
         letterSpacing: 10,
       ),
     );
@@ -223,11 +223,11 @@ class _CountdownPageState extends State<CountdownPage> {
   void checkLastThird() {
     // midNightEnd is the beginning of lastThird
     // lastThird == MidNightEnd
-    if (DateTime.now().hour >= bang.lastThird.hour &&
+    if (DateTime.now().hour >= bang.midNightEnd.hour &&
         TimeOfDay.now().period == DayPeriod.am &&
         _timeIs == TimeIs.night) {
-      if (DateTime.now().hour == bang.lastThird.hour) {
-        if (DateTime.now().minute >= bang.lastThird.minute) {
+      if (DateTime.now().hour == bang.midNightEnd.hour) {
+        if (DateTime.now().minute >= bang.midNightEnd.minute) {
           if (!_isLastThird) {
             _isLastThird = true;
             addToBloc();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart' as getPackage;
+import 'package:get/get.dart' as get_package;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
@@ -41,11 +41,11 @@ void main() async {
   HydratedBloc.storage = await HydratedStorage.build();
 
   final prefs = await SharedPreferences.getInstance();
-  String locationPrefs = prefs.getString('location');
+  final locationPrefs = prefs.getString('location');
 
   print('vscodeeee');
 
-  final LocalBangRepository repository = LocalBangRepository(
+  final repository = LocalBangRepository(
     bangApiClient: BangApiClient(
       httpClient: http.Client(),
     ),
@@ -82,7 +82,7 @@ void main() async {
           child: CubitBuilder<ThemeCubit, ThemeChanged>(
             builder: (context, state) {
               ScreenUtil.init();
-              return getPackage.GetMaterialApp(
+              return get_package.GetMaterialApp(
                 theme: state.themeData,
                 debugShowCheckedModeBanner: false,
                 home: locationPrefs != null
@@ -93,6 +93,7 @@ void main() async {
                           return OnBoardingPage();
                         },
                       ),
+                // home: AthkarPage(),
               );
             },
           ),
