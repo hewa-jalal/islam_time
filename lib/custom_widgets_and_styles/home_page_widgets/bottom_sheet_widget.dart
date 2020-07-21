@@ -5,7 +5,6 @@ import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
@@ -210,17 +209,26 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
           iconTime: 'moon',
         ),
         PrayerTile(
-          prayerTime: intl.DateFormat('HH:mm').format(bang.midNightStart),
+          prayerTime: _toAmPm(bang.midNightStart),
           prayerName: 'Midnight',
           iconTime: 'moon',
         ),
         PrayerTile(
-          prayerTime: intl.DateFormat('HH:mm').format(bang.midNightEnd),
+          prayerTime: _toAmPm(bang.midNightEnd),
           prayerName: 'Last Third',
           iconTime: 'moon',
         ),
       ],
     );
+  }
+
+  String _toAmPm(DateTime date) {
+    var tod = TimeOfDay(hour: date.hour, minute: date.minute);
+    print('${'${tod.hourOfPeriod}'.padLeft(2, '0')}');
+    if (tod.hourOfPeriod == 00) {
+      return '12:${'${tod.minute}'.padLeft(2, '0')}';
+    }
+    return '${'${tod.hourOfPeriod}'.padLeft(2, '0')}:${'${tod.minute}'.padLeft(2, '0')}';
   }
 
   @override

@@ -1,15 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:avatar_glow/avatar_glow.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_animator/flutter_animator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
@@ -37,14 +34,14 @@ import 'package:tutorial_coach_mark/target_focus.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class HomePage extends StatefulWidget {
-  final String userLocation;
-  final bool showDialog;
-
   const HomePage({
     Key key,
     @required this.userLocation,
     this.showDialog = false,
   }) : super(key: key);
+
+  final bool showDialog;
+  final String userLocation;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -290,6 +287,38 @@ class _HomePageState extends State<HomePage> {
         : cubitTheme.changeTheme(AppTheme.dark);
   }
 
+  Positioned _buildAthkarAvatar() {
+    return Positioned.fill(
+      top: SizeConfig.blockSizeVertical * 20.0,
+      right: SizeConfig.blockSizeHorizontal * 1.6,
+      child: Align(
+        alignment: Alignment.topRight,
+        child: CircleAvatar(
+          radius: SizeConfig.blockSizeVertical * 5.4,
+          backgroundColor: Colors.black,
+          child: InkWell(
+            onTap: () => Get.to(AthkarPage()),
+            child: CircleAvatar(
+              radius: SizeConfig.blockSizeVertical * 5.0,
+              backgroundColor: Colors.blueGrey[700],
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(
+                  '''the last third athkar''',
+                  style: customRobotoStyle(
+                    4.2,
+                    Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bangBloc = BlocProvider.of<BangBloc>(context);
@@ -306,7 +335,8 @@ class _HomePageState extends State<HomePage> {
           builder: (context, isLocalSnapshot) {
             if (isLocalSnapshot.hasData) {
               return SmartRefresher(
-                onRefresh: () => _onRefresh(bangBloc, context, isNotConnected),
+                onRefresh: () =>
+                    _onRefresh(bangBloc, context, isNotConnected),
                 physics: isLocalSnapshot.data
                     ? NeverScrollableScrollPhysics()
                     : null,
@@ -382,7 +412,8 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       Align(
                                         alignment: Alignment.topCenter,
-                                        child: CountdownPage(bang: state.bang),
+                                        child:
+                                            CountdownPage(bang: state.bang),
                                       ),
                                     ],
                                   ),
@@ -412,38 +443,6 @@ class _HomePageState extends State<HomePage> {
             }
             return CircularProgressIndicator();
           },
-        ),
-      ),
-    );
-  }
-
-  Positioned _buildAthkarAvatar() {
-    return Positioned.fill(
-      top: SizeConfig.blockSizeVertical * 20.0,
-      right: SizeConfig.blockSizeHorizontal * 1.6,
-      child: Align(
-        alignment: Alignment.topRight,
-        child: CircleAvatar(
-          radius: SizeConfig.blockSizeVertical * 5.4,
-          backgroundColor: Colors.black,
-          child: InkWell(
-            onTap: () => Get.to(AthkarPage()),
-            child: CircleAvatar(
-              radius: SizeConfig.blockSizeVertical * 5.0,
-              backgroundColor: Colors.blueGrey[700],
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Text(
-                  '''the last third athkar''',
-                  style: customRobotoStyle(
-                    4.2,
-                    Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ),
         ),
       ),
     );

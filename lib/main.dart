@@ -8,6 +8,7 @@ import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/pages/home_page.dart';
+import 'package:islamtime/pages/splash_screen_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/services/connection_service.dart';
@@ -93,7 +94,7 @@ void main() async {
                           return OnBoardingPage();
                         },
                       ),
-                // home: AthkarPage(),
+                // home: SplashScreenPage(locationPrefs: locationPrefs),
               );
             },
           ),

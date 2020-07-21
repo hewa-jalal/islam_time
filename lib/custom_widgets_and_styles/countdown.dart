@@ -5,7 +5,6 @@ import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/time_cycle.dart';
 
-import '../size_config.dart';
 import 'custom_styles_formats.dart';
 
 enum TimeIs { night, day }
