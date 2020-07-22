@@ -15,13 +15,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.39.11"
-  animated_splash:
-    dependency: "direct main"
-    description:
-      name: animated_splash
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   animated_text_kit:
     dependency: "direct main"
     description:
@@ -57,13 +50,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  avatar_glow:
-    dependency: "direct main"
-    description:
-      name: avatar_glow
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.0"
   awesome_dialog:
     dependency: "direct main"
     description:
@@ -342,13 +328,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
-  flutter_spinkit:
-    dependency: "direct main"
-    description:
-      name: flutter_spinkit
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.1.2+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -819,6 +798,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  splashscreen:
+    dependency: "direct main"
+    description:
+      name: splashscreen
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   stack_trace:
     dependency: transitive
     description:

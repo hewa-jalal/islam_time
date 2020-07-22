@@ -7,12 +7,7 @@ import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/size_config.dart';
 import 'location_page.dart';
 
-class OnBoardingPage extends StatefulWidget {
-  @override
-  _OnBoardingPageState createState() => _OnBoardingPageState();
-}
-
-class _OnBoardingPageState extends State<OnBoardingPage> {
+class OnBoardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntroViewsFlutter(
@@ -37,15 +32,15 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
     mainImage: Image.asset('assets/images/jew_and_christian.png'),
     body: Text(''),
     pageColor: Colors.blueGrey[800],
-    textStyle: GoogleFonts.heebo(fontSize: 26),
+    textStyle: GoogleFonts.heebo(fontSize: 26.0),
   );
 
   final page2 = PageViewModel(
     title: Padding(
-      padding: EdgeInsets.only(top: SizeConfig.safeBlockVertical * 1),
+      padding: EdgeInsets.only(top: SizeConfig.safeBlockVertical * 1.0),
       child: Text(
-        '''For muslims the day starts at maghrib, and that's why on the last day of Ramadan, we dont pray Taraweeh, and that’s because the day (new day) has started at maghrib, so Ramadan is over and Eid has begun. also keep in mind that in islam the the night precedes the morning.''',
-        style: customRobotoStyle(6.4, Colors.white, FontWeight.normal),
+        '''For muslims the day starts at maghrib, also keep in mind that in islam the the night precedes the morning. and that's why on the last day of Ramadan, we don't pray Taraweeh, and that’s because the day (new day) has started at maghrib, so Ramadan is over and Eid has begun. this also mean that you may recite Surah Kahf any time after sunset of Thursday.''',
+        style: customRobotoStyle(5.6, Colors.white, FontWeight.normal),
       ),
     ),
     mainImage: Image.asset('assets/images/muslim.png'),

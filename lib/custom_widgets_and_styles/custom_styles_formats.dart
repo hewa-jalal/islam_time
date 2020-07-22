@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:lottie/lottie.dart';
 
 import '../size_config.dart';
 
 void showOfflineDialog(BuildContext context, {bool isSetting = true}) async {
   AwesomeDialog(
     context: context,
-    dialogType: DialogType.WARNING,
+    customHeader: Lottie.asset('assets/images/no_internet.json'),
     animType: AnimType.SCALE,
     body: Center(
       child: Text(
@@ -31,11 +32,26 @@ TextStyle customRobotoStyle(
   double size, [
   Color color = Colors.black,
   FontWeight fontWeight = FontWeight.bold,
+  bool haveShadow = false,
 ]) =>
     GoogleFonts.roboto(
       fontSize: SizeConfig.blockSizeHorizontal * size,
       color: color,
       fontWeight: fontWeight,
+      shadows: haveShadow
+          ? <Shadow>[
+              Shadow(
+                offset: Offset(10.0, 10.0),
+                blurRadius: 3.0,
+                color: Color.fromARGB(255, 0, 0, 0),
+              ),
+              Shadow(
+                offset: Offset(10.0, 10.0),
+                blurRadius: 8.0,
+                color: Color.fromARGB(125, 0, 0, 255),
+              ),
+            ]
+          : null,
     );
 
 TextStyle customFarroDynamicStyle({

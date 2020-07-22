@@ -86,10 +86,7 @@ class _HomePageState extends State<HomePage> {
       colorShadow: Colors.grey[400],
       textSkip: 'Ok',
       clickSkip: () {},
-      textStyleSkip: TextStyle(
-        fontSize: 20,
-        color: Colors.black,
-      ),
+      textStyleSkip: customRobotoStyle(4.4),
       paddingFocus: -100,
     )..show();
   }
@@ -110,7 +107,8 @@ class _HomePageState extends State<HomePage> {
                     'Swipe to get more details',
                     style: GoogleFonts.roboto(
                       fontSize: ScreenUtil().setSp(70),
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
                     ),
                   ),
                 ],
@@ -335,8 +333,7 @@ class _HomePageState extends State<HomePage> {
           builder: (context, isLocalSnapshot) {
             if (isLocalSnapshot.hasData) {
               return SmartRefresher(
-                onRefresh: () =>
-                    _onRefresh(bangBloc, context, isNotConnected),
+                onRefresh: () => _onRefresh(bangBloc, context, isNotConnected),
                 physics: isLocalSnapshot.data
                     ? NeverScrollableScrollPhysics()
                     : null,
@@ -363,9 +360,6 @@ class _HomePageState extends State<HomePage> {
                           //   child: IconButton(
                           //     icon: FlutterLogo(),
                           //     onPressed: () async {
-                          //       final prefs =
-                          //           await SharedPreferences.getInstance();
-                          //       prefs.clear();
                           //     },
                           //   ),
                           // ),
@@ -412,8 +406,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       Align(
                                         alignment: Alignment.topCenter,
-                                        child:
-                                            CountdownPage(bang: state.bang),
+                                        child: CountdownPage(bang: state.bang),
                                       ),
                                     ],
                                   ),

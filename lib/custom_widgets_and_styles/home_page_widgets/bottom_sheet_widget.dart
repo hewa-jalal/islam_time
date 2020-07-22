@@ -77,7 +77,8 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                     : 'Tap here to tune prayers times or get a new location',
                 style: GoogleFonts.roboto(
                   fontSize: ScreenUtil().setSp(70),
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -92,7 +93,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     TutorialCoachMark(
       context,
       targets: _targets,
-      colorShadow: Colors.grey[400],
+      colorShadow: Colors.grey[600],
       textSkip: 'Ok',
       clickSkip: () {},
       finish: () {
@@ -103,6 +104,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
         afterSpotLightCubit.changeStatus();
         _persisetTutorialDisplay();
       },
+      textStyleSkip: customRobotoStyle(4.4),
     )..show();
   }
 

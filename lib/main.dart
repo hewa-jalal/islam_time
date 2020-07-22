@@ -14,6 +14,7 @@ import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/services/connection_service.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:provider/provider.dart';
+import 'package:splashscreen/splashscreen.dart';
 import 'cubit/body_status_cubit.dart';
 import 'cubit/theme_cubit/theme_cubit.dart';
 import 'pages/onboarding_page.dart';

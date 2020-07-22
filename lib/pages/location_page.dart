@@ -78,7 +78,7 @@ class _LocationPageState extends State<LocationPage> {
                       child: Text(
                         'Tap the screen to get your location',
                         style: GoogleFonts.roboto(
-                          fontSize: SizeConfig.blockSizeHorizontal * 5.8,
+                          fontSize: SizeConfig.blockSizeHorizontal * 5.4,
                           color: Colors.black,
                           fontWeight: FontWeight.w900,
                         ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -99,9 +100,12 @@ class _SelectCityPageState extends State<SelectCityPage> {
                                     );
                                   },
                                   child: ListTile(
-                                    title: Text(
-                                      cities[index],
-                                    ),
+                                    title: Text(cities[index],
+                                        style: customRobotoStyle(
+                                          5.0,
+                                          Colors.black,
+                                          FontWeight.normal,
+                                        )),
                                   ),
                                 );
                               } else {
@@ -123,6 +127,11 @@ class _SelectCityPageState extends State<SelectCityPage> {
                                         child: ListTile(
                                           title: Text(
                                             cities[index],
+                                            style: customRobotoStyle(
+                                              5.0,
+                                              Colors.black,
+                                              FontWeight.normal,
+                                            ),
                                           ),
                                         ),
                                       )
