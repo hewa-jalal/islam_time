@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,7 +72,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
           contents: [
             ContentTarget(
               align: AlignContent.top,
-              child: Text(
+              child: AutoSizeText(
                 _isLocal
                     ? 'Tap here to get a new location'
                     : 'Tap here to tune prayers times or get a new location',
@@ -80,6 +81,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
                 ),
+                maxLines: 1,
               ),
             ),
           ],
@@ -137,10 +139,16 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       ),
       onTap: () {
         if (_isLocal) {
+          if (isNotConnected) {
+            showOfflineDialog(context, OfflineMessage.local);
+            return;
+          }
           _showLocationConfirmDialog(context, bloc);
-        } else if (isNotConnected) {
-          showOfflineDialog(context);
         } else {
+          if (isNotConnected) {
+            showOfflineDialog(context, OfflineMessage.setting);
+            return;
+          }
           Get.to(SettingPage());
         }
       },

@@ -7,16 +7,34 @@ import 'package:lottie/lottie.dart';
 
 import '../size_config.dart';
 
-void showOfflineDialog(BuildContext context, {bool isSetting = true}) async {
+enum OfflineMessage {
+  location,
+  setting,
+  local,
+}
+
+void showOfflineDialog(
+  BuildContext context,
+  OfflineMessage offlineMessage,
+) async {
   AwesomeDialog(
     context: context,
     customHeader: Lottie.asset('assets/images/no_internet.json'),
     animType: AnimType.SCALE,
     body: Center(
       child: Text(
-        isSetting
-            ? 'Please make sure you are connected to the internet before going into settings'
-            : 'Please make sure you are connected to the internet so we can get correct prayers for your location',
+        () {
+          switch (offlineMessage) {
+            case OfflineMessage.location:
+              return 'Please make sure you are connected to the internet so we can get correct prayers times for your location';
+            case OfflineMessage.setting:
+              return 'Please make sure you are connected to the internet before going into settings';
+            case OfflineMessage.local:
+              return 'for the option to change location and get prayers from the internet you must be online';
+            default:
+              return '';
+          }
+        }(),
         style: customRobotoStyle(5),
         textAlign: TextAlign.center,
       ),
