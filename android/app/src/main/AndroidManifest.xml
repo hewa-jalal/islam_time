@@ -9,7 +9,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="islamtime"
+        android:label="Islam Time"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"

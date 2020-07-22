@@ -37,7 +37,7 @@ class _SettingPageState extends State<SettingPage> {
         child: SearchableDropdown.single(
           menuBackgroundColor: Colors.blueGrey[700],
           style: GoogleFonts.farro(
-            fontSize: SizeConfig.safeBlockHorizontal * 5.4,
+            fontSize: SizeConfig.safeBlockHorizontal * 5.0,
             color: Colors.white,
           ),
           items: MethodNumber.list.map(
@@ -45,10 +45,8 @@ class _SettingPageState extends State<SettingPage> {
               return DropdownMenuItem(
                 child: Text(
                   exNum.numberString,
-                  style: GoogleFonts.robotoCondensed(
-                    fontSize: SizeConfig.safeBlockHorizontal * 5.4,
-                    color: Colors.white,
-                  ),
+                  style:
+                      customRobotoStyle(5.4, Colors.white, FontWeight.normal),
                 ),
                 value: exNum,
               );
@@ -156,8 +154,6 @@ class _SettingPageState extends State<SettingPage> {
 
   void _getPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    int p = prefs.getInt('methodNumber');
-    print('p inside settingpage => $p');
     selectedNumber = MethodNumber(prefs.getInt('methodNumber')) ?? 3;
   }
 
