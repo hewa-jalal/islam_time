@@ -46,29 +46,28 @@ class LocalBangRepository implements BangRepository {
   Future<Bang> getPrayerData(String countryName, String cityName) async {
     print('countryName $countryName');
     if (countryName.toLowerCase() == 'iraq') {
-      String fileString = await rootBundle
+      final fileString = await rootBundle
           .loadString('assets/fixed_prayer_time/Iraq/$cityName.txt');
 
       // split the files into individual lines
-      List<String> fileLines = fileString.split('\n');
+      final fileLines = fileString.split('\n');
 
       // get the line that contains the matched date
-      String matchedDate =
+      final matchedDate =
           fileLines.where((element) => element.contains(getDate())).toString();
 
       // print('matched data => $matchedDate');
 
       // split the line that has the data by ','
-      List<String> splitLine = matchedDate.split(',');
+      final splitLine = matchedDate.split(',');
 
-      String speda = toAmPm(splitLine[2]);
-      String rojHalat = toAmPm(splitLine[3]);
-      String nevro = toAmPm(splitLine[4]);
-      String evar = toAmPm(splitLine[5]);
-      String maghrab = toAmPm(splitLine[6]);
-      String aesha = toAmPm(splitLine[7]).replaceAll(')', '').trim();
-      List<DateTime> dates =
-          getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
+      final speda = toAmPm(splitLine[2]);
+      final rojHalat = toAmPm(splitLine[3]);
+      final nevro = toAmPm(splitLine[4]);
+      final evar = toAmPm(splitLine[5]);
+      final maghrab = toAmPm(splitLine[6]);
+      final aesha = toAmPm(splitLine[7]).replaceAll(')', '').trim();
+      final dates = getTheDifference(splitLine[1], splitLine[2], splitLine[6]);
 
       return Bang(
         speda: speda,
@@ -94,48 +93,48 @@ class LocalBangRepository implements BangRepository {
   }
 
   String getDate() {
-    int month = Jiffy().month;
-    int day = Jiffy().date;
+    final month = Jiffy().month;
+    final day = Jiffy().date;
 
-    String formattedMonth = month.toString().padLeft(2, '0');
-    String formattedDay = day.toString().padLeft(2, '0');
+    final formattedMonth = month.toString().padLeft(2, '0');
+    final formattedDay = day.toString().padLeft(2, '0');
 
     return '$formattedMonth-$formattedDay';
   }
 
   String toAmPm(String time) {
-    List<String> splitedTime = time.split(':');
-    int hour = int.parse(splitedTime[0].trim());
+    final splitedTime = time.split(':');
+    final hour = int.parse(splitedTime[0].trim());
 
-    TimeOfDay timeOfDay = TimeOfDay(hour: hour, minute: 0);
+    final timeOfDay = TimeOfDay(hour: hour, minute: 0);
 
-    if (timeOfDay.hourOfPeriod < 10 && timeOfDay.hourOfPeriod != 00)
+    if (timeOfDay.hourOfPeriod < 10 && timeOfDay.hourOfPeriod != 00) {
       return '0${timeOfDay.hourOfPeriod}:${splitedTime[1]}';
+    }
     if (timeOfDay.hourOfPeriod == 00) return '12:${splitedTime[1]}';
 
     return '${timeOfDay.hourOfPeriod}:${splitedTime[1]}';
   }
 
   List<DateTime> getTheDifference(String date, String speda, String maghrab) {
-    List<String> splitedDate = date.split('-');
-    int month = int.parse(splitedDate[0]);
-    int day = int.parse(splitedDate[1]);
+    final splitedDate = date.split('-');
+    final month = int.parse(splitedDate[0]);
+    final day = int.parse(splitedDate[1]);
 
-    List<String> splitedSpedaTime = speda.split(':');
-    int spedaH = int.parse(splitedSpedaTime[0]);
-    int spedaM = int.parse(splitedSpedaTime[1]);
+    final splitedSpedaTime = speda.split(':');
+    final spedaH = int.parse(splitedSpedaTime[0]);
+    final spedaM = int.parse(splitedSpedaTime[1]);
 
-    List<String> splitedMaghrabTime = maghrab.split(':');
-    int maghrabH = int.parse(splitedMaghrabTime[0]);
-    int maghrabM = int.parse(splitedMaghrabTime[1]);
+    final splitedMaghrabTime = maghrab.split(':');
+    final maghrabH = int.parse(splitedMaghrabTime[0]);
+    final maghrabM = int.parse(splitedMaghrabTime[1]);
 
-    DateTime spedaBang =
-        DateTime(DateTime.now().year, month, day, spedaH, spedaM);
-    DateTime maghrabBang =
+    final spedaBang = DateTime(DateTime.now().year, month, day, spedaH, spedaM);
+    final maghrabBang =
         DateTime(DateTime.now().year, month, day, maghrabH, maghrabM);
 
     // get the full differnce between speda and maghrab bang
-    DateTime spedaAndMaghrabDiff = spedaBang.subtract(
+    final spedaAndMaghrabDiff = spedaBang.subtract(
       Duration(
         days: maghrabBang.day,
         hours: maghrabBang.hour,
@@ -144,37 +143,37 @@ class LocalBangRepository implements BangRepository {
     );
 
     // get a third of the time
-    int thirdOfDifferenceSeconds =
+    final thirdOfDifferenceSeconds =
         (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 3);
-    Duration thirdDuration = Duration(
+    final thirdDuration = Duration(
         seconds: thirdOfDifferenceSeconds,
         minutes: (spedaAndMaghrabDiff.minute ~/ 3));
-    int thirdHours = thirdDuration.inHours;
-    int thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
+    final thirdHours = thirdDuration.inHours;
+    final thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
     // int midSecond = thirdDuration.inSeconds;
 
-    DateTime midNightStart = maghrabBang.add(
+    final midNightStart = maghrabBang.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
       ),
     );
 
-    DateTime midNightEnd = midNightStart.add(
+    final midNightEnd = midNightStart.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
       ),
     );
 
-    DateTime lastThird = midNightEnd.add(
+    final lastThird = midNightEnd.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
       ),
     );
 
-    DateTime dayTime = maghrabBang
+    final dayTime = maghrabBang
         .subtract(Duration(hours: spedaBang.hour, minutes: spedaBang.minute));
 
     print('''##### 

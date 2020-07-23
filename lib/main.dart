@@ -8,13 +8,11 @@ import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/pages/home_page.dart';
-import 'package:islamtime/pages/splash_screen_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/services/connection_service.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:provider/provider.dart';
-import 'package:splashscreen/splashscreen.dart';
 import 'cubit/body_status_cubit.dart';
 import 'cubit/theme_cubit/theme_cubit.dart';
 import 'pages/onboarding_page.dart';
@@ -44,8 +42,6 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final locationPrefs = prefs.getString('location');
-
-  print('vscodeeee');
 
   final repository = LocalBangRepository(
     bangApiClient: BangApiClient(

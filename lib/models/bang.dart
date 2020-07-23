@@ -61,23 +61,23 @@ class Bang extends Equatable {
   Map<String, dynamic> toJson() => _$BangToJson(this);
 
   static Bang fromJsonRequest(dynamic json, int day) {
-    String speda = _toAmPm(json['data'][day]['timings']['Fajr']);
-    String rojHalat = _toAmPm(json['data'][day]['timings']['Sunrise']);
-    String nevro = _toAmPm(json['data'][day]['timings']['Dhuhr']);
-    String evar = _toAmPm(json['data'][day]['timings']['Asr']);
-    String maghrab = _toAmPm(json['data'][day]['timings']['Maghrib']);
-    String aesha = _toAmPm(json['data'][day]['timings']['Isha']);
+    final speda = _toAmPm(json['data'][day]['timings']['Fajr']);
+    final rojHalat = _toAmPm(json['data'][day]['timings']['Sunrise']);
+    final nevro = _toAmPm(json['data'][day]['timings']['Dhuhr']);
+    final evar = _toAmPm(json['data'][day]['timings']['Asr']);
+    final maghrab = _toAmPm(json['data'][day]['timings']['Maghrib']);
+    final aesha = _toAmPm(json['data'][day]['timings']['Isha']);
 
     String date = json['data'][day]['date']['readable'];
     String hijriDate = json['data'][day]['date']['hijri']['date'];
 
     List<String> hijriDateSplit = hijriDate.split('-');
-    DateTime hijriDateTime = DateTime(int.parse(hijriDateSplit[2]),
+    final hijriDateTime = DateTime(int.parse(hijriDateSplit[2]),
         int.parse(hijriDateSplit[1]), int.parse(hijriDateSplit[0]));
 
-    DateTime spedaDateTime =
+    final spedaDateTime =
         _customStringToDate(json['data'][day]['timings']['Fajr']);
-    DateTime maghrabDateTime =
+    final maghrabDateTime =
         _customStringToDate(json['data'][day]['timings']['Maghrib']);
 
     List<DateTime> dates = getTheDifference(spedaDateTime, maghrabDateTime);
@@ -171,12 +171,12 @@ class Bang extends Equatable {
       ),
     );
 
-    DateTime lastThird = midNightEnd.add(
-      Duration(
-        hours: thirdHours,
-        minutes: thirdMin,
-      ),
-    );
+    // DateTime lastThird = midNightEnd.add(
+    //   Duration(
+    //     hours: thirdHours,
+    //     minutes: thirdMin,
+    //   ),
+    // );
 
     print('midNightStart $midNightStart');
     print('midNightEnd  $midNightEnd');

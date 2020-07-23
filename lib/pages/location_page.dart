@@ -110,20 +110,21 @@ class _LocationPageState extends State<LocationPage> {
     final locationPrefs = prefs.getString('location');
 
     final position = await Geolocator().getCurrentPosition();
-    List<Placemark> placemarks = await Geolocator()
+    final placemarks = await Geolocator()
         .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
+    final placemark = placemarks[0];
 
-    String formattedAddress = '${placemark.locality},${placemark.country}';
-    List<String> splitedAddress = formattedAddress.split(',');
+    final formattedAddress = '${placemark.locality},${placemark.country}';
+    final splitedAddress = formattedAddress.split(',');
 
-    String userCity = splitedAddress[0];
-    String userCountry = splitedAddress[1];
+    final userCity = splitedAddress[0];
+    final userCountry = splitedAddress[1];
 
     if (locationPrefs != null) {
-      List<String> splitedPrefs = locationPrefs.split(',');
-      bangBloc.add(GetBang(
-          countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()));
+      final splitedPrefs = locationPrefs.split(',');
+      bangBloc.add(
+        GetBang(countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()),
+      );
     }
 
     if (userCountry.toLowerCase().contains('iraq')) {

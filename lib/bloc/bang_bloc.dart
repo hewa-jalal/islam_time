@@ -92,7 +92,7 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
         isLocal: false,
       );
       try {
-        final Bang bang = await bangRepository.fetchBang(
+        final bang = await bangRepository.fetchBang(
           lat: position.latitude,
           lng: position.longitude,
           month: DateTime.now().month,
@@ -115,12 +115,12 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
     bool isLocal,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    List<String> stringTuning = tuning.map((e) => e.toString()).toList();
-    prefs.setDouble('lat', lat);
-    prefs.setDouble('lng', lng);
-    prefs.setInt('methodNumber', methodNumber);
-    prefs.setStringList('tuning', stringTuning);
-    prefs.setBool(IS_LOCAL_KEY, isLocal);
+    final stringTuning = tuning.map((e) => e.toString()).toList();
+    await prefs.setDouble('lat', lat);
+    await prefs.setDouble('lng', lng);
+    await prefs.setInt('methodNumber', methodNumber);
+    await prefs.setStringList('tuning', stringTuning);
+    await prefs.setBool(IS_LOCAL_KEY, isLocal);
 
     print(''' bloc => lat prefs ${prefs.getDouble('lat')} 
               bloc => lng prefs ${prefs.getDouble('lng')}
@@ -131,17 +131,17 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
 
   void _saveUserLocationToPrefs(Position position) async {
     final prefs = await SharedPreferences.getInstance();
-    List<Placemark> placemarks = await Geolocator()
+    final placemarks = await Geolocator()
         .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
+    final placemark = placemarks[0];
 
-    String formattedAddress = '${placemark.locality},${placemark.country}';
-    List<String> splitedAddress = formattedAddress.split(',');
+    final formattedAddress = '${placemark.locality},${placemark.country}';
+    final splitedAddress = formattedAddress.split(',');
 
-    String userCity = splitedAddress[0];
-    String userCountry = splitedAddress[1];
+    final userCity = splitedAddress[0];
+    final userCountry = splitedAddress[1];
 
-    prefs.setString('location', '$userCountry, $userCity');
+    await prefs.setString('location', '$userCountry, $userCity');
 
     print('inside bloc userLocation => ${prefs.getString('location')}');
   }

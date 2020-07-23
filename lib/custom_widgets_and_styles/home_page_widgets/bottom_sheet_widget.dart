@@ -163,20 +163,13 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 1),
-          child: Wrap(
-            direction: Axis.horizontal,
-            children: <Widget>[
-              Text(
-                'you have fixed prayer times for you location, are you sure you want to change your location',
-                style: customRobotoStyle(5),
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                'and get prayer times from the internet?',
-                style: customRobotoStyle(5),
-                textAlign: TextAlign.center,
-              ),
-            ],
+          child: Text(
+            '''you have fixed prayer times for you location, are you sure you want to change your location,and get prayer times from the internet?''',
+            style: customFarroDynamicStyle(
+              size: 5.0,
+              context: context,
+            ),
+            textAlign: TextAlign.center,
           ),
         ),
       ),

@@ -59,8 +59,8 @@ class _HomePageState extends State<HomePage> {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  final SolidController _solidController = SolidController();
-  final GlobalKey _swipeSheetKey = GlobalKey();
+  final _solidController = SolidController();
+  final _swipeSheetKey = GlobalKey();
   final List<TargetFocus> _targets = [];
 
   @override
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
       body: Center(
         child: Text(
           'Your Location is \n ${widget.userLocation}',
-          style: customRobotoStyle(5.4),
+          style: customFarroDynamicStyle(size: 5.4, context: context),
           textAlign: TextAlign.center,
         ),
       ),
@@ -292,17 +292,17 @@ class _HomePageState extends State<HomePage> {
       child: Align(
         alignment: Alignment.topRight,
         child: CircleAvatar(
-          radius: SizeConfig.blockSizeVertical * 5.4,
+          radius: SizeConfig.blockSizeVertical * 5.6,
           backgroundColor: Colors.black,
           child: InkWell(
             onTap: () => Get.to(AthkarPage()),
             child: CircleAvatar(
-              radius: SizeConfig.blockSizeVertical * 5.0,
+              radius: SizeConfig.blockSizeVertical * 5.2,
               backgroundColor: Colors.blueGrey[700],
               child: Padding(
-                padding: const EdgeInsets.all(4.0),
+                padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 0.6),
                 child: Text(
-                  '''the last third athkar''',
+                  'last third deeds',
                   style: customRobotoStyle(
                     4.2,
                     Colors.white,
@@ -323,7 +323,7 @@ class _HomePageState extends State<HomePage> {
     final bodyStatusCubit = context.cubit<BodyStatusCubit>();
     final afterSpotLightCubit = CubitProvider.of<AfterSpotLightCubit>(context);
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
-    var isNotConnected = connectionStatus == ConnectivityStatus.Offline;
+    final isNotConnected = connectionStatus == ConnectivityStatus.Offline;
     SizeConfig().init(context);
 
     return SafeArea(

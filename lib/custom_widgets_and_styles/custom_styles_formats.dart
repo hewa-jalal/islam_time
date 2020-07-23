@@ -35,7 +35,10 @@ void showOfflineDialog(
               return '';
           }
         }(),
-        style: customRobotoStyle(5),
+        style: customFarroDynamicStyle(
+          size: 5.0,
+          context: context,
+        ),
         textAlign: TextAlign.center,
       ),
     ),
@@ -74,7 +77,7 @@ TextStyle customRobotoStyle(
 
 TextStyle customFarroDynamicStyle({
   double letterSpacing = 0,
-  @required FontWeight fontWeight,
+  FontWeight fontWeight = FontWeight.normal,
   @required BuildContext context,
   @required double size,
 }) {

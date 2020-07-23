@@ -4,10 +4,6 @@ import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import '../size_config.dart';
 
 class MethodNumberTile extends StatelessWidget {
-  final bool isEnd;
-  final String prayerName;
-  final String prayerTime;
-  final Function onChange;
   const MethodNumberTile({
     Key key,
     this.isEnd = false,
@@ -15,6 +11,11 @@ class MethodNumberTile extends StatelessWidget {
     @required this.onChange,
     @required this.prayerTime,
   }) : super(key: key);
+
+  final bool isEnd;
+  final Function onChange;
+  final String prayerName;
+  final String prayerTime;
 
   @override
   Widget build(BuildContext context) {
@@ -30,18 +31,18 @@ class MethodNumberTile extends StatelessWidget {
               children: <Widget>[
                 Text(
                   prayerName,
-                  style: customRobotoStyle(5.5, Colors.white),
+                  style: customRobotoStyle(5.0, Colors.white),
                 ),
                 Text(
                   prayerTime,
-                  style: customRobotoStyle(5.5, Colors.white),
+                  style: customRobotoStyle(5.0, Colors.white),
                 ),
               ],
             ),
             Spacer(),
             Container(
-              width: SizeConfig.safeBlockHorizontal * 14,
-              height: SizeConfig.safeBlockHorizontal * 14,
+              width: SizeConfig.safeBlockHorizontal * 12,
+              height: SizeConfig.safeBlockHorizontal * 12,
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.amber[500],
@@ -62,7 +63,7 @@ class MethodNumberTile extends StatelessWidget {
                       ? FocusScope.of(context).unfocus()
                       : FocusScope.of(context).nextFocus();
                 },
-                style: customRobotoStyle(6.4, Colors.white),
+                style: customRobotoStyle(5.6, Colors.white),
                 onChanged: onChange,
                 textAlign: TextAlign.center,
               ),
@@ -75,7 +76,7 @@ class MethodNumberTile extends StatelessWidget {
 }
 
 class MethodNumber {
-  int number;
+  MethodNumber(this.number);
 
   static final Map<int, String> map = {
     0: 'Shia Ithna-Ansari',
@@ -94,48 +95,21 @@ class MethodNumber {
     13: 'Spiritual Administration of Muslims of Russia',
   };
 
-  String get numberString {
-    return (map.containsKey(number) ? map[number] : 'unknown');
-  }
 
-  MethodNumber(this.number);
+  int number;
 
   @override
   String toString() {
     return ('${map[number]}');
   }
 
+  String get numberString {
+    return (map.containsKey(number) ? map[number] : 'unknown');
+  }
+
   static List<MethodNumber> get list {
     return (map.keys.map((num) {
       return (MethodNumber(num));
     })).toList();
-  }
-}
-
-class CustomListItem extends StatelessWidget {
-  const CustomListItem({
-    this.thumbnail,
-  });
-
-  final Widget thumbnail;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: thumbnail,
-          ),
-          const Icon(
-            Icons.more_vert,
-            size: 16.0,
-          ),
-        ],
-      ),
-    );
   }
 }

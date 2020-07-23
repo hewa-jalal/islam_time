@@ -45,8 +45,11 @@ class _SettingPageState extends State<SettingPage> {
               return DropdownMenuItem(
                 child: Text(
                   exNum.numberString,
-                  style:
-                      customRobotoStyle(5.4, Colors.white, FontWeight.normal),
+                  style: customRobotoStyle(
+                    5.4,
+                    Colors.white,
+                    FontWeight.normal,
+                  ),
                 ),
                 value: exNum,
               );
@@ -157,6 +160,35 @@ class _SettingPageState extends State<SettingPage> {
     selectedNumber = MethodNumber(prefs.getInt('methodNumber')) ?? 3;
   }
 
+  AppBar _buildSettingAppBar() {
+    return AppBar(
+      backgroundColor: Colors.blueGrey[700],
+      title: Text(
+        'Settings',
+        style: customRobotoStyle(
+          5.4,
+          Colors.white,
+        ),
+      ),
+      actions: <Widget>[
+        Padding(
+          padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 1.0),
+          child: FlatButton(
+            child: Text(
+              'Last third deeds',
+              style: customRobotoStyle(
+                3.0,
+                Colors.white,
+              ),
+            ),
+            onPressed: () => Get.to(AthkarPage()),
+            color: Colors.blue[900],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<BangBloc>(context);
@@ -175,32 +207,7 @@ class _SettingPageState extends State<SettingPage> {
         if (state is BangLoaded) {
           return SafeArea(
             child: Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  'Settings',
-                  style: customRobotoStyle(
-                    5.4,
-                    Colors.white,
-                  ),
-                ),
-                backgroundColor: Colors.blueGrey[700],
-                actions: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 1.0),
-                    child: FlatButton(
-                      child: Text(
-                        'Last Third Athkar',
-                        style: customRobotoStyle(
-                          3.0,
-                          Colors.white,
-                        ),
-                      ),
-                      onPressed: () => Get.to(AthkarPage()),
-                      color: Colors.blue[900],
-                    ),
-                  ),
-                ],
-              ),
+              appBar: _buildSettingAppBar(),
               body: Container(
                 color: Colors.blueGrey[900],
                 child: Padding(
@@ -214,7 +221,7 @@ class _SettingPageState extends State<SettingPage> {
                             _buildSearchableDropdown(),
                             Padding(
                               padding: EdgeInsets.only(
-                                top: SizeConfig.safeBlockVertical * 2.2,
+                                top: SizeConfig.safeBlockVertical * 1.6,
                                 left: SizeConfig.safeBlockVertical * 0.2,
                               ),
                               child: Text(
