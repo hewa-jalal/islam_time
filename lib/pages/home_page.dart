@@ -127,8 +127,8 @@ class _HomePageState extends State<HomePage> {
     prefsMethodNumber = prefs.getInt('methodNumber');
     locationPrefs = prefs.getString('location');
 
-    List<String> tuningString = prefs.getStringList('tuning');
-    List<int> tuningInt = tuningString.map((e) => int.parse(e)).toList();
+    final tuningString = prefs.getStringList('tuning');
+    final tuningInt = tuningString.map((e) => int.parse(e)).toList();
 
     prefsTuning = tuningInt;
   }
