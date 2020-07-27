@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -157,7 +156,7 @@ class _HomePageState extends State<HomePage> {
     await _getSharedPrefs();
     if (isNotConnected) {
       _refreshController.refreshCompleted();
-      showOfflineDialog(context, OfflineMessage.setting);
+      showOfflineDialog(context, OfflineMessage.setting, true);
     } else {
       bloc.add(
         FetchBangWithSettings(
@@ -228,7 +227,7 @@ class _HomePageState extends State<HomePage> {
             );
           },
         ),
-        body: CubitBuilder<BodyStatusCubit, bool>(
+        body: BlocBuilder<BodyStatusCubit, bool>(
           builder: (context, state) =>
               state ? BottomSheetTime(timeCycle: timeCycle) : Container(),
         ),
@@ -245,7 +244,7 @@ class _HomePageState extends State<HomePage> {
     return SimpleTooltip(
       content: Material(
         child: Text(
-          'swipe from here to get latest prayer times',
+          'Swipe from here to get latest prayer times',
           style: GoogleFonts.roboto(
             fontSize: ScreenUtil().setSp(70),
             fontWeight: FontWeight.bold,
@@ -264,21 +263,25 @@ class _HomePageState extends State<HomePage> {
       hideOnTooltipTap: true,
       tooltipTap: _persisetTutorialDisplay,
       tooltipDirection: TooltipDirection.down,
-      child: AutoSizeText(
-        'Time Remaining Until ${timeCycle.untilDayOrNight}',
-        textAlign: TextAlign.center,
-        style: customFarroDynamicStyle(
-          fontWeight: FontWeight.bold,
-          context: context,
-          size: 6.8,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: SizeConfig.safeBlockHorizontal * 2.0),
+        child: AutoSizeText(
+          'Time Remaining Until ${timeCycle.untilDayOrNight}',
+          textAlign: TextAlign.center,
+          style: customFarroDynamicStyle(
+            fontWeight: FontWeight.bold,
+            context: context,
+            size: 6.8,
+          ),
+          maxLines: 1,
         ),
-        maxLines: 1,
       ),
     );
   }
 
   void _checkTheme(TimeCycle timeCycle, BuildContext context) {
-    final cubitTheme = CubitProvider.of<ThemeCubit>(context);
+    final cubitTheme = BlocProvider.of<ThemeCubit>(context);
 
     timeCycle.timeIs == TimeIs.day
         ? cubitTheme.changeTheme(AppTheme.light)
@@ -287,8 +290,8 @@ class _HomePageState extends State<HomePage> {
 
   Positioned _buildAthkarAvatar() {
     return Positioned.fill(
-      top: SizeConfig.blockSizeVertical * 20.0,
-      right: SizeConfig.blockSizeHorizontal * 1.6,
+      top: SizeConfig.safeBlockVertical * 20.0,
+      right: SizeConfig.safeBlockHorizontal * 1.6,
       child: Align(
         alignment: Alignment.topRight,
         child: CircleAvatar(
@@ -302,7 +305,7 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                 padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 0.6),
                 child: Text(
-                  'last third deeds',
+                  'Last third deeds',
                   style: customRobotoStyle(
                     4.2,
                     Colors.white,
@@ -320,8 +323,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final bangBloc = BlocProvider.of<BangBloc>(context);
-    final bodyStatusCubit = context.cubit<BodyStatusCubit>();
-    final afterSpotLightCubit = CubitProvider.of<AfterSpotLightCubit>(context);
+    final bodyStatusCubit = context.bloc<BodyStatusCubit>();
+    final afterSpotLightCubit = BlocProvider.of<AfterSpotLightCubit>(context);
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
     final isNotConnected = connectionStatus == ConnectivityStatus.Offline;
     SizeConfig().init(context);
@@ -390,7 +393,7 @@ class _HomePageState extends State<HomePage> {
                                           future: _getTutorialDisplay(),
                                           builder:
                                               (context, isFirstTimeSnapshot) {
-                                            return CubitBuilder<
+                                            return BlocBuilder<
                                                 AfterSpotLightCubit, bool>(
                                               builder: (context, state) {
                                                 return _buildSimpleTooltip(

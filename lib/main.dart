@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
+import 'package:bloc/bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart' as get_package;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -61,40 +61,42 @@ void main() async {
         BlocProvider<TimeCycleBloc>(
           create: (_) => TimeCycleBloc(),
         ),
+        BlocProvider<BodyStatusCubit>(
+          create: (_) => BodyStatusCubit(),
+        ),
+        BlocProvider<AfterSpotLightCubit>(
+          create: (_) => AfterSpotLightCubit(),
+        ),
+        BlocProvider<ThemeCubit>(
+          create: (_) => ThemeCubit(),
+        ),
       ],
-      child: MultiCubitProvider(
-        providers: [
-          CubitProvider<BodyStatusCubit>(
-            create: (_) => BodyStatusCubit(),
-          ),
-          CubitProvider<AfterSpotLightCubit>(
-            create: (_) => AfterSpotLightCubit(),
-          ),
-          CubitProvider<ThemeCubit>(
-            create: (_) => ThemeCubit(),
-          ),
-        ],
-        child: StreamProvider<ConnectivityStatus>(
-          create: (context) =>
-              ConnectivityService().connectionStatusController.stream,
-          child: CubitBuilder<ThemeCubit, ThemeChanged>(
-            builder: (context, state) {
-              ScreenUtil.init();
-              return get_package.GetMaterialApp(
-                theme: state.themeData,
-                debugShowCheckedModeBanner: false,
-                home: locationPrefs != null
-                    ? HomePage(showDialog: false, userLocation: locationPrefs)
-                    : Builder(
-                        builder: (context) {
-                          SizeConfig().init(context);
-                          return OnBoardingPage();
-                        },
-                      ),
-                // home: SplashScreenPage(locationPrefs: locationPrefs),
-              );
-            },
-          ),
+      child: StreamProvider<ConnectivityStatus>(
+        create: (context) =>
+            ConnectivityService().connectionStatusController.stream,
+        child: BlocBuilder<ThemeCubit, ThemeChanged>(
+          builder: (context, state) {
+            return get_package.GetMaterialApp(
+              theme: state.themeData,
+              debugShowCheckedModeBanner: false,
+              home: locationPrefs != null
+                  ? Builder(builder: (context) {
+                      ScreenUtil.init(context);
+                      return HomePage(
+                        showDialog: false,
+                        userLocation: locationPrefs,
+                      );
+                    })
+                  : Builder(
+                      builder: (context) {
+                        SizeConfig().init(context);
+                        ScreenUtil.init(context);
+                        return OnBoardingPage();
+                      },
+                    ),
+              // home: SplashScreenPage(locationPrefs: locationPrefs),
+            );
+          },
         ),
       ),
     ),

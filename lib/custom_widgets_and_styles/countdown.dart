@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
@@ -104,6 +105,7 @@ class _CountdownPageState extends State<CountdownPage> {
     startTime = time;
   }
 
+  @override
   void initState() {
     super.initState();
     duration = Duration(seconds: 5);
@@ -133,13 +135,14 @@ class _CountdownPageState extends State<CountdownPage> {
   Widget build(BuildContext context) {
     checkDayNight();
     checkLastThird();
-    return Text(
+    return AutoSizeText(
       formatDuration(remainingTime ?? duration),
+      maxLines: 1,
       style: customFarroDynamicStyle(
         fontWeight: FontWeight.bold,
         context: context,
-        size: 11.0,
-        letterSpacing: 10,
+        size: 10.0,
+        letterSpacing: 10.0,
       ),
     );
   }
@@ -152,7 +155,6 @@ class _CountdownPageState extends State<CountdownPage> {
           // hours and minutes are greater
           _timeIs = TimeIs.night;
           if (_timeIs != _oldTimeIs) {
-            print('0 $_oldTimeIs');
             _oldTimeIs = _timeIs;
             addToBloc();
             setDurationToNight();
@@ -161,7 +163,6 @@ class _CountdownPageState extends State<CountdownPage> {
           // minutes are still not greater so it's still day time
           _timeIs = TimeIs.day;
           if (_timeIs != _oldTimeIs) {
-            print('0 $_oldTimeIs');
             _oldTimeIs = _timeIs;
             addToBloc();
             setDurationToDay();
@@ -171,7 +172,6 @@ class _CountdownPageState extends State<CountdownPage> {
         // hours are greater
         _timeIs = TimeIs.night;
         if (_timeIs != _oldTimeIs) {
-          print('0 $_oldTimeIs');
           _oldTimeIs = _timeIs;
           addToBloc();
           setDurationToNight();
@@ -184,7 +184,6 @@ class _CountdownPageState extends State<CountdownPage> {
         if (DateTime.now().minute < bang.spedaDateTime.minute) {
           _timeIs = TimeIs.night;
           if (_timeIs != _oldTimeIs) {
-            print('0 $_oldTimeIs');
             _oldTimeIs = _timeIs;
             addToBloc();
             setDurationToNight();
@@ -192,7 +191,6 @@ class _CountdownPageState extends State<CountdownPage> {
         } else {
           _timeIs = TimeIs.day;
           if (_timeIs != _oldTimeIs) {
-            print('1 $_oldTimeIs');
             _oldTimeIs = _timeIs;
             addToBloc();
             setDurationToDay();
@@ -202,7 +200,6 @@ class _CountdownPageState extends State<CountdownPage> {
         // hours are smaller
         _timeIs = TimeIs.night;
         if (_timeIs != _oldTimeIs) {
-          print('2 $_oldTimeIs');
           _oldTimeIs = _timeIs;
           addToBloc();
           setDurationToNight();
@@ -211,7 +208,6 @@ class _CountdownPageState extends State<CountdownPage> {
     } else {
       _timeIs = TimeIs.day;
       if (_timeIs != _oldTimeIs) {
-        print('3 $_oldTimeIs');
         _oldTimeIs = _timeIs;
         addToBloc();
         setDurationToDay();

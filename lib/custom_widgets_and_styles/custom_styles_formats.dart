@@ -1,11 +1,16 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:islamtime/pages/athkar_page.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:lottie/lottie.dart';
 
 import '../size_config.dart';
+
+const String IS_LOCAL_KEY = 'isLocal';
+const String IS_FIRST_TIME_KEY = 'isFirstTime';
 
 enum OfflineMessage {
   location,
@@ -16,6 +21,7 @@ enum OfflineMessage {
 void showOfflineDialog(
   BuildContext context,
   OfflineMessage offlineMessage,
+  bool showLastThirdDeeds,
 ) async {
   AwesomeDialog(
     context: context,
@@ -43,36 +49,21 @@ void showOfflineDialog(
       ),
     ),
     btnOkOnPress: () {},
+    btnCancelText: showLastThirdDeeds ? 'Last third deeds' : null,
+    btnCancelOnPress: showLastThirdDeeds ? () => Get.to(AthkarPage()) : null,
+    btnCancelColor: Colors.blue[800],
   )..show();
 }
-
-const String IS_LOCAL_KEY = 'isLocal';
-const String IS_FIRST_TIME_KEY = 'isFirstTime';
 
 TextStyle customRobotoStyle(
   double size, [
   Color color = Colors.black,
   FontWeight fontWeight = FontWeight.bold,
-  bool haveShadow = false,
 ]) =>
     GoogleFonts.roboto(
-      fontSize: SizeConfig.blockSizeHorizontal * size,
+      fontSize: SizeConfig.safeBlockHorizontal * size,
       color: color,
       fontWeight: fontWeight,
-      shadows: haveShadow
-          ? <Shadow>[
-              Shadow(
-                offset: Offset(10.0, 10.0),
-                blurRadius: 3.0,
-                color: Color.fromARGB(255, 0, 0, 0),
-              ),
-              Shadow(
-                offset: Offset(10.0, 10.0),
-                blurRadius: 8.0,
-                color: Color.fromARGB(125, 0, 0, 255),
-              ),
-            ]
-          : null,
     );
 
 TextStyle customFarroDynamicStyle({

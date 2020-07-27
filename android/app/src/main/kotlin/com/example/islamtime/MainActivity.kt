@@ -1,4 +1,4 @@
-package com.example.islamtime
+package com.hiwad.islamtime
 
 import io.flutter.embedding.android.FlutterActivity
 

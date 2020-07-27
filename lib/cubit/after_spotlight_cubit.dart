@@ -1,4 +1,4 @@
-import 'package:cubit/cubit.dart';
+import 'package:bloc/bloc.dart';
 
 class AfterSpotLightCubit extends Cubit<bool> {
   AfterSpotLightCubit() : super(false);

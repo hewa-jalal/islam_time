@@ -1,11 +1,11 @@
 import 'dart:ui';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/pages/select_city_page.dart';
@@ -13,8 +13,6 @@ import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/services/connection_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../size_config.dart';
 
 class LocationPage extends StatefulWidget {
   @override
@@ -34,7 +32,7 @@ class _LocationPageState extends State<LocationPage> {
         body: BlocConsumer<BangBloc, BangState>(
           listener: (context, state) async {
             final prefs = await SharedPreferences.getInstance();
-            String locationPrefs = prefs.get('location');
+            final locationPrefs = prefs.get('location');
             if (state is BangLoaded) {
               if (locationPrefs != null) {
                 Get.off(
@@ -64,7 +62,8 @@ class _LocationPageState extends State<LocationPage> {
                 children: <Widget>[
                   GestureDetector(
                     onTap: () => isNotConnected
-                        ? showOfflineDialog(context, OfflineMessage.location)
+                        ? showOfflineDialog(
+                            context, OfflineMessage.location, false)
                         : getUserLocation(context),
                     child: FlareActor(
                       'assets/flare/location_place_holder.flr',
@@ -75,13 +74,14 @@ class _LocationPageState extends State<LocationPage> {
                     top: 30,
                     child: Align(
                       alignment: Alignment.topCenter,
-                      child: Text(
+                      child: AutoSizeText(
                         'Tap the screen to get your location',
-                        style: GoogleFonts.roboto(
-                          fontSize: SizeConfig.blockSizeHorizontal * 5.4,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w900,
+                        style: customRobotoStyle(
+                          5.4,
+                          Colors.black,
+                          FontWeight.w900,
                         ),
+                        maxLines: 1,
                       ),
                     ),
                   ),

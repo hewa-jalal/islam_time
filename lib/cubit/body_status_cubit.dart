@@ -1,4 +1,4 @@
-import 'package:cubit/cubit.dart';
+import 'package:bloc/bloc.dart';
 
 class BodyStatusCubit extends Cubit<bool> {
   BodyStatusCubit() : super(false);

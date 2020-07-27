@@ -78,7 +78,7 @@ class MethodNumberTile extends StatelessWidget {
 class MethodNumber {
   MethodNumber(this.number);
 
-  static final Map<int, String> map = {
+  static const Map<int, String> map = const {
     0: 'Shia Ithna-Ansari',
     1: 'University of Islamic Sciences, Karachi',
     2: 'Islamic Society of North America',

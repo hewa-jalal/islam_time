@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_cubit/flutter_cubit.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -91,7 +90,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   }
 
   void _showTutorial() {
-    final afterSpotLightCubit = CubitProvider.of<AfterSpotLightCubit>(context);
+    final afterSpotLightCubit = BlocProvider.of<AfterSpotLightCubit>(context);
     TutorialCoachMark(
       context,
       targets: _targets,
@@ -135,18 +134,18 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       child: Icon(
         _isLocal ? Icons.add_location : Icons.settings,
         color: Colors.blue,
-        size: SizeConfig.blockSizeHorizontal * 11,
+        size: SizeConfig.safeBlockHorizontal * 11.0,
       ),
       onTap: () {
         if (_isLocal) {
           if (isNotConnected) {
-            showOfflineDialog(context, OfflineMessage.local);
+            showOfflineDialog(context, OfflineMessage.local, true);
             return;
           }
           _showLocationConfirmDialog(context, bloc);
         } else {
           if (isNotConnected) {
-            showOfflineDialog(context, OfflineMessage.setting);
+            showOfflineDialog(context, OfflineMessage.setting, true);
             return;
           }
           Get.to(SettingPage());
@@ -166,7 +165,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
           child: Text(
             '''you have fixed prayer times for you location, are you sure you want to change your location,and get prayer times from the internet?''',
             style: customFarroDynamicStyle(
-              size: 5.0,
+              size: 4.0,
               context: context,
             ),
             textAlign: TextAlign.center,
@@ -246,7 +245,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
           child: BlocBuilder<BangBloc, BangState>(
-            builder: (contt, state) {
+            builder: (context, state) {
               if (state is BangLoaded) {
                 final bang = state.bang;
                 return Column(
