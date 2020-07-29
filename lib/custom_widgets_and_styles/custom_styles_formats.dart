@@ -12,6 +12,12 @@ import '../size_config.dart';
 const String IS_LOCAL_KEY = 'isLocal';
 const String IS_FIRST_TIME_KEY = 'isFirstTime';
 
+bool isArabic(context) {
+  final myLocale = Localizations.localeOf(context);
+  print('isArabic method ${myLocale.languageCode}');
+  return myLocale.languageCode == 'ar' ? true : false;
+}
+
 enum OfflineMessage {
   location,
   setting,

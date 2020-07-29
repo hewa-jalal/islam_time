@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart' as get_package;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:i18n_extension/i18n_widget.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/pages/home_page.dart';
+import 'package:islamtime/pages/language_selection_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/services/connection_service.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:provider/provider.dart';
 import 'cubit/body_status_cubit.dart';
+import 'cubit/is_arabic_cubit.dart';
 import 'cubit/theme_cubit/theme_cubit.dart';
-import 'pages/onboarding_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:islamtime/repository/location_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,31 +73,47 @@ void main() async {
         BlocProvider<ThemeCubit>(
           create: (_) => ThemeCubit(),
         ),
+        BlocProvider<IsArabicCubit>(
+          create: (_) => IsArabicCubit(),
+        ),
       ],
       child: StreamProvider<ConnectivityStatus>(
         create: (context) =>
             ConnectivityService().connectionStatusController.stream,
         child: BlocBuilder<ThemeCubit, ThemeChanged>(
           builder: (context, state) {
-            return get_package.GetMaterialApp(
-              theme: state.themeData,
+            return NeumorphicApp(
               debugShowCheckedModeBanner: false,
-              home: locationPrefs != null
-                  ? Builder(builder: (context) {
-                      ScreenUtil.init(context);
-                      return HomePage(
-                        showDialog: false,
-                        userLocation: locationPrefs,
-                      );
-                    })
-                  : Builder(
-                      builder: (context) {
-                        SizeConfig().init(context);
-                        ScreenUtil.init(context);
-                        return OnBoardingPage();
-                      },
-                    ),
-              // home: SplashScreenPage(locationPrefs: locationPrefs),
+              home: get_package.GetMaterialApp(
+                // localizationsDelegates: [
+                //   GlobalMaterialLocalizations.delegate,
+                //   GlobalWidgetsLocalizations.delegate,
+                //   GlobalCupertinoLocalizations.delegate,
+                // ],
+                // supportedLocales: const [const Locale('ar'), const Locale('en_us')],
+                theme: state.themeData,
+                debugShowCheckedModeBanner: false,
+                home: locationPrefs != null
+                    ? Builder(
+                        builder: (context) {
+                          ScreenUtil.init(context);
+                          return HomePage(
+                            showDialog: false,
+                            userLocation: locationPrefs,
+                          );
+                        },
+                      )
+                    : Builder(
+                        builder: (context) {
+                          SizeConfig().init(context);
+                          ScreenUtil.init(context);
+                          return I18n(
+                            child: LanguageSelectionPage(),
+                          );
+                        },
+                      ),
+                // home: SplashScreenPage(locationPrefs: locationPrefs),
+              ),
             );
           },
         ),
