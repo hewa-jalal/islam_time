@@ -1,22 +1,19 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:islamtime/cubit/is_rtl_cubit.dart';
 import 'package:islamtime/pages/athkar_page.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:lottie/lottie.dart';
+import 'package:bloc/bloc.dart';
 
 import '../size_config.dart';
 
 const String IS_LOCAL_KEY = 'isLocal';
 const String IS_FIRST_TIME_KEY = 'isFirstTime';
-
-bool isArabic(context) {
-  final myLocale = Localizations.localeOf(context);
-  print('isArabic method ${myLocale.languageCode}');
-  return myLocale.languageCode == 'ar' ? true : false;
-}
 
 enum OfflineMessage {
   location,
@@ -62,15 +59,19 @@ void showOfflineDialog(
 }
 
 TextStyle customRobotoStyle(
-  double size, [
+  double size,
+  BuildContext context, [
   Color color = Colors.black,
   FontWeight fontWeight = FontWeight.bold,
-]) =>
-    GoogleFonts.roboto(
-      fontSize: SizeConfig.safeBlockHorizontal * size,
-      color: color,
-      fontWeight: fontWeight,
-    );
+]) {
+  final isRtlCubit = BlocProvider.of(context);
+  print(isRtlCubit);
+  return GoogleFonts.roboto(
+    fontSize: SizeConfig.safeBlockHorizontal * size,
+    color: color,
+    fontWeight: fontWeight,
+  );
+}
 
 TextStyle customFarroDynamicStyle({
   double letterSpacing = 0,

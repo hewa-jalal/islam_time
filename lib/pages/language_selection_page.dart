@@ -3,10 +3,24 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i18n_extension/i18n_widget.dart';
+import 'package:islamtime/cubit/is_rtl_cubit.dart';
 
 import 'onboarding_page.dart';
 
-class LanguageSelectionPage extends StatelessWidget {
+class LanguageSelectionPage extends StatefulWidget {
+  @override
+  _LanguageSelectionPageState createState() => _LanguageSelectionPageState();
+}
+
+class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
+  IsRtlCubit isRtlCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    isRtlCubit = IsRtlCubit();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,6 +51,7 @@ class LanguageSelectionPage extends StatelessWidget {
 
   void _langaugeSelection(BuildContext context, String lang) {
     I18n.of(context).locale = Locale(lang);
+    lang == 'ar' ? isRtlCubit.isRtl(true) : isRtlCubit.isRtl(false);
     Get.to(OnBoardingPage());
   }
 }

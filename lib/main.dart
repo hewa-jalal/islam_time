@@ -17,7 +17,7 @@ import 'package:islamtime/services/connection_service.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:provider/provider.dart';
 import 'cubit/body_status_cubit.dart';
-import 'cubit/is_arabic_cubit.dart';
+import 'cubit/is_rtl_cubit.dart';
 import 'cubit/theme_cubit/theme_cubit.dart';
 import 'package:http/http.dart' as http;
 import 'package:islamtime/repository/location_repository.dart';
@@ -61,21 +61,11 @@ void main() async {
             locationRepository: LocationRepository(),
           ),
         ),
-        BlocProvider<TimeCycleBloc>(
-          create: (_) => TimeCycleBloc(),
-        ),
-        BlocProvider<BodyStatusCubit>(
-          create: (_) => BodyStatusCubit(),
-        ),
-        BlocProvider<AfterSpotLightCubit>(
-          create: (_) => AfterSpotLightCubit(),
-        ),
-        BlocProvider<ThemeCubit>(
-          create: (_) => ThemeCubit(),
-        ),
-        BlocProvider<IsArabicCubit>(
-          create: (_) => IsArabicCubit(),
-        ),
+        BlocProvider<TimeCycleBloc>(create: (_) => TimeCycleBloc()),
+        BlocProvider<BodyStatusCubit>(create: (_) => BodyStatusCubit()),
+        BlocProvider<AfterSpotLightCubit>(create: (_) => AfterSpotLightCubit()),
+        BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
+        BlocProvider<IsRtlCubit>(create: (_) => IsRtlCubit()),
       ],
       child: StreamProvider<ConnectivityStatus>(
         create: (context) =>
@@ -85,12 +75,6 @@ void main() async {
             return NeumorphicApp(
               debugShowCheckedModeBanner: false,
               home: get_package.GetMaterialApp(
-                // localizationsDelegates: [
-                //   GlobalMaterialLocalizations.delegate,
-                //   GlobalWidgetsLocalizations.delegate,
-                //   GlobalCupertinoLocalizations.delegate,
-                // ],
-                // supportedLocales: const [const Locale('ar'), const Locale('en_us')],
                 theme: state.themeData,
                 debugShowCheckedModeBanner: false,
                 home: locationPrefs != null
