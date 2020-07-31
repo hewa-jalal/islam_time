@@ -11,12 +11,10 @@ import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/pages/language_selection_page.dart';
-import 'package:islamtime/pages/liquid_introduction.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/services/connection_service.dart';
 import 'package:islamtime/size_config.dart';
-import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:provider/provider.dart';
 import 'cubit/body_status_cubit.dart';
 import 'cubit/is_arabic_cubit.dart';
@@ -110,7 +108,7 @@ void main() async {
                           SizeConfig().init(context);
                           ScreenUtil.init(context);
                           return I18n(
-                            child: LiquidIntroductionPage(),
+                            child: LanguageSelectionPage(),
                           );
                         },
                       ),

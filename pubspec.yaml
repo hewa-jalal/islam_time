@@ -54,7 +54,6 @@ dependencies:
   i18n_extension: ^1.4.1
   devicelocale: ^0.3.1
   flutter_neumorphic: ^3.0.1
-  liquid_swipe: ^1.4.3
 
       
 
