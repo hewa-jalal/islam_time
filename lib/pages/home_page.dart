@@ -16,6 +16,7 @@ import 'package:islamtime/cubit/theme_cubit/theme_cubit.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_text.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/athkar_page.dart';
@@ -288,7 +289,7 @@ class _HomePageState extends State<HomePage> {
         : cubitTheme.changeTheme(AppTheme.dark);
   }
 
-  Positioned _buildAthkarAvatar() {
+  Widget _buildAthkarAvatar() {
     return Positioned.fill(
       top: SizeConfig.safeBlockVertical * 20.0,
       right: SizeConfig.safeBlockHorizontal * 1.6,
@@ -304,12 +305,10 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.blueGrey[700],
               child: Padding(
                 padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 0.6),
-                child: Text(
+                child: CustomText(
                   'Last third deeds',
-                  style: customRobotoStyle(
-                    4.2,
-                    Colors.white,
-                  ),
+                  size: 4.2,
+                  color: Colors.white,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -359,13 +358,18 @@ class _HomePageState extends State<HomePage> {
                       return Stack(
                         children: <Widget>[
                           _buildFlareActor(),
-                          // Center(
-                          //   child: IconButton(
-                          //     icon: FlutterLogo(),
-                          //     onPressed: () async {
-                          //     },
-                          //   ),
-                          // ),
+                          Center(
+                            child: IconButton(
+                              icon: FlutterLogo(
+                                size: 4000.0,
+                              ),
+                              onPressed: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.clear();
+                              },
+                            ),
+                          ),
                           _buildBottomSheet(
                             context,
                             bodyStatusCubit,

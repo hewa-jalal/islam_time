@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_text.dart';
 
 import '../size_config.dart';
 
@@ -29,13 +30,15 @@ class MethodNumberTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
+                CustomText(
                   prayerName,
-                  style: customRobotoStyle(5.0, Colors.white),
+                  size: 5.0,
+                  color: Colors.white,
                 ),
-                Text(
+                CustomText(
                   prayerTime,
-                  style: customRobotoStyle(5.0, Colors.white),
+                  size: 5.0,
+                  color: Colors.white,
                 ),
               ],
             ),
@@ -94,7 +97,6 @@ class MethodNumber {
     12: 'Diyanet İşleri Başkanlığı, Turkey',
     13: 'Spiritual Administration of Muslims of Russia',
   };
-
 
   int number;
 

@@ -74,29 +74,29 @@ void main() async {
           builder: (context, state) {
             return NeumorphicApp(
               debugShowCheckedModeBanner: false,
-              home: get_package.GetMaterialApp(
-                theme: state.themeData,
-                debugShowCheckedModeBanner: false,
-                home: locationPrefs != null
-                    ? Builder(
-                        builder: (context) {
-                          ScreenUtil.init(context);
-                          return HomePage(
-                            showDialog: false,
-                            userLocation: locationPrefs,
-                          );
-                        },
-                      )
-                    : Builder(
-                        builder: (context) {
-                          SizeConfig().init(context);
-                          ScreenUtil.init(context);
-                          return I18n(
-                            child: LanguageSelectionPage(),
-                          );
-                        },
-                      ),
-                // home: SplashScreenPage(locationPrefs: locationPrefs),
+              home: I18n(
+                child: get_package.GetMaterialApp(
+                  theme: state.themeData,
+                  debugShowCheckedModeBanner: false,
+                  home: locationPrefs != null
+                      ? Builder(
+                          builder: (context) {
+                            ScreenUtil.init(context);
+                            return HomePage(
+                              showDialog: false,
+                              userLocation: locationPrefs,
+                            );
+                          },
+                        )
+                      : Builder(
+                          builder: (context) {
+                            SizeConfig().init(context);
+                            ScreenUtil.init(context);
+                            return LanguageSelectionPage();
+                          },
+                        ),
+                  // home: SplashScreenPage(locationPrefs: locationPrefs),
+                ),
               ),
             );
           },

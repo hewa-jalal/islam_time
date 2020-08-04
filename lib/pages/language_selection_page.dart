@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,20 +8,7 @@ import 'package:islamtime/cubit/is_rtl_cubit.dart';
 
 import 'onboarding_page.dart';
 
-class LanguageSelectionPage extends StatefulWidget {
-  @override
-  _LanguageSelectionPageState createState() => _LanguageSelectionPageState();
-}
-
-class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
-  IsRtlCubit isRtlCubit;
-
-  @override
-  void initState() {
-    super.initState();
-    isRtlCubit = IsRtlCubit();
-  }
-
+class LanguageSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,6 +38,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
   }
 
   void _langaugeSelection(BuildContext context, String lang) {
+    final isRtlCubit = BlocProvider.of<IsRtlCubit>(context);
     I18n.of(context).locale = Locale(lang);
     lang == 'ar' ? isRtlCubit.isRtl(true) : isRtlCubit.isRtl(false);
     Get.to(OnBoardingPage());

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:i18n_extension/i18n_widget.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/models/bang.dart';
@@ -10,6 +11,7 @@ import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:islamtime/i18n/prayer_names_i18n.dart';
 
 import 'athkar_page.dart';
 
@@ -29,7 +31,7 @@ class _SettingPageState extends State<SettingPage> {
     super.initState();
   }
 
-  Container _buildSearchableDropdown() {
+  Widget _buildSearchableDropdown() {
     return Container(
       color: Colors.blueGrey[700],
       child: Padding(
@@ -64,7 +66,7 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  Row _buildButtonsRow(BangBloc bloc) {
+  Widget _buildButtonsRow(BangBloc bloc) {
     return Row(
       children: <Widget>[
         Align(
@@ -117,11 +119,15 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  Column _buildMehtodNumberTiles(Bang bang) {
+  Widget _buildMehtodNumberTilesColumn(Bang bang) {
     return Column(
       children: <Widget>[
+        Text(
+          'Locale ${I18n.locale}',
+          style: customFarroDynamicStyle(context: context, size: 9.0),
+        ),
         MethodNumberTile(
-          prayerName: 'Fajr',
+          prayerName: 'Fajr'.i18n,
           prayerTime: bang.speda,
           onChange: (val) => methodNumbersList[0] = int.parse(val),
         ),
@@ -191,7 +197,7 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<BangBloc>(context);
+    final bangBloc = BlocProvider.of<BangBloc>(context);
     return BlocConsumer<BangBloc, BangState>(
       listener: (context, state) {
         if (state is BangLoaded) {
@@ -230,11 +236,11 @@ class _SettingPageState extends State<SettingPage> {
                               ),
                             ),
                             SizedBox(height: SizeConfig.safeBlockVertical * 2),
-                            _buildMehtodNumberTiles(state.bang),
+                            _buildMehtodNumberTilesColumn(state.bang),
                           ],
                         ),
                       ),
-                      _buildButtonsRow(bloc),
+                      _buildButtonsRow(bangBloc),
                     ],
                   ),
                 ),
