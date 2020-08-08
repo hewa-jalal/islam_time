@@ -132,28 +132,28 @@ class _SettingPageState extends State<SettingPage> {
           onChange: (val) => methodNumbersList[0] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerName: 'Sunrise'.i18n,
           prayerTime: bang.rojHalat,
-          prayerName: 'Sunrise',
           onChange: (val) => methodNumbersList[1] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerName: 'Zuhr'.i18n,
           prayerTime: bang.nevro,
-          prayerName: 'Zuhr',
           onChange: (val) => methodNumbersList[2] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerName: 'Asr'.i18n,
           prayerTime: bang.evar,
-          prayerName: 'Asr',
           onChange: (val) => methodNumbersList[3] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerName: 'Maghrib'.i18n,
           prayerTime: bang.maghrab,
-          prayerName: 'Maghrib',
           onChange: (val) => methodNumbersList[4] = int.parse(val),
         ),
         MethodNumberTile(
+          prayerName: 'Isha'.i18n,
           prayerTime: bang.aesha,
-          prayerName: 'Isha',
           isEnd: true,
           onChange: (val) => methodNumbersList[5] = int.parse(val),
         ),

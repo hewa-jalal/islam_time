@@ -53,6 +53,7 @@ class _HomePageState extends State<HomePage> {
   double prefsLng;
   int prefsMethodNumber;
   List<int> prefsTuning;
+  GlobalKey _scaffold = GlobalKey();
 
   int _animation;
   String _arrowAnimation = 'upArrowAnimation';
@@ -68,7 +69,7 @@ class _HomePageState extends State<HomePage> {
     _animation = 0;
     if (widget.showDialog) {
       SchedulerBinding.instance
-          .addPostFrameCallback((_) => _showLocationDialog(context));
+          .addPostFrameCallback((_) => _showLocationDialog());
     }
     _initTargets();
     super.initState();
@@ -133,9 +134,9 @@ class _HomePageState extends State<HomePage> {
     prefsTuning = tuningInt;
   }
 
-  void _showLocationDialog(BuildContext context) {
+  void _showLocationDialog() {
     AwesomeDialog(
-      context: context,
+      context: _scaffold.currentContext,
       dialogType: DialogType.INFO,
       animType: AnimType.SCALE,
       body: Center(
@@ -178,7 +179,7 @@ class _HomePageState extends State<HomePage> {
     return prefs.getBool(IS_FIRST_TIME_KEY);
   }
 
-  FlareActor _buildFlareActor() {
+  Widget _buildFlareActor() {
     return FlareActor(
       'assets/flare/DayAndNight.flr',
       animation: (_animation == 0)
@@ -197,7 +198,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Align _buildBottomSheet(
+  Widget _buildBottomSheet(
     BuildContext context,
     BodyStatusCubit bodyStatusCubit,
     TimeCycle timeCycle,
@@ -236,7 +237,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  SimpleTooltip _buildSimpleTooltip(
+  Widget _buildSimpleTooltip(
     AsyncSnapshot<bool> isLocalSnapshot,
     AsyncSnapshot<bool> isFirstTimeSnapshot,
     bool state,
@@ -330,6 +331,7 @@ class _HomePageState extends State<HomePage> {
 
     return SafeArea(
       child: Scaffold(
+        key: _scaffold,
         body: FutureBuilder<bool>(
           future: _getIsLocal(),
           builder: (context, isLocalSnapshot) {

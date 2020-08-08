@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:islamtime/i18n/prayer_names_i18n.dart';
 
 import '../../size_config.dart';
 
@@ -182,42 +183,42 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       children: <Widget>[
         PrayerTile(
           prayerTime: bang.speda,
-          prayerName: 'Fajr',
+          prayerName: 'Fajr'.i18n,
           iconTime: 'sun',
         ),
         PrayerTile(
           prayerTime: bang.rojHalat,
-          prayerName: 'Sunrise',
+          prayerName: 'Sunrise'.i18n,
           iconTime: 'sun',
         ),
         PrayerTile(
           prayerTime: bang.nevro,
-          prayerName: 'Zuhr',
+          prayerName: 'Zuhr'.i18n,
           iconTime: 'sun',
         ),
         PrayerTile(
           prayerTime: bang.evar,
-          prayerName: 'Asr',
+          prayerName: 'Asr'.i18n,
           iconTime: 'sun',
         ),
         PrayerTile(
           prayerTime: bang.maghrab,
-          prayerName: 'Maghrib',
+          prayerName: 'Maghrib'.i18n,
           iconTime: 'moon',
         ),
         PrayerTile(
           prayerTime: bang.aesha,
-          prayerName: 'Isha',
+          prayerName: 'Isha'.i18n,
           iconTime: 'moon',
         ),
         PrayerTile(
           prayerTime: _toAmPm(bang.midNightStart),
-          prayerName: 'Midnight',
+          prayerName: 'Midnight'.i18n,
           iconTime: 'moon',
         ),
         PrayerTile(
           prayerTime: _toAmPm(bang.midNightEnd),
-          prayerName: 'Last Third',
+          prayerName: 'Last Third'.i18n,
           iconTime: 'moon',
         ),
       ],

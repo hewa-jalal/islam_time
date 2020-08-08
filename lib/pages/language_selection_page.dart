@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i18n_extension/i18n_widget.dart';
@@ -19,7 +18,7 @@ class LanguageSelectionPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            NeumorphicButton(
+            FlatButton(
               child: Padding(
                 padding: EdgeInsets.all(10.0.w),
                 child: Text('English', textAlign: TextAlign.center),
@@ -27,7 +26,7 @@ class LanguageSelectionPage extends StatelessWidget {
               onPressed: () => _langaugeSelection(context, 'en'),
             ),
             SizedBox(height: 20.0),
-            NeumorphicButton(
+            FlatButton(
               child: Text('العربیة', textAlign: TextAlign.center),
               onPressed: () => _langaugeSelection(context, 'ar'),
             ),

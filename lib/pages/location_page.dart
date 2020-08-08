@@ -32,27 +32,14 @@ class _LocationPageState extends State<LocationPage> {
         body: BlocConsumer<BangBloc, BangState>(
           listener: (context, state) async {
             final prefs = await SharedPreferences.getInstance();
-            final locationPrefs = prefs.get('location');
+            final locationPrefs = prefs.getString('location');
             if (state is BangLoaded) {
-              if (locationPrefs != null) {
-                Get.off(
-                  HomePage(
-                    userLocation: locationPrefs,
-                    showDialog: true,
-                  ),
-                );
-              } else {
-                getUserLocation(context).then(
-                  (value) {
-                    Get.off(
-                      HomePage(
-                        userLocation: value,
-                        showDialog: true,
-                      ),
-                    );
-                  },
-                );
-              }
+              Get.off(
+                HomePage(
+                  userLocation: locationPrefs,
+                  showDialog: true,
+                ),
+              );
             }
           },
           builder: (context, state) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart' as get_package;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -72,31 +71,28 @@ void main() async {
             ConnectivityService().connectionStatusController.stream,
         child: BlocBuilder<ThemeCubit, ThemeChanged>(
           builder: (context, state) {
-            return NeumorphicApp(
-              debugShowCheckedModeBanner: false,
-              home: I18n(
-                child: get_package.GetMaterialApp(
-                  theme: state.themeData,
-                  debugShowCheckedModeBanner: false,
-                  home: locationPrefs != null
-                      ? Builder(
-                          builder: (context) {
-                            ScreenUtil.init(context);
-                            return HomePage(
-                              showDialog: false,
-                              userLocation: locationPrefs,
-                            );
-                          },
-                        )
-                      : Builder(
-                          builder: (context) {
-                            SizeConfig().init(context);
-                            ScreenUtil.init(context);
-                            return LanguageSelectionPage();
-                          },
-                        ),
-                  // home: SplashScreenPage(locationPrefs: locationPrefs),
-                ),
+            return I18n(
+              child: get_package.GetMaterialApp(
+                theme: state.themeData,
+                debugShowCheckedModeBanner: false,
+                home: locationPrefs != null
+                    ? Builder(
+                        builder: (context) {
+                          ScreenUtil.init(context);
+                          return HomePage(
+                            showDialog: false,
+                            userLocation: locationPrefs,
+                          );
+                        },
+                      )
+                    : Builder(
+                        builder: (context) {
+                          SizeConfig().init(context);
+                          ScreenUtil.init(context);
+                          return LanguageSelectionPage();
+                        },
+                      ),
+                // home: SplashScreenPage(locationPrefs: locationPrefs),
               ),
             );
           },
