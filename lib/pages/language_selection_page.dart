@@ -51,7 +51,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
 
   void _langaugeSelection(BuildContext context, String lang) {
     I18n.of(context).locale = Locale(lang);
-    lang == 'ar' ? isRtlCubit.isRtl(true) : isRtlCubit.isRtl(false);
+    // lang == 'ar' ? isRtlCubit.isRtl(true) : isRtlCubit.isRtl(false);
     Get.to(OnBoardingPage());
   }
 }

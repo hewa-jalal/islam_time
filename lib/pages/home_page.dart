@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
     _animation = 0;
     if (widget.showDialog) {
       SchedulerBinding.instance
-          .addPostFrameCallback((_) => _showLocationDialog(context));
+          .addPostFrameCallback((_) => _showLocationDialog());
     }
     _initTargets();
     super.initState();
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
     prefsTuning = tuningInt;
   }
 
-  void _showLocationDialog(BuildContext context) {
+  void _showLocationDialog() {
     AwesomeDialog(
       context: context,
       dialogType: DialogType.INFO,
@@ -169,7 +169,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _persisetTutorialDisplay() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool(IS_FIRST_TIME_KEY, true);
+    await prefs.setBool(IS_FIRST_TIME_KEY, true);
   }
 
   Future<bool> _getTutorialDisplay() async {
@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Align _buildBottomSheet(
+  Widget _buildBottomSheet(
     BuildContext context,
     BodyStatusCubit bodyStatusCubit,
     TimeCycle timeCycle,
@@ -359,13 +359,16 @@ class _HomePageState extends State<HomePage> {
                       return Stack(
                         children: <Widget>[
                           _buildFlareActor(),
-                          // Center(
-                          //   child: IconButton(
-                          //     icon: FlutterLogo(),
-                          //     onPressed: () async {
-                          //     },
-                          //   ),
-                          // ),
+                          Center(
+                            child: IconButton(
+                              icon: FlutterLogo(),
+                              onPressed: () async {
+                                final prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.clear();
+                              },
+                            ),
+                          ),
                           _buildBottomSheet(
                             context,
                             bodyStatusCubit,

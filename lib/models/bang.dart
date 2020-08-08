@@ -80,7 +80,7 @@ class Bang extends Equatable {
     final maghrabDateTime =
         _customStringToDate(json['data'][day]['timings']['Maghrib']);
 
-    List<DateTime> dates = getTheDifference(spedaDateTime, maghrabDateTime);
+    var dates = getTheDifference(spedaDateTime, maghrabDateTime);
     print('dates $dates');
 
     return Bang(
@@ -103,30 +103,31 @@ class Bang extends Equatable {
   }
 
   static DateTime _customStringToDate(String time, [bool isSpeda = false]) {
-    DateTime now = DateTime.now();
-    List<String> splitedTime = time.split(':');
+    final now = DateTime.now();
+    final splitedTime = time.split(':');
 
-    int hour = int.parse(splitedTime[0].trim());
+    final hour = int.parse(splitedTime[0].trim());
+
     // to remove the extra stuff at the end
-    String formattedStringPartTwo = splitedTime[1]
+    final formattedStringPartTwo = splitedTime[1]
         .replaceAll(RegExp(r'(?<=\().*?(?=\))'), '')
         .replaceAll('()', '');
 
-    int minute = int.parse(formattedStringPartTwo);
+    final minute = int.parse(formattedStringPartTwo);
 
-    DateTime dateTime = DateTime(now.year, now.month, now.day, hour, minute);
+    final dateTime = DateTime(now.year, now.month, now.day, hour, minute);
 
     return dateTime;
   }
 
   static String _toAmPm(String time) {
-    String formattedString =
+    final formattedString =
         time.replaceAll(RegExp(r'(?<=\().*?(?=\))'), '').replaceAll('()', '');
-    List<String> splitString = formattedString.split(':');
-    int hour = int.parse(splitString[0]);
-    int minute = int.parse(splitString[1]);
+    final splitString = formattedString.split(':');
+    final hour = int.parse(splitString[0]);
+    final minute = int.parse(splitString[1]);
 
-    TimeOfDay tod = TimeOfDay(hour: hour, minute: minute);
+    final tod = TimeOfDay(hour: hour, minute: minute);
     if (tod.hourOfPeriod == 0) {
       return '12:${tod.minute.toString().padLeft(2, '0')}';
     }
@@ -139,7 +140,7 @@ class Bang extends Equatable {
     DateTime maghrabBang,
   ) {
     // get the full differnce between speda and maghrab bang
-    DateTime spedaAndMaghrabDiff = spedaBang.subtract(
+    final spedaAndMaghrabDiff = spedaBang.subtract(
       Duration(
         days: maghrabBang.day,
         hours: maghrabBang.hour,
@@ -148,23 +149,23 @@ class Bang extends Equatable {
     );
 
     // ** get a third of the time
-    int thirdOfDifferenceSeconds =
+    final thirdOfDifferenceSeconds =
         (Duration(hours: spedaAndMaghrabDiff.hour).inSeconds ~/ 3);
-    Duration thirdDuration = Duration(
+    final thirdDuration = Duration(
         seconds: thirdOfDifferenceSeconds,
         minutes: (spedaAndMaghrabDiff.minute ~/ 3));
-    int thirdHours = thirdDuration.inHours;
-    int thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
+    final thirdHours = thirdDuration.inHours;
+    final thirdMin = thirdDuration.inMinutes % (thirdHours * 60);
     // int midSecond = thirdDuration.inSeconds;
 
-    DateTime midNightStart = maghrabBang.add(
+    final midNightStart = maghrabBang.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
       ),
     );
 
-    DateTime midNightEnd = midNightStart.add(
+    final midNightEnd = midNightStart.add(
       Duration(
         hours: thirdHours,
         minutes: thirdMin,
@@ -178,10 +179,7 @@ class Bang extends Equatable {
     //   ),
     // );
 
-    print('midNightStart $midNightStart');
-    print('midNightEnd  $midNightEnd');
-
-    DateTime dayTime = maghrabBang.subtract(
+    final dayTime = maghrabBang.subtract(
       Duration(hours: spedaBang.hour, minutes: spedaBang.minute),
     );
 

@@ -72,31 +72,34 @@ void main() async {
             ConnectivityService().connectionStatusController.stream,
         child: BlocBuilder<ThemeCubit, ThemeChanged>(
           builder: (context, state) {
-            return NeumorphicApp(
-              debugShowCheckedModeBanner: false,
-              home: get_package.GetMaterialApp(
-                theme: state.themeData,
+            return Directionality(
+              textDirection: TextDirection.rtl,
+              child: NeumorphicApp(
                 debugShowCheckedModeBanner: false,
-                home: locationPrefs != null
-                    ? Builder(
-                        builder: (context) {
-                          ScreenUtil.init(context);
-                          return HomePage(
-                            showDialog: false,
-                            userLocation: locationPrefs,
-                          );
-                        },
-                      )
-                    : Builder(
-                        builder: (context) {
-                          SizeConfig().init(context);
-                          ScreenUtil.init(context);
-                          return I18n(
-                            child: LanguageSelectionPage(),
-                          );
-                        },
-                      ),
-                // home: SplashScreenPage(locationPrefs: locationPrefs),
+                home: get_package.GetMaterialApp(
+                  theme: state.themeData,
+                  debugShowCheckedModeBanner: false,
+                  home: locationPrefs != null
+                      ? Builder(
+                          builder: (context) {
+                            ScreenUtil.init(context);
+                            return HomePage(
+                              showDialog: false,
+                              userLocation: locationPrefs,
+                            );
+                          },
+                        )
+                      : Builder(
+                          builder: (context) {
+                            SizeConfig().init(context);
+                            ScreenUtil.init(context);
+                            return I18n(
+                              child: LanguageSelectionPage(),
+                            );
+                          },
+                        ),
+                  // home: SplashScreenPage(locationPrefs: locationPrefs),
+                ),
               ),
             );
           },

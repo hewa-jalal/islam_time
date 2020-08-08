@@ -26,12 +26,13 @@ class OnBoardingPage extends StatelessWidget {
     title: Padding(
       padding: EdgeInsets.only(top: SizeConfig.safeBlockVertical * 1),
       child: Text(
-        '''There are differences in perspective of the day's beginning(by day we mean the full 24 hour cycle not the morning time). Jews tend to begin at Magrib, Christians at sharp midnight.Most Muslims seem to abide by the Jewish timing, but this is wrong.'''
+        '''ومن الحقائق الثابتة منذ فترة طويلة أن القارئ سوف يشتت انتباهه من خلال المحتوى المقروء للصفحة عند النظر إلى تخطيطها. إن الهدف من استخدام هو أن يكون توزيع الأحرف طبيعياً بشكل أكبر أو أقل، بدلاً من استخدام "المحتوى هنا"،'''
             .i18n,
         style: customRobotoStyle(6.4, Colors.white, FontWeight.normal),
       ),
     ),
-    mainImage: Image.asset('assets/images/jew_and_christian.png'),
+    mainImage: FlutterLogo(),
+    // mainImage: Image.asset('assets/images/jew_and_christian.png'),
     body: Text(''),
     pageColor: Colors.blueGrey[800],
     textStyle: GoogleFonts.heebo(fontSize: 26.0),
@@ -44,7 +45,6 @@ class OnBoardingPage extends StatelessWidget {
         '''For muslims the day starts at maghrib, also keep in mind that in islam the the night precedes the morning. and that's why on the last day of Ramadan, we don't pray Taraweeh, and that’s because the day (new day) has started at maghrib, so Ramadan is over and Eid has begun. this also mean that you may recite Surah Kahf any time after sunset of Thursday.'''
             .i18n,
         style: customRobotoStyle(5.6, Colors.white, FontWeight.normal),
-        textDirection: TextDirection.rtl,
       ),
     ),
     mainImage: Image.asset('assets/images/muslim.png'),

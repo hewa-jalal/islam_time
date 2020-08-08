@@ -1,7 +1,7 @@
 import 'package:i18n_extension/i18n_extension.dart';
 
 extension Localization on String {
-  static var _t = Translations('en') +
+  static final _t = Translations('en') +
       {
         'en':
             '''There are differences in perspective of the day's beginning(by day we mean the full 24 hour cycle not the morning time). Jews tend to begin at Magrib, Christians at sharp midnight.Most Muslims seem to abide by the Jewish timing, but this is wrong.''',

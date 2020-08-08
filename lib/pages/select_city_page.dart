@@ -81,7 +81,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
                               final item = snapshot.data[index];
                               final regex = RegExp(r'\w+(?=\.)');
                               final iter = regex.allMatches(item);
-                              for (var element in iter) {
+                              for (final element in iter) {
                                 cities.add(
                                   item.substring(element.start, element.end),
                                 );

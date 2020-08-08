@@ -121,10 +121,10 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
 
   Future<void> _persisetTutorialDisplay() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool(IS_FIRST_TIME_KEY, true);
+    await prefs.setBool(IS_FIRST_TIME_KEY, true);
   }
 
-  InkWell _buildSettingChoiceButton(
+  Widget _buildSettingChoiceButton(
     BuildContext context,
     BangBloc bloc,
     bool isNotConnected,
@@ -154,14 +154,14 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     );
   }
 
-  void _showLocationConfirmDialog(BuildContext context, BangBloc bloc) async {
+  void _showLocationConfirmDialog(BuildContext context, BangBloc bloc) {
     AwesomeDialog(
       context: context,
       dialogType: DialogType.WARNING,
       animType: AnimType.SCALE,
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 1),
+          padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 1.0),
           child: Text(
             '''you have fixed prayer times for you location, are you sure you want to change your location,and get prayer times from the internet?''',
             style: customFarroDynamicStyle(
@@ -225,8 +225,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
   }
 
   String _toAmPm(DateTime date) {
-    var tod = TimeOfDay(hour: date.hour, minute: date.minute);
-    print('${'${tod.hourOfPeriod}'.padLeft(2, '0')}');
+    final tod = TimeOfDay(hour: date.hour, minute: date.minute);
     if (tod.hourOfPeriod == 00) {
       return '12:${'${tod.minute}'.padLeft(2, '0')}';
     }
