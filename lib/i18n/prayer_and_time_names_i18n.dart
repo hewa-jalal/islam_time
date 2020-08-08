@@ -33,6 +33,22 @@ extension Localization on String {
       {
         'en': 'Last Third',
         'ar': 'الثلث الأخير',
+      } +
+      {
+        'en': 'Prayers Times for',
+        'ar': 'أوقات الصلاة في',
+      } +
+      {
+        'en': 'Time Remaining Until ',
+        'ar': 'الوقت المتبقي حتى',
+      } +
+      {
+        'en': 'Night',
+        'ar': 'الیل',
+      } +
+      {
+        'en': 'Day',
+        'ar': 'صباح',
       };
 
   String get i18n => localize(this, _t);

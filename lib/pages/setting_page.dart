@@ -11,7 +11,7 @@ import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:islamtime/i18n/prayer_names_i18n.dart';
+import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
 
 import 'athkar_page.dart';
 

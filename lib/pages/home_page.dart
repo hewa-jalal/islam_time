@@ -13,6 +13,7 @@ import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/cubit/body_status_cubit.dart';
 import 'package:islamtime/cubit/theme_cubit/theme_cubit.dart';
+import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
@@ -221,7 +222,7 @@ class _HomePageState extends State<HomePage> {
             });
             return SizedBox(
               key: _swipeSheetKey,
-              height: SizeConfig.safeBlockHorizontal * 20,
+              height: SizeConfig.safeBlockHorizontal * 20.0,
               child: FlareActor(
                 'assets/flare/arrow_up_down.flr',
                 animation: _arrowAnimation,
@@ -268,15 +269,29 @@ class _HomePageState extends State<HomePage> {
       child: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: SizeConfig.safeBlockHorizontal * 2.0),
-        child: AutoSizeText(
-          'Time Remaining Until ${timeCycle.untilDayOrNight}',
-          textAlign: TextAlign.center,
-          style: customFarroDynamicStyle(
-            fontWeight: FontWeight.bold,
-            context: context,
-            size: 6.8,
+        child: AutoSizeText.rich(
+          TextSpan(
+            children: <TextSpan>[
+              TextSpan(
+                text: 'Time Remaining Until '.i18n,
+                style: customFarroDynamicStyle(
+                  fontWeight: FontWeight.bold,
+                  context: context,
+                  size: 6.8,
+                ),
+              ),
+              TextSpan(
+                text: ' ${timeCycle.untilDayOrNight.i18n}',
+                style: customFarroDynamicStyle(
+                  fontWeight: FontWeight.bold,
+                  context: context,
+                  size: 6.8,
+                ),
+              )
+            ],
           ),
           maxLines: 1,
+          textAlign: TextAlign.center,
         ),
       ),
     );

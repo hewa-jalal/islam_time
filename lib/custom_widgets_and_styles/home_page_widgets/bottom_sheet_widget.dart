@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-import 'package:islamtime/i18n/prayer_names_i18n.dart';
+import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
 
 import '../../size_config.dart';
 
@@ -285,13 +285,28 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Text(
-                                    'Prayers for \n ${snapshotLocation.data}',
+                                  RichText(
                                     textAlign: TextAlign.center,
-                                    style: customFarroDynamicStyle(
-                                      fontWeight: FontWeight.bold,
-                                      context: context,
-                                      size: 4.6,
+                                    text: TextSpan(
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text: 'Prayers Times for'.i18n,
+                                          style: customFarroDynamicStyle(
+                                            fontWeight: FontWeight.bold,
+                                            context: context,
+                                            size: 4.6,
+                                          ),
+                                        ),
+                                        TextSpan(text: '\n'),
+                                        TextSpan(
+                                          text: snapshotLocation.data,
+                                          style: customFarroDynamicStyle(
+                                            fontWeight: FontWeight.bold,
+                                            context: context,
+                                            size: 4.6,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
