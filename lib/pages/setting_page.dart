@@ -5,15 +5,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:i18n_extension/i18n_widget.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_text.dart';
 import 'package:islamtime/models/bang.dart';
-import 'package:islamtime/models/method_number.dart';
+import 'package:islamtime/models/method_number_tile.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
-
+import 'package:islamtime/i18n/setting_page_i18n.dart';
 import 'athkar_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -37,6 +39,13 @@ class _SettingPageState extends State<SettingPage> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SearchableDropdown.single(
+          closeButton: FlatButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Close'.i18n2,
+              style: customRobotoStyle(4.5, Colors.white),
+            ),
+          ),
           menuBackgroundColor: Colors.blueGrey[700],
           style: GoogleFonts.farro(
             fontSize: SizeConfig.safeBlockHorizontal * 5.0,
@@ -45,12 +54,16 @@ class _SettingPageState extends State<SettingPage> {
           items: MethodNumber.list.map(
             (exNum) {
               return DropdownMenuItem(
-                child: Text(
-                  exNum.numberString,
-                  style: customRobotoStyle(
-                    5.4,
-                    Colors.white,
-                    FontWeight.normal,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 18.0.w),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: CustomText(
+                      exNum.numberString,
+                      size: 5.4,
+                      color: Colors.white,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
                 ),
                 value: exNum,
@@ -59,7 +72,7 @@ class _SettingPageState extends State<SettingPage> {
           ).toList(),
           onChanged: (value) => selectedNumber = value,
           value: selectedNumber,
-          hint: 'Select a method',
+          hint: 'Select a method'.i18n2,
           isExpanded: true,
         ),
       ),
@@ -77,7 +90,7 @@ class _SettingPageState extends State<SettingPage> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  'Get a new location',
+                  'Get a new location'.i18n2,
                   style: customRobotoStyle(
                     4.4,
                     Colors.amber[300],
@@ -98,7 +111,7 @@ class _SettingPageState extends State<SettingPage> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  'Ok',
+                  'Ok'.i18n2,
                   style: customRobotoStyle(
                     4.4,
                     Colors.amber[300],
@@ -170,7 +183,7 @@ class _SettingPageState extends State<SettingPage> {
     return AppBar(
       backgroundColor: Colors.blueGrey[700],
       title: Text(
-        'Settings',
+        'Settings'.i18n2,
         style: customRobotoStyle(
           5.4,
           Colors.white,
@@ -181,7 +194,7 @@ class _SettingPageState extends State<SettingPage> {
           padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 1.0),
           child: FlatButton(
             child: Text(
-              'Last third deeds',
+              'Last third deeds'.i18n2,
               style: customRobotoStyle(
                 3.0,
                 Colors.white,
@@ -230,9 +243,10 @@ class _SettingPageState extends State<SettingPage> {
                                 top: SizeConfig.safeBlockVertical * 1.6,
                                 left: SizeConfig.safeBlockVertical * 0.2,
                               ),
-                              child: Text(
-                                'Tune prayer times (in minutes)',
-                                style: customRobotoStyle(6.0, Colors.white),
+                              child: CustomText(
+                                'Tune prayer times (in minutes)'.i18n2,
+                                size: 6.0,
+                                color: Colors.white,
                               ),
                             ),
                             SizedBox(height: SizeConfig.safeBlockVertical * 2),

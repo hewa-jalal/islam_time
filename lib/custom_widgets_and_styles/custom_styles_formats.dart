@@ -6,6 +6,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:islamtime/pages/athkar_page.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:lottie/lottie.dart';
+import 'package:islamtime/i18n/dialogs_i18n.dart';
 
 import '../size_config.dart';
 
@@ -32,11 +33,14 @@ void showOfflineDialog(
         () {
           switch (offlineMessage) {
             case OfflineMessage.location:
-              return 'Please make sure you are connected to the internet so we can get correct prayers times for your location';
+              return 'Please make sure you are connected to the internet so we can get correct prayers times for your location'
+                  .i18n;
             case OfflineMessage.setting:
-              return 'Please make sure you are connected to the internet before going into settings';
+              return 'Please make sure you are connected to the internet before going into settings'
+                  .i18n;
             case OfflineMessage.local:
-              return 'for the option to change location and get prayers from the internet you must be online';
+              return 'For the option to change location and get prayers from the internet you must be online'
+                  .i18n;
             default:
               return '';
           }
@@ -49,7 +53,8 @@ void showOfflineDialog(
       ),
     ),
     btnOkOnPress: () {},
-    btnCancelText: showLastThirdDeeds ? 'Last third deeds' : null,
+    btnOkText: 'Ok'.i18n,
+    btnCancelText: showLastThirdDeeds ? 'Last third deeds'.i18n : null,
     btnCancelOnPress: showLastThirdDeeds ? () => Get.to(AthkarPage()) : null,
     btnCancelColor: Colors.blue[800],
   )..show();
@@ -68,8 +73,9 @@ TextStyle customRobotoStyle(
 }
 
 TextStyle customFarroDynamicStyle({
-  double letterSpacing = 0,
+  double letterSpacing = 0.0,
   FontWeight fontWeight = FontWeight.normal,
+  double height = 1.0,
   @required BuildContext context,
   @required double size,
 }) {
@@ -83,42 +89,22 @@ TextStyle customFarroDynamicStyle({
         ? <Shadow>[
             Shadow(
               offset: Offset(2.0, 2.0),
-              blurRadius: 6.0,
+              blurRadius: 4.0,
               color: Colors.black,
             ),
             Shadow(
               offset: Offset(2.0, 2.0),
-              blurRadius: 6.0,
+              blurRadius: 4.0,
               color: Colors.black,
             ),
           ]
         : null,
+    height: height,
   );
 }
 
 Color hexToColor(String code) =>
     Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
-
-// RichText customRichText(String text, BuildContext context) {
-//   return RichText(
-//     textAlign: TextAlign.end,
-//     text: TextSpan(
-//       children: <TextSpan>[
-//         TextSpan(
-//           text: 'Prayer times for',
-//           style: customFarroDynamicStyle(
-//               fontWeight: FontWeight.bold, context: context, size: 10),
-//         ),
-//         TextSpan(text: '\n'),
-//         TextSpan(
-//           text: text,
-//           style: customFarroDynamicStyle(
-//               fontWeight: FontWeight.bold, context: context, size: 10),
-//         ),
-//       ],
-//     ),
-//   );
-// }
 
 final _tempHijri = HijriCalendar.now();
 final todayHijri = _tempHijri.toFormat('MMMM dd yyyy');

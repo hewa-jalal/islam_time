@@ -49,6 +49,18 @@ extension Localization on String {
       {
         'en': 'Day',
         'ar': 'صباح',
+      } +
+      {
+        'en': 'Swipe from here to get latest prayer times',
+        'ar': 'اسحب من هنا للحصول على أحدث مواقيت الصلاة',
+      } +
+      {
+        'en': 'Tap the screen to get your location',
+        'ar': 'اضغط على الشاشة للحصول على موقعك',
+      } +
+      {
+        'en': 'Your Location is',
+        'ar': 'موقعك هو',
       };
 
   String get i18n => localize(this, _t);

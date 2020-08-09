@@ -125,7 +125,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     prefs.setBool(IS_FIRST_TIME_KEY, true);
   }
 
-  InkWell _buildSettingChoiceButton(
+  Widget _buildSettingChoiceButton(
     BuildContext context,
     BangBloc bloc,
     bool isNotConnected,
@@ -178,7 +178,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     )..show();
   }
 
-  Column _buildPrayerTilesColumn(Bang bang) {
+  Widget _buildPrayerTilesColumn(Bang bang) {
     return Column(
       children: <Widget>[
         PrayerTile(
@@ -285,29 +285,17 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                          text: 'Prayers Times for'.i18n,
-                                          style: customFarroDynamicStyle(
-                                            fontWeight: FontWeight.bold,
-                                            context: context,
-                                            size: 4.6,
-                                          ),
-                                        ),
-                                        TextSpan(text: '\n'),
-                                        TextSpan(
-                                          text: snapshotLocation.data,
-                                          style: customFarroDynamicStyle(
-                                            fontWeight: FontWeight.bold,
-                                            context: context,
-                                            size: 4.6,
-                                          ),
-                                        ),
-                                      ],
+                                  Text(
+                                    'Prayers Times for'.i18n +
+                                        '\n' +
+                                        snapshotLocation.data,
+                                    style: customFarroDynamicStyle(
+                                      fontWeight: FontWeight.bold,
+                                      context: context,
+                                      size: 4.6,
+                                      height: 1.35,
                                     ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),

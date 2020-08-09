@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
       animType: AnimType.SCALE,
       body: Center(
         child: Text(
-          'Your Location is \n ${widget.userLocation}',
+          'Your Location is'.i18n + '\n' + '${widget.userLocation}',
           style: customFarroDynamicStyle(size: 5.4, context: context),
           textAlign: TextAlign.center,
         ),
@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage> {
     await _getSharedPrefs();
     if (isNotConnected) {
       _refreshController.refreshCompleted();
-      showOfflineDialog(context, OfflineMessage.setting, true);
+      showOfflineDialog(context, OfflineMessage.location, true);
     } else {
       bloc.add(
         FetchBangWithSettings(
@@ -246,12 +246,14 @@ class _HomePageState extends State<HomePage> {
   ) {
     return SimpleTooltip(
       content: Material(
-        child: Text(
-          'Swipe from here to get latest prayer times',
+        child: AutoSizeText(
+          'Swipe from here to get latest prayer times'.i18n,
           style: GoogleFonts.roboto(
-            fontSize: ScreenUtil().setSp(70),
+            fontSize: 76.sp,
             fontWeight: FontWeight.bold,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
         ),
       ),
       show: () {
@@ -287,7 +289,11 @@ class _HomePageState extends State<HomePage> {
                   context: context,
                   size: 6.8,
                 ),
-              )
+              ),
+              TextSpan(
+                text: '1234',
+                style: GoogleFonts.cairo(),
+              ),
             ],
           ),
           maxLines: 1,
@@ -299,7 +305,6 @@ class _HomePageState extends State<HomePage> {
 
   void _checkTheme(TimeCycle timeCycle, BuildContext context) {
     final cubitTheme = BlocProvider.of<ThemeCubit>(context);
-
     timeCycle.timeIs == TimeIs.day
         ? cubitTheme.changeTheme(AppTheme.light)
         : cubitTheme.changeTheme(AppTheme.dark);
@@ -343,6 +348,7 @@ class _HomePageState extends State<HomePage> {
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
     final isNotConnected = connectionStatus == ConnectivityStatus.Offline;
     SizeConfig().init(context);
+    final cubitTheme = BlocProvider.of<ThemeCubit>(context);
 
     return SafeArea(
       child: Scaffold(
@@ -371,7 +377,8 @@ class _HomePageState extends State<HomePage> {
                   builder: (context, state) {
                     if (state is TimeCycleLoaded) {
                       final timeCycle = state.timeCycle;
-                      _checkTheme(state.timeCycle, context);
+                      // TODO: turn this back
+                      // _checkTheme(state.timeCycle, context);
                       return Stack(
                         children: <Widget>[
                           _buildFlareActor(),
@@ -385,6 +392,23 @@ class _HomePageState extends State<HomePage> {
                                     await SharedPreferences.getInstance();
                                 prefs.clear();
                               },
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: const EdgeInsets.all(40.0),
+                              child: FlatButton(
+                                child: FlutterLogo(
+                                  size: 100.0,
+                                  colors: Colors.red,
+                                ),
+                                onPressed: () async {
+                                  cubitTheme.changeTheme(AppTheme.dark);
+                                },
+                                onLongPress: () =>
+                                    cubitTheme.changeTheme(AppTheme.light),
+                              ),
                             ),
                           ),
                           _buildBottomSheet(
