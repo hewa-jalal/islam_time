@@ -19,6 +19,10 @@ extension Localization on String {
         'ar': 'حسنا',
       } +
       {
+        'en': 'Change Langauge',
+        'ar': 'تغيير اللغة',
+      } +
+      {
         'en': 'Get a new location',
         'ar': 'احصل على موقع جديد',
       } +

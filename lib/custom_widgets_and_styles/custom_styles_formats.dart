@@ -12,6 +12,7 @@ import '../size_config.dart';
 
 const String IS_LOCAL_KEY = 'isLocal';
 const String IS_FIRST_TIME_KEY = 'isFirstTime';
+const String LANGUAGE_KEY = 'language';
 
 enum OfflineMessage {
   location,

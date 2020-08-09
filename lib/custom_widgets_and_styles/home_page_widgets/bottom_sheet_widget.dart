@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
@@ -75,9 +75,10 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
               child: AutoSizeText(
                 _isLocal
                     ? 'Tap here to get a new location'
-                    : 'Tap here to tune prayers times or get a new location',
+                    : 'Tap here to tune prayers times or get a new location'
+                        .i18n,
                 style: GoogleFonts.roboto(
-                  fontSize: ScreenUtil().setSp(70),
+                  fontSize: 90.sp,
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
                 ),

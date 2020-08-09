@@ -70,6 +70,7 @@ class _LocationPageState extends State<LocationPage> {
                           FontWeight.w900,
                         ),
                         maxLines: 1,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
@@ -120,7 +121,7 @@ class _LocationPageState extends State<LocationPage> {
       Get.off(SelectCityPage());
     } else {
       await prefs.setBool(IS_LOCAL_KEY, false);
-      bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
+      bangBloc.add(FetchBang());
     }
     return '$userCountry, $userCity';
   }

@@ -37,20 +37,20 @@ class MethodNumberTile extends StatelessWidget {
                 children: <Widget>[
                   CustomText(
                     prayerName,
-                    size: 5.0,
+                    size: 4.4,
                     color: Colors.white,
                   ),
                   CustomText(
                     prayerTime,
-                    size: 5.0,
+                    size: 4.4,
                     color: Colors.white,
                   ),
                 ],
               ),
               Spacer(),
               Container(
-                width: SizeConfig.safeBlockHorizontal * 12,
-                height: SizeConfig.safeBlockHorizontal * 12,
+                width: SizeConfig.safeBlockHorizontal * 10.0,
+                height: SizeConfig.safeBlockHorizontal * 10.0,
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: Colors.amber[500],

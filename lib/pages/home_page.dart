@@ -8,10 +8,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:i18n_extension/i18n_widget.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/cubit/body_status_cubit.dart';
+import 'package:islamtime/cubit/is_rtl_cubit.dart';
 import 'package:islamtime/cubit/theme_cubit/theme_cubit.dart';
 import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
 
@@ -86,7 +88,7 @@ class _HomePageState extends State<HomePage> {
       context,
       targets: _targets,
       colorShadow: Colors.grey[400],
-      textSkip: 'Ok',
+      textSkip: 'Ok'.i18n,
       clickSkip: () {},
       textStyleSkip: customRobotoStyle(4.4),
       paddingFocus: -100,
@@ -106,12 +108,13 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'Swipe to get more details',
+                    'Swipe to get more details'.i18n,
                     style: GoogleFonts.roboto(
-                      fontSize: ScreenUtil().setSp(70),
+                      fontSize: 64.sp,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -326,6 +329,7 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.blueGrey[700],
               child: Padding(
                 padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 0.6),
+                // TODO: translate
                 child: CustomText(
                   'Last third deeds',
                   size: 4.2,
@@ -347,6 +351,10 @@ class _HomePageState extends State<HomePage> {
     final afterSpotLightCubit = BlocProvider.of<AfterSpotLightCubit>(context);
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
     final isNotConnected = connectionStatus == ConnectivityStatus.Offline;
+    final isRtlCubit = BlocProvider.of<IsRtlCubit>(context);
+    if (I18n.locale.languageCode == 'ar') {
+      isRtlCubit.isRtl(true);
+    }
     SizeConfig().init(context);
     final cubitTheme = BlocProvider.of<ThemeCubit>(context);
 

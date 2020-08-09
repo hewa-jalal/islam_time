@@ -3,6 +3,10 @@ import 'package:i18n_extension/i18n_extension.dart';
 extension Localization on String {
   static var _t = Translations('en') +
       {
+        'en': 'Ok',
+        'ar': 'حسنا',
+      } +
+      {
         'en': 'Fajr',
         'ar': 'الصباح',
       } +
@@ -53,6 +57,14 @@ extension Localization on String {
       {
         'en': 'Swipe from here to get latest prayer times',
         'ar': 'اسحب من هنا للحصول على أحدث مواقيت الصلاة',
+      } +
+      {
+        'en': 'Swipe to get more details',
+        'ar': "اسحب للحصول على مزيد من التفاصيل",
+      } +
+      {
+        'en': 'Tap here to tune prayers times or get a new location',
+        'ar': 'اضغط هنا لضبط مواقيت الصلاة أو الحصول على موقع جديد',
       } +
       {
         'en': 'Tap the screen to get your location',

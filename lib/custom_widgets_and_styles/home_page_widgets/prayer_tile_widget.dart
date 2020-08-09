@@ -31,7 +31,7 @@ class PrayerTile extends StatelessWidget {
                 child: Image.asset('assets/images/$iconTime.png'),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 30.0.w, right: 30.w),
+                padding: EdgeInsets.only(left: 20.0.w, right: 30.w),
                 child: Text(
                   prayerName,
                   textAlign: TextAlign.center,
@@ -45,15 +45,12 @@ class PrayerTile extends StatelessWidget {
               Spacer(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 26),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    prayerTime,
-                    style: customFarroDynamicStyle(
-                      fontWeight: FontWeight.w600,
-                      context: context,
-                      size: 6.0,
-                    ),
+                child: Text(
+                  prayerTime,
+                  style: customFarroDynamicStyle(
+                    fontWeight: FontWeight.w600,
+                    context: context,
+                    size: 6.0,
                   ),
                 ),
               ),

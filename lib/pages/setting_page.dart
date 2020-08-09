@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:i18n_extension/i18n_widget.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
+import 'package:islamtime/custom_widgets_and_styles/appbar_setting_button.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_text.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/method_number_tile.dart';
 import 'package:islamtime/pages/home_page.dart';
+import 'package:islamtime/pages/language_selection_page.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +32,11 @@ class _SettingPageState extends State<SettingPage> {
   void initState() {
     _getPrefs();
     super.initState();
+  }
+
+  void _getPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    selectedNumber = MethodNumber(prefs.getInt('methodNumber')) ?? 3;
   }
 
   Widget _buildSearchableDropdown() {
@@ -119,12 +125,14 @@ class _SettingPageState extends State<SettingPage> {
                 ),
               ),
               color: Colors.blueGrey[700],
-              onPressed: () => bloc.add(
-                FetchBangWithSettings(
-                  methodNumber: selectedNumber.number,
-                  tuning: methodNumbersList,
-                ),
-              ),
+              onPressed: () {
+                bloc.add(
+                  FetchBangWithSettings(
+                    methodNumber: selectedNumber.number,
+                    tuning: methodNumbersList,
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -135,10 +143,6 @@ class _SettingPageState extends State<SettingPage> {
   Widget _buildMehtodNumberTilesColumn(Bang bang) {
     return Column(
       children: <Widget>[
-        Text(
-          'Locale ${I18n.locale}',
-          style: customFarroDynamicStyle(context: context, size: 9.0),
-        ),
         MethodNumberTile(
           prayerName: 'Fajr'.i18n,
           prayerTime: bang.speda,
@@ -174,11 +178,6 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  void _getPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    selectedNumber = MethodNumber(prefs.getInt('methodNumber')) ?? 3;
-  }
-
   AppBar _buildSettingAppBar() {
     return AppBar(
       backgroundColor: Colors.blueGrey[700],
@@ -190,19 +189,13 @@ class _SettingPageState extends State<SettingPage> {
         ),
       ),
       actions: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 1.0),
-          child: FlatButton(
-            child: Text(
-              'Last third deeds'.i18n2,
-              style: customRobotoStyle(
-                3.0,
-                Colors.white,
-              ),
-            ),
-            onPressed: () => Get.to(AthkarPage()),
-            color: Colors.blue[900],
-          ),
+        AppBarSettingButton(
+          text: 'Last third deeds',
+          onPressed: () => Get.to(AthkarPage()),
+        ),
+        AppBarSettingButton(
+          text: 'Change Langauge',
+          onPressed: () => Get.to(LanguageSelectionPage(isFromSetting: true)),
         ),
       ],
     );
@@ -240,12 +233,12 @@ class _SettingPageState extends State<SettingPage> {
                             _buildSearchableDropdown(),
                             Padding(
                               padding: EdgeInsets.only(
-                                top: SizeConfig.safeBlockVertical * 1.6,
+                                top: SizeConfig.safeBlockVertical * 1.2,
                                 left: SizeConfig.safeBlockVertical * 0.2,
                               ),
                               child: CustomText(
                                 'Tune prayer times (in minutes)'.i18n2,
-                                size: 6.0,
+                                size: 5.6,
                                 color: Colors.white,
                               ),
                             ),
