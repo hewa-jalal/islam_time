@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart' as get_package;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -17,11 +16,12 @@ import 'package:islamtime/services/connection_service.dart';
 import 'package:islamtime/size_config.dart';
 import 'package:provider/provider.dart';
 import 'cubit/body_status_cubit.dart';
-import 'cubit/is_arabic_cubit.dart';
+import 'cubit/is_rtl_cubit.dart';
 import 'cubit/theme_cubit/theme_cubit.dart';
 import 'package:http/http.dart' as http;
 import 'package:islamtime/repository/location_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 
 class SimpleBlocDelegate extends BlocObserver {
   @override
@@ -45,6 +45,9 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final locationPrefs = prefs.getString('location');
+  final langaugePrefs = prefs.getString(LANGUAGE_KEY);
+
+  print('lang prefs in main ====> $langaugePrefs ==============<');
 
   final repository = LocalBangRepository(
     bangApiClient: BangApiClient(
@@ -61,36 +64,21 @@ void main() async {
             locationRepository: LocationRepository(),
           ),
         ),
-        BlocProvider<TimeCycleBloc>(
-          create: (_) => TimeCycleBloc(),
-        ),
-        BlocProvider<BodyStatusCubit>(
-          create: (_) => BodyStatusCubit(),
-        ),
-        BlocProvider<AfterSpotLightCubit>(
-          create: (_) => AfterSpotLightCubit(),
-        ),
-        BlocProvider<ThemeCubit>(
-          create: (_) => ThemeCubit(),
-        ),
-        BlocProvider<IsArabicCubit>(
-          create: (_) => IsArabicCubit(),
-        ),
+        BlocProvider<TimeCycleBloc>(create: (_) => TimeCycleBloc()),
+        BlocProvider<BodyStatusCubit>(create: (_) => BodyStatusCubit()),
+        BlocProvider<AfterSpotLightCubit>(create: (_) => AfterSpotLightCubit()),
+        BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
+        BlocProvider<IsRtlCubit>(create: (_) => IsRtlCubit()),
       ],
       child: StreamProvider<ConnectivityStatus>(
         create: (context) =>
             ConnectivityService().connectionStatusController.stream,
         child: BlocBuilder<ThemeCubit, ThemeChanged>(
           builder: (context, state) {
-            return NeumorphicApp(
-              debugShowCheckedModeBanner: false,
-              home: get_package.GetMaterialApp(
-                // localizationsDelegates: [
-                //   GlobalMaterialLocalizations.delegate,
-                //   GlobalWidgetsLocalizations.delegate,
-                //   GlobalCupertinoLocalizations.delegate,
-                // ],
-                // supportedLocales: const [const Locale('ar'), const Locale('en_us')],
+            return I18n(
+              initialLocale:
+                  langaugePrefs != null ? Locale(langaugePrefs) : Locale('en'),
+              child: get_package.GetMaterialApp(
                 theme: state.themeData,
                 debugShowCheckedModeBanner: false,
                 home: locationPrefs != null
@@ -107,9 +95,7 @@ void main() async {
                         builder: (context) {
                           SizeConfig().init(context);
                           ScreenUtil.init(context);
-                          return I18n(
-                            child: LanguageSelectionPage(),
-                          );
+                          return LanguageSelectionPage();
                         },
                       ),
                 // home: SplashScreenPage(locationPrefs: locationPrefs),
