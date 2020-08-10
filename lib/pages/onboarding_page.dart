@@ -31,15 +31,14 @@ class OnBoardingPage extends StatelessWidget {
     title: Padding(
       padding: EdgeInsets.only(top: SizeConfig.safeBlockVertical * 1.0),
       child: CustomText(
-        '''There are differences in perspective of the day's beginning(by day we mean the full 24 hour cycle not the morning time). Jews tend to begin at Magrib, Christians at sharp midnight.Most Muslims seem to abide by the Jewish timing, but this is wrong.'''
+        '''There are differences in perspective of the day's beginning(by day we mean the full 24 hour cycle not the morning time). Jews tend to begin at Magrib, Christians at sharp midnight.'''
             .i18n,
         size: 6.4,
         color: Colors.white,
         fontWeight: FontWeight.normal,
       ),
     ),
-    mainImage: FlutterLogo(),
-    // mainImage: Image.asset('assets/images/jew_and_christian.png'),
+    mainImage: Image.asset('assets/images/jew_and_christian.png'),
     body: Text(''),
     pageColor: Colors.blueGrey[800],
     textStyle: GoogleFonts.heebo(fontSize: 26.0),

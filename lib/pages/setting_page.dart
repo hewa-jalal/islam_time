@@ -181,13 +181,6 @@ class _SettingPageState extends State<SettingPage> {
   AppBar _buildSettingAppBar() {
     return AppBar(
       backgroundColor: Colors.blueGrey[700],
-      title: Text(
-        'Settings'.i18n2,
-        style: customRobotoStyle(
-          5.4,
-          Colors.white,
-        ),
-      ),
       actions: <Widget>[
         AppBarSettingButton(
           text: 'Last third deeds',
@@ -233,7 +226,7 @@ class _SettingPageState extends State<SettingPage> {
                             _buildSearchableDropdown(),
                             Padding(
                               padding: EdgeInsets.only(
-                                top: SizeConfig.safeBlockVertical * 1.2,
+                                top: SizeConfig.safeBlockVertical * 1.0,
                                 left: SizeConfig.safeBlockVertical * 0.2,
                               ),
                               child: CustomText(

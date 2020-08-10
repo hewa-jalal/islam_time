@@ -97,7 +97,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       context,
       targets: _targets,
       colorShadow: Colors.grey[600],
-      textSkip: 'Ok',
+      textSkip: 'Ok'.i18n,
       clickSkip: () {},
       finish: () {
         afterSpotLightCubit.changeStatus();

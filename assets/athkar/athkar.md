@@ -21,7 +21,7 @@ End your night prayers with “Witr” prayers. It is a prayer consisting of 3 r
  After you’re done with your night prayer, you may choose to read some parts of the Quran.
  
 ## Make istighfar
-After finishing your night prayer, complete it with your most sincere istighfar. In Surah Ali Imran between verse 15 to 17, Allah mentioned that “For those who fear Allah will be gardens in the presence of their Lord beneath which rivers flow, wherein they abide eternally, and purified spouses and approval from Allah” to a few groups of people, and one of those that Allah highlighted are “those who seek forgiveness before dawn”
+After finishing reading the Quran, complete it with your most sincere istighfar. In Surah Ali Imran between verse 15 to 17, Allah mentioned that “For those who fear Allah will be gardens in the presence of their Lord beneath which rivers flow, wherein they abide eternally, and purified spouses and approval from Allah” to a few groups of people, and one of those that Allah highlighted are “those who seek forgiveness before dawn”
 
 > الصّابِرينَ وَالصّادِقينَ وَالقانِتينَ وَالمُنفِقينَ وَالمُستَغفِرينَ بِالأَسحارِ
 

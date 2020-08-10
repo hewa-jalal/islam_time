@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage> {
       animType: AnimType.SCALE,
       body: Center(
         child: Text(
-          'Your Location is'.i18n + '\n' + '${widget.userLocation}',
+          'Your Location is'.i18n + '\n' + widget.userLocation,
           style: customFarroDynamicStyle(size: 5.4, context: context),
           textAlign: TextAlign.center,
         ),
@@ -173,6 +173,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // TODO: merge both these methods
   Future<void> _persisetTutorialDisplay() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(IS_FIRST_TIME_KEY, true);
@@ -275,7 +276,7 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.symmetric(
             horizontal: SizeConfig.safeBlockHorizontal * 2.0),
         child: AutoSizeText(
-          'Time Remaining Until '.i18n + timeCycle.untilDayOrNight.i18n,
+          'Time Remaining Until'.i18n + ' ${timeCycle.untilDayOrNight.i18n}',
           style: customFarroDynamicStyle(
             fontWeight: FontWeight.bold,
             context: context,
@@ -379,7 +380,7 @@ class _HomePageState extends State<HomePage> {
                               onPressed: () async {
                                 final prefs =
                                     await SharedPreferences.getInstance();
-                                prefs.clear();
+                                await prefs.clear();
                               },
                             ),
                           ),

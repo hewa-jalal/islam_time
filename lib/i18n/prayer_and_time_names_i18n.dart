@@ -47,7 +47,7 @@ extension Localization on String {
         'ar': 'أوقات الصلاة في',
       } +
       {
-        'en': 'Time Remaining Until ',
+        'en': 'Time Remaining Until',
         'ar': 'الوقت المتبقي حتى',
       } +
       {
@@ -64,7 +64,7 @@ extension Localization on String {
       } +
       {
         'en': 'Swipe to get more details',
-        'ar': "اسحب للحصول على مزيد من التفاصيل",
+        'ar': 'اسحب للحصول على مزيد من التفاصيل',
       } +
       {
         'en': 'Tap here to tune prayers times or get a new location',

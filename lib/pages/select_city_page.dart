@@ -15,8 +15,8 @@ class SelectCityPage extends StatefulWidget {
 }
 
 class _SelectCityPageState extends State<SelectCityPage> {
-  List<String> _cities = [];
-  Future _citiesFiles;
+  final List<String> _cities = [];
+  Future<List<String>> _citiesFiles;
   final _controller = TextEditingController();
   String _filter;
   String _userCity;

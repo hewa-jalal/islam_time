@@ -71,7 +71,7 @@ class MethodNumberTile extends StatelessWidget {
                         ? FocusScope.of(context).unfocus()
                         : FocusScope.of(context).nextFocus();
                   },
-                  style: customRobotoStyle(5.6, Colors.white),
+                  style: customRobotoStyle(5.0, Colors.white),
                   onChanged: onChange,
                   textAlign: TextAlign.center,
                 ),
