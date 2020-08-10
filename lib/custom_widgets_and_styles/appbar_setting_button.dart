@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../size_config.dart';
 import 'custom_styles_formats.dart';
 import '../i18n/setting_page_i18n.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppBarSettingButton extends StatelessWidget {
   final String text;
@@ -16,12 +17,12 @@ class AppBarSettingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 0.4),
+      padding: EdgeInsets.symmetric(vertical: 20.0.w, horizontal: 4.0.w),
       child: FlatButton(
         child: Text(
           text.i18n2,
           style: customRobotoStyle(
-            2.4,
+            3.4,
             Colors.white,
           ),
           textAlign: TextAlign.center,

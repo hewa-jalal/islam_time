@@ -274,30 +274,12 @@ class _HomePageState extends State<HomePage> {
       child: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: SizeConfig.safeBlockHorizontal * 2.0),
-        child: AutoSizeText.rich(
-          TextSpan(
-            children: <TextSpan>[
-              TextSpan(
-                text: 'Time Remaining Until '.i18n,
-                style: customFarroDynamicStyle(
-                  fontWeight: FontWeight.bold,
-                  context: context,
-                  size: 6.8,
-                ),
-              ),
-              TextSpan(
-                text: ' ${timeCycle.untilDayOrNight.i18n}',
-                style: customFarroDynamicStyle(
-                  fontWeight: FontWeight.bold,
-                  context: context,
-                  size: 6.8,
-                ),
-              ),
-              TextSpan(
-                text: '1234',
-                style: GoogleFonts.cairo(),
-              ),
-            ],
+        child: AutoSizeText(
+          'Time Remaining Until '.i18n + timeCycle.untilDayOrNight.i18n,
+          style: customFarroDynamicStyle(
+            fontWeight: FontWeight.bold,
+            context: context,
+            size: 6.8,
           ),
           maxLines: 1,
           textAlign: TextAlign.center,
@@ -329,9 +311,8 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.blueGrey[700],
               child: Padding(
                 padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 0.6),
-                // TODO: translate
                 child: CustomText(
-                  'Last third deeds',
+                  'Last third deeds'.i18n,
                   size: 4.2,
                   color: Colors.white,
                   textAlign: TextAlign.center,

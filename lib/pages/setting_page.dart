@@ -242,7 +242,8 @@ class _SettingPageState extends State<SettingPage> {
                                 color: Colors.white,
                               ),
                             ),
-                            SizedBox(height: SizeConfig.safeBlockVertical * 2),
+                            SizedBox(
+                                height: SizeConfig.safeBlockVertical * 2.0),
                             _buildMehtodNumberTilesColumn(state.bang),
                           ],
                         ),
@@ -257,9 +258,7 @@ class _SettingPageState extends State<SettingPage> {
         }
         return Container(
           color: Colors.blueGrey[700],
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: Center(child: CircularProgressIndicator()),
         );
       },
     );

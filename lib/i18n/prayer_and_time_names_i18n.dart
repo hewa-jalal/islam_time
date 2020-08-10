@@ -39,6 +39,10 @@ extension Localization on String {
         'ar': 'الثلث الأخير',
       } +
       {
+        'en': 'Last third deeds',
+        'ar': 'اعمال الثلث اللأخیر',
+      } +
+      {
         'en': 'Prayers Times for',
         'ar': 'أوقات الصلاة في',
       } +

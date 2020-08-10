@@ -26,7 +26,7 @@ extension Localization on String {
       } +
       {
         'en': 'Last third deeds',
-        'ar': 'عرض عمال الثلث اللأخیر',
+        'ar': 'عرض اعمال الثلث اللأخیر',
       } +
       {
         'en': 'Ok',
