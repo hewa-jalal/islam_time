@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart' as get_package;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -22,6 +21,7 @@ import 'cubit/theme_cubit/theme_cubit.dart';
 import 'package:http/http.dart' as http;
 import 'package:islamtime/repository/location_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 
 class SimpleBlocDelegate extends BlocObserver {
   @override
@@ -45,6 +45,9 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final locationPrefs = prefs.getString('location');
+  final langaugePrefs = prefs.getString(LANGUAGE_KEY);
+
+  print('lang prefs in main ====> $langaugePrefs ==============<');
 
   final repository = LocalBangRepository(
     bangApiClient: BangApiClient(
@@ -72,34 +75,30 @@ void main() async {
             ConnectivityService().connectionStatusController.stream,
         child: BlocBuilder<ThemeCubit, ThemeChanged>(
           builder: (context, state) {
-            return Directionality(
-              textDirection: TextDirection.rtl,
-              child: NeumorphicApp(
+            return I18n(
+              initialLocale:
+                  langaugePrefs != null ? Locale(langaugePrefs) : Locale('en'),
+              child: get_package.GetMaterialApp(
+                theme: state.themeData,
                 debugShowCheckedModeBanner: false,
-                home: get_package.GetMaterialApp(
-                  theme: state.themeData,
-                  debugShowCheckedModeBanner: false,
-                  home: locationPrefs != null
-                      ? Builder(
-                          builder: (context) {
-                            ScreenUtil.init(context);
-                            return HomePage(
-                              showDialog: false,
-                              userLocation: locationPrefs,
-                            );
-                          },
-                        )
-                      : Builder(
-                          builder: (context) {
-                            SizeConfig().init(context);
-                            ScreenUtil.init(context);
-                            return I18n(
-                              child: LanguageSelectionPage(),
-                            );
-                          },
-                        ),
-                  // home: SplashScreenPage(locationPrefs: locationPrefs),
-                ),
+                home: locationPrefs != null
+                    ? Builder(
+                        builder: (context) {
+                          ScreenUtil.init(context);
+                          return HomePage(
+                            showDialog: false,
+                            userLocation: locationPrefs,
+                          );
+                        },
+                      )
+                    : Builder(
+                        builder: (context) {
+                          SizeConfig().init(context);
+                          ScreenUtil.init(context);
+                          return LanguageSelectionPage();
+                        },
+                      ),
+                // home: SplashScreenPage(locationPrefs: locationPrefs),
               ),
             );
           },

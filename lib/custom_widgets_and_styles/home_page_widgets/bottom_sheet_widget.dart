@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
 
 import '../../size_config.dart';
 
@@ -74,9 +75,10 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
               child: AutoSizeText(
                 _isLocal
                     ? 'Tap here to get a new location'
-                    : 'Tap here to tune prayers times or get a new location',
+                    : 'Tap here to tune prayers times or get a new location'
+                        .i18n,
                 style: GoogleFonts.roboto(
-                  fontSize: ScreenUtil().setSp(70),
+                  fontSize: 90.sp,
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
                 ),
@@ -177,47 +179,47 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     )..show();
   }
 
-  Column _buildPrayerTilesColumn(Bang bang) {
+  Widget _buildPrayerTilesColumn(Bang bang) {
     return Column(
       children: <Widget>[
         PrayerTile(
           prayerTime: bang.speda,
-          prayerName: 'Fajr',
+          prayerName: 'Fajr'.i18n,
           iconTime: 'sun',
         ),
         PrayerTile(
           prayerTime: bang.rojHalat,
-          prayerName: 'Sunrise',
+          prayerName: 'Sunrise'.i18n,
           iconTime: 'sun',
         ),
         PrayerTile(
           prayerTime: bang.nevro,
-          prayerName: 'Zuhr',
+          prayerName: 'Zuhr'.i18n,
           iconTime: 'sun',
         ),
         PrayerTile(
           prayerTime: bang.evar,
-          prayerName: 'Asr',
+          prayerName: 'Asr'.i18n,
           iconTime: 'sun',
         ),
         PrayerTile(
           prayerTime: bang.maghrab,
-          prayerName: 'Maghrib',
+          prayerName: 'Maghrib'.i18n,
           iconTime: 'moon',
         ),
         PrayerTile(
           prayerTime: bang.aesha,
-          prayerName: 'Isha',
+          prayerName: 'Isha'.i18n,
           iconTime: 'moon',
         ),
         PrayerTile(
           prayerTime: _toAmPm(bang.midNightStart),
-          prayerName: 'Midnight',
+          prayerName: 'Midnight'.i18n,
           iconTime: 'moon',
         ),
         PrayerTile(
           prayerTime: _toAmPm(bang.midNightEnd),
-          prayerName: 'Last Third',
+          prayerName: 'Last Third'.i18n,
           iconTime: 'moon',
         ),
       ],
@@ -284,13 +286,16 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    'Prayers for \n ${snapshotLocation.data}',
-                                    textAlign: TextAlign.center,
+                                    'Prayers Times for'.i18n +
+                                        '\n' +
+                                        snapshotLocation.data,
                                     style: customFarroDynamicStyle(
                                       fontWeight: FontWeight.bold,
                                       context: context,
                                       size: 4.6,
+                                      height: 1.35,
                                     ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),

@@ -1,26 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i18n_extension/i18n_widget.dart';
 import 'package:islamtime/cubit/is_rtl_cubit.dart';
-
+import 'package:islamtime/custom_widgets_and_styles/langauge_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
+import 'home_page.dart';
 import 'onboarding_page.dart';
 
-class LanguageSelectionPage extends StatefulWidget {
-  @override
-  _LanguageSelectionPageState createState() => _LanguageSelectionPageState();
-}
+class LanguageSelectionPage extends StatelessWidget {
+  final bool isFromSetting;
 
-class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
-  IsRtlCubit isRtlCubit;
-
-  @override
-  void initState() {
-    super.initState();
-    isRtlCubit = IsRtlCubit();
-  }
-
+  const LanguageSelectionPage({Key key, this.isFromSetting = false})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,17 +25,14 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            NeumorphicButton(
-              child: Padding(
-                padding: EdgeInsets.all(10.0.w),
-                child: Text('English', textAlign: TextAlign.center),
-              ),
-              onPressed: () => _langaugeSelection(context, 'en'),
+            LanguageButton(
+              text: 'English',
+              onPressed: () => _langaugeSelection(context, 'en', isFromSetting),
             ),
             SizedBox(height: 20.0),
-            NeumorphicButton(
-              child: Text('العربیة', textAlign: TextAlign.center),
-              onPressed: () => _langaugeSelection(context, 'ar'),
+            LanguageButton(
+              text: 'العربیة',
+              onPressed: () => _langaugeSelection(context, 'ar', isFromSetting),
             ),
           ],
         ),
@@ -49,9 +40,20 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     );
   }
 
-  void _langaugeSelection(BuildContext context, String lang) {
+  void _langaugeSelection(
+      BuildContext context, String lang, isFromSetting) async {
+    final prefs = await SharedPreferences.getInstance();
+    final isRtlCubit = BlocProvider.of<IsRtlCubit>(context);
     I18n.of(context).locale = Locale(lang);
-    // lang == 'ar' ? isRtlCubit.isRtl(true) : isRtlCubit.isRtl(false);
-    Get.to(OnBoardingPage());
+    lang == 'ar' ? isRtlCubit.isRtl(true) : isRtlCubit.isRtl(false);
+    prefs.setString(LANGUAGE_KEY, lang);
+    isFromSetting
+        ? Get.off(
+            HomePage(
+              showDialog: false,
+              userLocation: 'from setting',
+            ),
+          )
+        : Get.to(OnBoardingPage());
   }
 }

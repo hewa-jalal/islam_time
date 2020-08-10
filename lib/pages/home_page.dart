@@ -8,14 +8,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:i18n_extension/i18n_widget.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/cubit/body_status_cubit.dart';
+import 'package:islamtime/cubit/is_rtl_cubit.dart';
 import 'package:islamtime/cubit/theme_cubit/theme_cubit.dart';
+import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
 
 import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_text.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
 import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/athkar_page.dart';
@@ -52,6 +56,7 @@ class _HomePageState extends State<HomePage> {
   double prefsLng;
   int prefsMethodNumber;
   List<int> prefsTuning;
+  GlobalKey _scaffold = GlobalKey();
 
   int _animation;
   String _arrowAnimation = 'upArrowAnimation';
@@ -83,7 +88,7 @@ class _HomePageState extends State<HomePage> {
       context,
       targets: _targets,
       colorShadow: Colors.grey[400],
-      textSkip: 'Ok',
+      textSkip: 'Ok'.i18n,
       clickSkip: () {},
       textStyleSkip: customRobotoStyle(4.4),
       paddingFocus: -100,
@@ -103,12 +108,13 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'Swipe to get more details',
+                    'Swipe to get more details'.i18n,
                     style: GoogleFonts.roboto(
-                      fontSize: ScreenUtil().setSp(70),
+                      fontSize: 64.sp,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -134,12 +140,12 @@ class _HomePageState extends State<HomePage> {
 
   void _showLocationDialog() {
     AwesomeDialog(
-      context: context,
+      context: _scaffold.currentContext,
       dialogType: DialogType.INFO,
       animType: AnimType.SCALE,
       body: Center(
         child: Text(
-          'Your Location is \n ${widget.userLocation}',
+          'Your Location is'.i18n + '\n' + '${widget.userLocation}',
           style: customFarroDynamicStyle(size: 5.4, context: context),
           textAlign: TextAlign.center,
         ),
@@ -156,7 +162,7 @@ class _HomePageState extends State<HomePage> {
     await _getSharedPrefs();
     if (isNotConnected) {
       _refreshController.refreshCompleted();
-      showOfflineDialog(context, OfflineMessage.setting, true);
+      showOfflineDialog(context, OfflineMessage.location, true);
     } else {
       bloc.add(
         FetchBangWithSettings(
@@ -177,7 +183,7 @@ class _HomePageState extends State<HomePage> {
     return prefs.getBool(IS_FIRST_TIME_KEY);
   }
 
-  FlareActor _buildFlareActor() {
+  Widget _buildFlareActor() {
     return FlareActor(
       'assets/flare/DayAndNight.flr',
       animation: (_animation == 0)
@@ -219,7 +225,7 @@ class _HomePageState extends State<HomePage> {
             });
             return SizedBox(
               key: _swipeSheetKey,
-              height: SizeConfig.safeBlockHorizontal * 20,
+              height: SizeConfig.safeBlockHorizontal * 20.0,
               child: FlareActor(
                 'assets/flare/arrow_up_down.flr',
                 animation: _arrowAnimation,
@@ -235,7 +241,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  SimpleTooltip _buildSimpleTooltip(
+  Widget _buildSimpleTooltip(
     AsyncSnapshot<bool> isLocalSnapshot,
     AsyncSnapshot<bool> isFirstTimeSnapshot,
     bool state,
@@ -243,12 +249,14 @@ class _HomePageState extends State<HomePage> {
   ) {
     return SimpleTooltip(
       content: Material(
-        child: Text(
-          'Swipe from here to get latest prayer times',
+        child: AutoSizeText(
+          'Swipe from here to get latest prayer times'.i18n,
           style: GoogleFonts.roboto(
-            fontSize: ScreenUtil().setSp(70),
+            fontSize: 76.sp,
             fontWeight: FontWeight.bold,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
         ),
       ),
       show: () {
@@ -267,14 +275,14 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.symmetric(
             horizontal: SizeConfig.safeBlockHorizontal * 2.0),
         child: AutoSizeText(
-          'Time Remaining Until ${timeCycle.untilDayOrNight}',
-          textAlign: TextAlign.center,
+          'Time Remaining Until '.i18n + timeCycle.untilDayOrNight.i18n,
           style: customFarroDynamicStyle(
             fontWeight: FontWeight.bold,
             context: context,
             size: 6.8,
           ),
           maxLines: 1,
+          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -282,13 +290,12 @@ class _HomePageState extends State<HomePage> {
 
   void _checkTheme(TimeCycle timeCycle, BuildContext context) {
     final cubitTheme = BlocProvider.of<ThemeCubit>(context);
-
     timeCycle.timeIs == TimeIs.day
         ? cubitTheme.changeTheme(AppTheme.light)
         : cubitTheme.changeTheme(AppTheme.dark);
   }
 
-  Positioned _buildAthkarAvatar() {
+  Widget _buildAthkarAvatar() {
     return Positioned.fill(
       top: SizeConfig.safeBlockVertical * 20.0,
       right: SizeConfig.safeBlockHorizontal * 1.6,
@@ -304,12 +311,10 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.blueGrey[700],
               child: Padding(
                 padding: EdgeInsets.all(SizeConfig.blockSizeVertical * 0.6),
-                child: Text(
-                  'Last third deeds',
-                  style: customRobotoStyle(
-                    4.2,
-                    Colors.white,
-                  ),
+                child: CustomText(
+                  'Last third deeds'.i18n,
+                  size: 4.2,
+                  color: Colors.white,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -327,10 +332,16 @@ class _HomePageState extends State<HomePage> {
     final afterSpotLightCubit = BlocProvider.of<AfterSpotLightCubit>(context);
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
     final isNotConnected = connectionStatus == ConnectivityStatus.Offline;
+    final isRtlCubit = BlocProvider.of<IsRtlCubit>(context);
+    if (I18n.locale.languageCode == 'ar') {
+      isRtlCubit.isRtl(true);
+    }
     SizeConfig().init(context);
+    final cubitTheme = BlocProvider.of<ThemeCubit>(context);
 
     return SafeArea(
       child: Scaffold(
+        key: _scaffold,
         body: FutureBuilder<bool>(
           future: _getIsLocal(),
           builder: (context, isLocalSnapshot) {
@@ -355,18 +366,38 @@ class _HomePageState extends State<HomePage> {
                   builder: (context, state) {
                     if (state is TimeCycleLoaded) {
                       final timeCycle = state.timeCycle;
-                      _checkTheme(state.timeCycle, context);
+                      // TODO: turn this back
+                      // _checkTheme(state.timeCycle, context);
                       return Stack(
                         children: <Widget>[
                           _buildFlareActor(),
                           Center(
                             child: IconButton(
-                              icon: FlutterLogo(),
+                              icon: FlutterLogo(
+                                size: 4000.0,
+                              ),
                               onPressed: () async {
                                 final prefs =
                                     await SharedPreferences.getInstance();
                                 prefs.clear();
                               },
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: const EdgeInsets.all(40.0),
+                              child: FlatButton(
+                                child: FlutterLogo(
+                                  size: 100.0,
+                                  colors: Colors.red,
+                                ),
+                                onPressed: () async {
+                                  cubitTheme.changeTheme(AppTheme.dark);
+                                },
+                                onLongPress: () =>
+                                    cubitTheme.changeTheme(AppTheme.light),
+                              ),
                             ),
                           ),
                           _buildBottomSheet(

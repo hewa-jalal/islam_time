@@ -13,6 +13,7 @@ import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/services/connection_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
 
 class LocationPage extends StatefulWidget {
   @override
@@ -32,27 +33,14 @@ class _LocationPageState extends State<LocationPage> {
         body: BlocConsumer<BangBloc, BangState>(
           listener: (context, state) async {
             final prefs = await SharedPreferences.getInstance();
-            final locationPrefs = prefs.get('location');
+            final locationPrefs = prefs.getString('location');
             if (state is BangLoaded) {
-              if (locationPrefs != null) {
-                Get.off(
-                  HomePage(
-                    userLocation: locationPrefs,
-                    showDialog: true,
-                  ),
-                );
-              } else {
-                getUserLocation(context).then(
-                  (value) {
-                    Get.off(
-                      HomePage(
-                        userLocation: value,
-                        showDialog: true,
-                      ),
-                    );
-                  },
-                );
-              }
+              Get.off(
+                HomePage(
+                  userLocation: locationPrefs,
+                  showDialog: true,
+                ),
+              );
             }
           },
           builder: (context, state) {
@@ -75,13 +63,14 @@ class _LocationPageState extends State<LocationPage> {
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: AutoSizeText(
-                        'Tap the screen to get your location',
+                        'Tap the screen to get your location'.i18n,
                         style: customRobotoStyle(
                           5.4,
                           Colors.black,
                           FontWeight.w900,
                         ),
                         maxLines: 1,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
@@ -127,12 +116,12 @@ class _LocationPageState extends State<LocationPage> {
       );
     }
 
-    if (userCountry.toLowerCase().contains('iraq')) {
+    if (userCountry.toLowerCase().contains('i2raq')) {
       await prefs.setBool(IS_LOCAL_KEY, true);
       Get.off(SelectCityPage());
     } else {
       await prefs.setBool(IS_LOCAL_KEY, false);
-      bangBloc.add(GetBang(cityName: userCity, countryName: userCountry));
+      bangBloc.add(FetchBang());
     }
     return '$userCountry, $userCity';
   }
