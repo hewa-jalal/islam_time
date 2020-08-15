@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../size_config.dart';
 import 'custom_styles_formats.dart';
 import '../i18n/setting_page_i18n.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

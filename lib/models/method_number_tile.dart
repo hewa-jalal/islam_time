@@ -5,7 +5,7 @@ import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_text.dart';
 import 'package:islamtime/i18n/setting_page_i18n.dart';
 
-import '../size_config.dart';
+import '../services/size_config.dart';
 
 class MethodNumberTile extends StatelessWidget {
   const MethodNumberTile({

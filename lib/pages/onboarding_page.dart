@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:i18n_extension/i18n_widget.dart';
 import 'package:intro_views_flutter/Models/page_view_model.dart';
 import 'package:intro_views_flutter/intro_views_flutter.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_text.dart';
-import 'package:islamtime/size_config.dart';
+import 'package:islamtime/services/size_config.dart';
 import 'location_page.dart';
 import 'package:islamtime/i18n/onboarding_i18n.dart';
 
 class OnBoardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('==========> ${I18n.locale}  <==========');
     return IntroViewsFlutter(
       [page1, page2],
       showSkipButton: false,

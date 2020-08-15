@@ -8,12 +8,13 @@ import 'package:i18n_extension/i18n_widget.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
+import 'package:islamtime/cubit/is_outdated_cubit.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/pages/language_selection_page.dart';
 import 'package:islamtime/repository/bang_api_client.dart';
 import 'package:islamtime/repository/bang_repository.dart';
 import 'package:islamtime/services/connection_service.dart';
-import 'package:islamtime/size_config.dart';
+import 'package:islamtime/services/size_config.dart';
 import 'package:provider/provider.dart';
 import 'cubit/body_status_cubit.dart';
 import 'cubit/is_rtl_cubit.dart';
@@ -69,6 +70,7 @@ void main() async {
         BlocProvider<AfterSpotLightCubit>(create: (_) => AfterSpotLightCubit()),
         BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
         BlocProvider<IsRtlCubit>(create: (_) => IsRtlCubit()),
+        BlocProvider<IsOutdatedCubit>(create: (_) => IsOutdatedCubit()),
       ],
       child: StreamProvider<ConnectivityStatus>(
         create: (context) =>

@@ -31,6 +31,11 @@ extension Localization on String {
       {
         'en': 'Ok',
         'ar': 'حسنا',
+      } +
+      {
+        'en':
+            'Please make sure you are connected to the internet to get the latest prayer times',
+        'ar': 'يرجى التأكد من اتصالك بالإنترنت للحصول على أحدث مواقيت الصلاة',
       };
   String get i18n => localize(this, _t);
 }

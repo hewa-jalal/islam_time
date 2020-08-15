@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:i18n_extension/i18n_widget.dart';
@@ -13,6 +16,7 @@ import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/cubit/body_status_cubit.dart';
+import 'package:islamtime/cubit/is_outdated_cubit.dart';
 import 'package:islamtime/cubit/is_rtl_cubit.dart';
 import 'package:islamtime/cubit/theme_cubit/theme_cubit.dart';
 import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
@@ -21,10 +25,11 @@ import 'package:islamtime/custom_widgets_and_styles/countdown.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_text.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/bottom_sheet_widget.dart';
+import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/athkar_page.dart';
 import 'package:islamtime/services/connection_service.dart';
-import 'package:islamtime/size_config.dart';
+import 'package:islamtime/services/size_config.dart';
 import 'package:islamtime/ui/global/theme/app_themes.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -56,13 +61,14 @@ class _HomePageState extends State<HomePage> {
   double prefsLng;
   int prefsMethodNumber;
   List<int> prefsTuning;
-  GlobalKey _scaffold = GlobalKey();
 
   int _animation;
+  var _isLoading = false;
   String _arrowAnimation = 'upArrowAnimation';
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
+  final _scaffold = GlobalKey();
   final _solidController = SolidController();
   final _swipeSheetKey = GlobalKey();
   final List<TargetFocus> _targets = [];
@@ -235,8 +241,7 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         body: BlocBuilder<BodyStatusCubit, bool>(
-          builder: (context, state) =>
-              state ? BottomSheetTime(timeCycle: timeCycle) : Container(),
+          builder: (context, state) => state ? BottomSheetTime() : Container(),
         ),
       ),
     );
@@ -244,46 +249,54 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSimpleTooltip(
     AsyncSnapshot<bool> isLocalSnapshot,
-    AsyncSnapshot<bool> isFirstTimeSnapshot,
-    bool state,
     TimeCycle timeCycle,
   ) {
-    return SimpleTooltip(
-      content: Material(
-        child: AutoSizeText(
-          'Swipe from here to get latest prayer times'.i18n,
-          style: GoogleFonts.roboto(
-            fontSize: 76.sp,
-            fontWeight: FontWeight.bold,
+    return FutureBuilder(
+      future: _getTutorialDisplay(),
+      builder: (
+        context,
+        isFirstTimeSnapshot,
+      ) =>
+          BlocBuilder<AfterSpotLightCubit, bool>(
+        builder: (context, state) => SimpleTooltip(
+          content: Material(
+            child: AutoSizeText(
+              'Swipe from here to get latest prayer times'.i18n,
+              style: GoogleFonts.roboto(
+                fontSize: 76.sp,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+            ),
           ),
-          textAlign: TextAlign.center,
-          maxLines: 1,
-        ),
-      ),
-      show: () {
-        if (isLocalSnapshot.data) {
-          return false;
-        }
-        if (isFirstTimeSnapshot.data == null && state) {
-          return true;
-        }
-        return false;
-      }(),
-      hideOnTooltipTap: true,
-      tooltipTap: _persisetTutorialDisplay,
-      tooltipDirection: TooltipDirection.down,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: SizeConfig.safeBlockHorizontal * 2.0),
-        child: AutoSizeText(
-          'Time Remaining Until'.i18n + ' ${timeCycle.untilDayOrNight.i18n}',
-          style: customFarroDynamicStyle(
-            fontWeight: FontWeight.bold,
-            context: context,
-            size: 6.8,
+          show: () {
+            if (isLocalSnapshot.data) {
+              return false;
+            }
+            if (isFirstTimeSnapshot.data == null && state) {
+              return true;
+            }
+            return false;
+          }(),
+          hideOnTooltipTap: true,
+          tooltipTap: _persisetTutorialDisplay,
+          tooltipDirection: TooltipDirection.down,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: SizeConfig.safeBlockHorizontal * 2.4),
+            child: AutoSizeText(
+              'Time Remaining Until'.i18n +
+                  ' ${timeCycle.untilDayOrNight.i18n}',
+              style: customFarroDynamicStyle(
+                fontWeight: FontWeight.bold,
+                context: context,
+                size: 6.8,
+              ),
+              maxLines: 1,
+              textAlign: TextAlign.center,
+            ),
           ),
-          maxLines: 1,
-          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -326,6 +339,24 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _isDateOudated(BangBloc bangBloc, Bang bang) {
+    final day = bang.date.numericOnly(bang.date, firstWordOnly: true);
+    print('now day ${DateTime.now().day}');
+
+    if (int.parse(day) < DateTime.now().day) {
+      print('your day:$day is outdated');
+      bangBloc.add(
+        FetchBangWithSettings(
+          methodNumber: prefsMethodNumber ?? 0,
+          tuning: prefsTuning ?? [0, 0, 0, 0, 0, 0],
+        ),
+      );
+      _isLoading = true;
+    } else {
+      _isLoading = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bangBloc = BlocProvider.of<BangBloc>(context);
@@ -338,143 +369,182 @@ class _HomePageState extends State<HomePage> {
       isRtlCubit.isRtl(true);
     }
     SizeConfig().init(context);
+
     final cubitTheme = BlocProvider.of<ThemeCubit>(context);
 
     return SafeArea(
-      child: Scaffold(
-        key: _scaffold,
-        body: FutureBuilder<bool>(
-          future: _getIsLocal(),
-          builder: (context, isLocalSnapshot) {
-            if (isLocalSnapshot.hasData) {
-              return SmartRefresher(
-                onRefresh: () => _onRefresh(bangBloc, context, isNotConnected),
-                physics: isLocalSnapshot.data
-                    ? NeverScrollableScrollPhysics()
-                    : null,
-                controller: _refreshController,
-                header: WaterDropHeader(waterDropColor: Colors.blue),
-                child: BlocConsumer<TimeCycleBloc, TimeCycleState>(
-                  listener: (context, state) {
-                    if (state is TimeCycleLoaded) {
-                      if (state.timeCycle.timeIs == TimeIs.day) {
-                        _animation = 2;
-                      } else {
-                        _animation = 1;
-                      }
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is TimeCycleLoaded) {
-                      final timeCycle = state.timeCycle;
-                      // TODO: turn this back
-                      // _checkTheme(state.timeCycle, context);
-                      return Stack(
-                        children: <Widget>[
-                          _buildFlareActor(),
-                          Center(
-                            child: IconButton(
-                              icon: FlutterLogo(
-                                size: 4000.0,
-                              ),
-                              onPressed: () async {
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.clear();
-                              },
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding: const EdgeInsets.all(40.0),
-                              child: FlatButton(
-                                child: FlutterLogo(
-                                  size: 100.0,
-                                  colors: Colors.red,
-                                ),
-                                onPressed: () async {
-                                  cubitTheme.changeTheme(AppTheme.dark);
-                                },
-                                onLongPress: () =>
-                                    cubitTheme.changeTheme(AppTheme.light),
-                              ),
-                            ),
-                          ),
-                          _buildBottomSheet(
-                            context,
-                            bodyStatusCubit,
-                            timeCycle,
-                          ),
-                          BlocConsumer<BangBloc, BangState>(
-                            listener: (context, state) {
-                              if (state is BangLoaded) {
-                                afterSpotLightCubit.changeStatus();
-                                _persisetTutorialDisplay();
-                                _refreshController.refreshCompleted();
-                              }
-                            },
-                            builder: (context, state) {
-                              if (state is BangLoaded) {
-                                return SingleChildScrollView(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 14.0,
-                                          bottom: 18.0,
-                                        ),
-                                        child: FutureBuilder<bool>(
-                                          future: _getTutorialDisplay(),
-                                          builder:
-                                              (context, isFirstTimeSnapshot) {
-                                            return BlocBuilder<
-                                                AfterSpotLightCubit, bool>(
-                                              builder: (context, state) {
-                                                return _buildSimpleTooltip(
-                                                  isLocalSnapshot,
-                                                  isFirstTimeSnapshot,
-                                                  state,
-                                                  timeCycle,
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.topCenter,
-                                        child: CountdownPage(bang: state.bang),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                              return SizedBox();
-                            },
-                          ),
-                          timeCycle.isLastThird
-                              ? _buildAthkarAvatar()
-                              : Container(),
-                        ],
-                      );
-                    } else {
-                      return BlocBuilder<BangBloc, BangState>(
-                        builder: (context, state) {
-                          if (state is BangLoaded) {
-                            return CountdownPage(bang: state.bang);
+      child: AbsorbPointer(
+        absorbing: _isLoading,
+        child: Scaffold(
+          key: _scaffold,
+          body: Stack(
+            children: [
+              FutureBuilder<bool>(
+                future: _getIsLocal(),
+                builder: (context, isLocalSnapshot) {
+                  if (isLocalSnapshot.hasData) {
+                    return SmartRefresher(
+                      onRefresh: () =>
+                          _onRefresh(bangBloc, context, isNotConnected),
+                      // TODO: remove physics
+                      physics: isLocalSnapshot.data
+                          ? NeverScrollableScrollPhysics()
+                          : null,
+                      controller: _refreshController,
+                      header: WaterDropHeader(waterDropColor: Colors.blue),
+                      child: BlocConsumer<TimeCycleBloc, TimeCycleState>(
+                        listener: (context, state) {
+                          if (state is TimeCycleLoaded) {
+                            if (state.timeCycle.timeIs == TimeIs.day) {
+                              _animation = 2;
+                            } else {
+                              _animation = 1;
+                            }
                           }
-                          return SizedBox();
                         },
-                      );
-                    }
-                  },
-                ),
-              );
-            }
-            return CircularProgressIndicator();
-          },
+                        builder: (context, state) {
+                          if (state is TimeCycleLoaded) {
+                            final timeCycle = state.timeCycle;
+                            // TODO: turn this back
+                            // _checkTheme(state.timeCycle, context);
+                            return Stack(
+                              children: <Widget>[
+                                _buildFlareActor(),
+                                Center(
+                                  child: IconButton(
+                                    icon: FlutterLogo(
+                                      size: 4000.0,
+                                    ),
+                                    onPressed: () async {
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      await prefs.clear();
+                                    },
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(40.0),
+                                    child: FlatButton(
+                                      child: FlutterLogo(
+                                        size: 100.0,
+                                        colors: Colors.red,
+                                      ),
+                                      onPressed: () async =>
+                                          cubitTheme.changeTheme(AppTheme.dark),
+                                      onLongPress: () => cubitTheme
+                                          .changeTheme(AppTheme.light),
+                                    ),
+                                  ),
+                                ),
+                                _buildBottomSheet(
+                                  context,
+                                  bodyStatusCubit,
+                                  timeCycle,
+                                ),
+                                BlocConsumer<BangBloc, BangState>(
+                                  listener: (context, state) {
+                                    if (state is BangLoaded) {
+                                      afterSpotLightCubit.changeStatus();
+                                      _persisetTutorialDisplay();
+                                      _refreshController.refreshCompleted();
+                                    }
+                                  },
+                                  builder: (context, state) {
+                                    if (state is BangLoaded) {
+                                      _isDateOudated(bangBloc, state.bang);
+                                      return SingleChildScrollView(
+                                        child: Column(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 14.0,
+                                                bottom: 18.0,
+                                              ),
+                                              child: _buildSimpleTooltip(
+                                                isLocalSnapshot,
+                                                timeCycle,
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment: Alignment.topCenter,
+                                              child: CountdownPage(
+                                                bang: state.bang,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                    return SizedBox();
+                                  },
+                                ),
+                                timeCycle.isLastThird
+                                    ? _buildAthkarAvatar()
+                                    : Container(),
+                                _isLoading
+                                    ? _buildLoadingOverlay(context)
+                                    : Container(),
+                              ],
+                            );
+                          } else {
+                            return BlocBuilder<BangBloc, BangState>(
+                              builder: (context, state) {
+                                if (state is BangLoaded) {
+                                  return CountdownPage(bang: state.bang);
+                                }
+                                return SizedBox();
+                              },
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingOverlay(BuildContext context) {
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 4,
+              sigmaY: 4,
+            ),
+            child: SizedBox(
+              height: 260.w,
+              width: 260.w,
+              child: SpinKitDoubleBounce(
+                color: Colors.white,
+                size: 300.w,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 700.h,
+            right: 50.w,
+            left: 50.w,
+            child: AutoSizeText(
+              'Getting prayer times for today',
+              style: customFarroDynamicStyle(context: context, size: 6.0),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+            ),
+          ),
+        ],
       ),
     );
   }

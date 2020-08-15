@@ -27,7 +27,10 @@ class FetchBangWithSettings extends BangEvent {
   final int methodNumber;
   final List<int> tuning;
 
-  FetchBangWithSettings({@required this.methodNumber, @required this.tuning});
+  const FetchBangWithSettings({
+    @required this.methodNumber,
+    @required this.tuning,
+  });
   @override
   List<Object> get props => [];
 }

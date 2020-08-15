@@ -46,7 +46,7 @@ class LanguageSelectionPage extends StatelessWidget {
     final isRtlCubit = BlocProvider.of<IsRtlCubit>(context);
     I18n.of(context).locale = Locale(lang);
     lang == 'ar' ? isRtlCubit.isRtl(true) : isRtlCubit.isRtl(false);
-    prefs.setString(LANGUAGE_KEY, lang);
+    await prefs.setString(LANGUAGE_KEY, lang);
     isFromSetting
         ? Get.off(
             HomePage(

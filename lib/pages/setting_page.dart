@@ -10,7 +10,7 @@ import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/method_number_tile.dart';
 import 'package:islamtime/pages/home_page.dart';
 import 'package:islamtime/pages/language_selection_page.dart';
-import 'package:islamtime/size_config.dart';
+import 'package:islamtime/services/size_config.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';

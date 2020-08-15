@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 
-import '../size_config.dart';
+import '../services/size_config.dart';
 
 class MethodNumberTile extends StatelessWidget {
   const MethodNumberTile({

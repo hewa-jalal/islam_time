@@ -10,6 +10,7 @@ import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/prayer_tile_widget.dart';
 import 'package:islamtime/models/bang.dart';
+import 'package:islamtime/models/fetch_settings.dart';
 import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/setting_page.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
@@ -20,16 +21,9 @@ import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
 
-import '../../size_config.dart';
+import '../../services/size_config.dart';
 
 class BottomSheetTime extends StatefulWidget {
-  const BottomSheetTime({
-    Key key,
-    @required this.timeCycle,
-  }) : super(key: key);
-
-  final TimeCycle timeCycle;
-
   @override
   _BottomSheetTimeState createState() => _BottomSheetTimeState();
 }
@@ -49,7 +43,13 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     SchedulerBinding.instance.addPostFrameCallback((_) => _afterLayout(_));
   }
 
-  TimeCycle get timeCycle => widget.timeCycle;
+  Future<FetchSetting> _getSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final methodNumber = prefs.getInt(METHOD_NUMBER_KEY);
+    final tuning = prefs.getStringList(TUNING_KEY);
+
+    return FetchSetting(methodNumber: methodNumber, tuning: tuning);
+  }
 
   Future<String> _getLocation() async {
     final prefs = await SharedPreferences.getInstance();
@@ -234,9 +234,43 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     return '${'${tod.hourOfPeriod}'.padLeft(2, '0')}:${'${tod.minute}'.padLeft(2, '0')}';
   }
 
+  Widget _buildIsOutdatedWidget(
+    BangBloc bangBloc,
+    Bang bang,
+    bool isNotConnected,
+  ) {
+    final day = bang.date.numericOnly(bang.date, firstWordOnly: true);
+    if (int.parse(day) < DateTime.now().day) {
+      return FutureBuilder<FetchSetting>(
+        future: _getSettings(),
+        builder: (context, fetchSetting) {
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14.0.w),
+            child: GestureDetector(
+              child: Icon(Icons.warning, color: Colors.red),
+              onTap: () {
+                if (isNotConnected) {
+                  showOfflineDialog(context, OfflineMessage.basic, false);
+                } else {
+                  bangBloc.add(
+                    FetchBangWithSettings(
+                      methodNumber: fetchSetting.data.methodNumber ?? 3,
+                      tuning: fetchSetting.data.tuningInt ?? [0, 0, 0, 0, 0, 0],
+                    ),
+                  );
+                }
+              },
+            ),
+          );
+        },
+      );
+    }
+    return Container();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<BangBloc>(context);
+    final bangBloc = BlocProvider.of<BangBloc>(context);
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
     final isNotConnected = connectionStatus == ConnectivityStatus.Offline;
 
@@ -262,6 +296,11 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                           ),
                         ),
                         Spacer(),
+                        _buildIsOutdatedWidget(
+                          bangBloc,
+                          bang,
+                          isNotConnected,
+                        ),
                         Text(
                           bang.date,
                           style: customFarroDynamicStyle(
@@ -305,7 +344,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
                                   child: Container(
                                     child: _buildSettingChoiceButton(
                                       context,
-                                      bloc,
+                                      bangBloc,
                                       isNotConnected,
                                     ),
                                   ),

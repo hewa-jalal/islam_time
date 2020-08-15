@@ -115,10 +115,10 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final stringTuning = tuning.map((e) => e.toString()).toList();
-    await prefs.setDouble('lat', lat);
-    await prefs.setDouble('lng', lng);
-    await prefs.setInt('methodNumber', methodNumber);
-    await prefs.setStringList('tuning', stringTuning);
+    await prefs.setDouble(LAT_KEY, lat);
+    await prefs.setDouble(LNG_KEY, lng);
+    await prefs.setInt(METHOD_NUMBER_KEY, methodNumber);
+    await prefs.setStringList(TUNING_KEY, stringTuning);
     await prefs.setBool(IS_LOCAL_KEY, isLocal);
 
     print(''' bloc => lat prefs ${prefs.getDouble('lat')} 

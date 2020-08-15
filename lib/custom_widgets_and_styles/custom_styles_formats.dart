@@ -8,16 +8,21 @@ import 'package:jiffy/jiffy.dart';
 import 'package:lottie/lottie.dart';
 import 'package:islamtime/i18n/dialogs_i18n.dart';
 
-import '../size_config.dart';
+import '../services/size_config.dart';
 
 const String IS_LOCAL_KEY = 'isLocal';
 const String IS_FIRST_TIME_KEY = 'isFirstTime';
 const String LANGUAGE_KEY = 'language';
+const String LAT_KEY = 'lat';
+const String LNG_KEY = 'lng';
+const String METHOD_NUMBER_KEY = 'methodNumber';
+const String TUNING_KEY = 'tuning';
 
 enum OfflineMessage {
   location,
   setting,
   local,
+  basic,
 }
 
 void showOfflineDialog(
@@ -41,6 +46,9 @@ void showOfflineDialog(
                   .i18n;
             case OfflineMessage.local:
               return 'For the option to change location and get prayers from the internet you must be online'
+                  .i18n;
+            case OfflineMessage.basic:
+              return 'Please make sure you are connected to the internet to get the latest prayer times'
                   .i18n;
             default:
               return '';
