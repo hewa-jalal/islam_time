@@ -18,6 +18,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/animated_focus_light.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:jiffy/jiffy.dart';
+
 import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
 
 import '../../services/size_config.dart';
@@ -243,8 +245,11 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     bool isLocal,
     String location,
   ) {
-    final day = bang.date.numericOnly(bang.date, firstWordOnly: true);
-    if (int.parse(day) < DateTime.now().day && !isLocal) {
+    final jif = Jiffy(bang.date, 'dd MMM yyyy');
+    if ((jif.date < DateTime.now().day ||
+            jif.month < DateTime.now().month ||
+            jif.year < DateTime.now().year) &&
+        !isLocal) {
       return FutureBuilder<FetchSetting>(
         future: _getSettings(),
         builder: (context, fetchSetting) {

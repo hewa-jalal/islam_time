@@ -12,7 +12,7 @@ extension Localization on String {
         'en':
             '''For muslims the day starts at maghrib, also keep in mind that in islam the the night precedes the morning. and that's why on the last day of Ramadan, we don't pray Taraweeh, and that’s because the day (new day) has started at maghrib, so Ramadan is over and Eid has begun. this also mean that you may recite Surah Kahf any time after sunset of Thursday.''',
         'ar':
-            '''بالنسبة للمسلمين يبدأ اليوم في المغرب،  و تذكر أن الليل في الإسلام يسبق الصباح، ولهذا السبب في آخر يوم رمضان،  لا نصلي التراويح،  وذلك لأن اليوم (يوم جديد) بدأ في المغرب،  لذلك انتهى رمضان وبدأ العيد. هذا يعني أيضًا أنه يمكنك قراءة سورة الكهف في أي وقت بعد غروب الشمس في  يوم الخميس.'''
+            '''بالنسبة للمسلمين يبدأ اليوم في المغرب، و تذكر أن الليل في الإسلام يسبق الصباح، ولهذا السبب في آخر يوم رمضان،  لا نصلي التراويح،  وذلك لأن اليوم (يوم جديد) بدأ في المغرب،  لذلك انتهى رمضان وبدأ العيد. هذا يعني أيضًا أنه يمكنك قراءة سورة الكهف في أي وقت بعد غروب الشمس في  يوم الخميس.'''
       } +
       {
         'en': 'done',

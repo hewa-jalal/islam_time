@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:jiffy/jiffy.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flare_flutter/flare_actor.dart';
@@ -351,11 +351,11 @@ class _HomePageState extends State<HomePage> {
     bool isNotConnected,
     bool isLocal,
   ) {
-    final day = bang.date.numericOnly(bang.date, firstWordOnly: true);
-    print('now day ${DateTime.now().day}');
+    final jif = Jiffy(bang.date, 'dd MMM yyyy');
 
-    if (int.parse(day) < DateTime.now().day) {
-      print('your day:$day is outdated');
+    if (jif.date < DateTime.now().day ||
+        jif.month < DateTime.now().month ||
+        jif.year < DateTime.now().year) {
       if (isLocal) {
         final splitedPrefs = widget.userLocation.split(',');
         bangBloc.add(

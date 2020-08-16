@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
@@ -251,7 +252,12 @@ class _SettingPageState extends State<SettingPage> {
         }
         return Container(
           color: Colors.blueGrey[700],
-          child: Center(child: CircularProgressIndicator()),
+          child: Center(
+            child: SpinKitDoubleBounce(
+              color: Colors.white,
+              size: 300.w,
+            ),
+          ),
         );
       },
     );
