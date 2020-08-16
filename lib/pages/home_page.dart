@@ -16,7 +16,6 @@ import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/bloc/time_cycle/time_cycle_bloc.dart';
 import 'package:islamtime/cubit/after_spotlight_cubit.dart';
 import 'package:islamtime/cubit/body_status_cubit.dart';
-import 'package:islamtime/cubit/is_outdated_cubit.dart';
 import 'package:islamtime/cubit/is_rtl_cubit.dart';
 import 'package:islamtime/cubit/theme_cubit/theme_cubit.dart';
 import 'package:islamtime/i18n/prayer_and_time_names_i18n.dart';
@@ -63,8 +62,8 @@ class _HomePageState extends State<HomePage> {
   List<int> prefsTuning;
 
   int _animation;
-  var _isLoading = false;
   String _arrowAnimation = 'upArrowAnimation';
+  var _isLoading = false;
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
@@ -133,12 +132,12 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _getSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    prefsLat = prefs.getDouble('lat');
-    prefsLng = prefs.getDouble('lng');
-    prefsMethodNumber = prefs.getInt('methodNumber');
-    locationPrefs = prefs.getString('location');
+    prefsLat = prefs.getDouble(LAT_KEY);
+    prefsLng = prefs.getDouble(LNG_KEY);
+    prefsMethodNumber = prefs.getInt(METHOD_NUMBER_KEY);
+    locationPrefs = prefs.getString(LOCATION_KEY);
 
-    final tuningString = prefs.getStringList('tuning');
+    final tuningString = prefs.getStringList(TUNING_KEY);
     final tuningInt = tuningString.map((e) => int.parse(e)).toList();
 
     prefsTuning = tuningInt;
@@ -161,21 +160,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _onRefresh(
-    BangBloc bloc,
+    BangBloc bangBloc,
     BuildContext context,
     bool isNotConnected,
+    bool isLocal,
   ) async {
-    await _getSharedPrefs();
-    if (isNotConnected) {
-      _refreshController.refreshCompleted();
-      showOfflineDialog(context, OfflineMessage.location, true);
-    } else {
-      bloc.add(
-        FetchBangWithSettings(
-          methodNumber: prefsMethodNumber,
-          tuning: prefsTuning,
-        ),
+    final prefs = await SharedPreferences.getInstance();
+    if (isLocal) {
+      final locationPrefsLocal = prefs.getString(LOCATION_KEY);
+      final splitedPrefs = locationPrefsLocal.split(',');
+      bangBloc.add(
+        GetBang(countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()),
       );
+    } else {
+      await _getSharedPrefs();
+      if (isNotConnected) {
+        _refreshController.refreshCompleted();
+        showOfflineDialog(context, OfflineMessage.basic, true);
+      } else {
+        bangBloc.add(
+          FetchBangWithSettings(
+            methodNumber: prefsMethodNumber,
+            tuning: prefsTuning,
+          ),
+        );
+      }
     }
   }
 
@@ -258,7 +267,7 @@ class _HomePageState extends State<HomePage> {
         isFirstTimeSnapshot,
       ) =>
           BlocBuilder<AfterSpotLightCubit, bool>(
-        builder: (context, state) => SimpleTooltip(
+        builder: (context, afterSpotLightState) => SimpleTooltip(
           content: Material(
             child: AutoSizeText(
               'Swipe from here to get latest prayer times'.i18n,
@@ -271,10 +280,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           show: () {
-            if (isLocalSnapshot.data) {
-              return false;
-            }
-            if (isFirstTimeSnapshot.data == null && state) {
+            if (isFirstTimeSnapshot.data == null && afterSpotLightState) {
               return true;
             }
             return false;
@@ -339,22 +345,75 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _isDateOudated(BangBloc bangBloc, Bang bang) {
+  void _isDateOudated(
+    BangBloc bangBloc,
+    Bang bang,
+    bool isNotConnected,
+    bool isLocal,
+  ) {
     final day = bang.date.numericOnly(bang.date, firstWordOnly: true);
     print('now day ${DateTime.now().day}');
 
     if (int.parse(day) < DateTime.now().day) {
       print('your day:$day is outdated');
-      bangBloc.add(
-        FetchBangWithSettings(
-          methodNumber: prefsMethodNumber ?? 0,
-          tuning: prefsTuning ?? [0, 0, 0, 0, 0, 0],
-        ),
-      );
+      if (isLocal) {
+        final splitedPrefs = widget.userLocation.split(',');
+        bangBloc.add(
+          GetBang(
+              countryName: splitedPrefs[0], cityName: splitedPrefs[1].trim()),
+        );
+        _isLoading = true;
+      } else {
+        if (!isNotConnected) {
+          bangBloc.add(
+            FetchBangWithSettings(
+              methodNumber: prefsMethodNumber ?? 0,
+              tuning: prefsTuning ?? [0, 0, 0, 0, 0, 0],
+            ),
+          );
+        }
+      }
       _isLoading = true;
     } else {
       _isLoading = false;
     }
+  }
+
+  Widget _buildLoadingOverlay(BuildContext context) {
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 4,
+              sigmaY: 4,
+            ),
+            child: SizedBox(
+              height: 260.w,
+              width: 260.w,
+              child: SpinKitDoubleBounce(
+                color: Colors.white,
+                size: 300.w,
+              ),
+            ),
+          ),
+          Positioned(
+            top: 700.h,
+            right: 50.w,
+            left: 50.w,
+            child: AutoSizeText(
+              'Getting prayer times for today'.i18n,
+              style: customFarroDynamicStyle(context: context, size: 6.0),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -370,8 +429,6 @@ class _HomePageState extends State<HomePage> {
     }
     SizeConfig().init(context);
 
-    final cubitTheme = BlocProvider.of<ThemeCubit>(context);
-
     return SafeArea(
       child: AbsorbPointer(
         absorbing: _isLoading,
@@ -383,13 +440,14 @@ class _HomePageState extends State<HomePage> {
                 future: _getIsLocal(),
                 builder: (context, isLocalSnapshot) {
                   if (isLocalSnapshot.hasData) {
+                    print('ISLOCAL => ${isLocalSnapshot.data}');
                     return SmartRefresher(
-                      onRefresh: () =>
-                          _onRefresh(bangBloc, context, isNotConnected),
-                      // TODO: remove physics
-                      physics: isLocalSnapshot.data
-                          ? NeverScrollableScrollPhysics()
-                          : null,
+                      onRefresh: () => _onRefresh(
+                        bangBloc,
+                        context,
+                        isNotConnected,
+                        isLocalSnapshot.data,
+                      ),
                       controller: _refreshController,
                       header: WaterDropHeader(waterDropColor: Colors.blue),
                       child: BlocConsumer<TimeCycleBloc, TimeCycleState>(
@@ -405,39 +463,38 @@ class _HomePageState extends State<HomePage> {
                         builder: (context, state) {
                           if (state is TimeCycleLoaded) {
                             final timeCycle = state.timeCycle;
-                            // TODO: turn this back
-                            // _checkTheme(state.timeCycle, context);
+                            _checkTheme(state.timeCycle, context);
                             return Stack(
                               children: <Widget>[
                                 _buildFlareActor(),
-                                Center(
-                                  child: IconButton(
-                                    icon: FlutterLogo(
-                                      size: 4000.0,
-                                    ),
-                                    onPressed: () async {
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      await prefs.clear();
-                                    },
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(40.0),
-                                    child: FlatButton(
-                                      child: FlutterLogo(
-                                        size: 100.0,
-                                        colors: Colors.red,
-                                      ),
-                                      onPressed: () async =>
-                                          cubitTheme.changeTheme(AppTheme.dark),
-                                      onLongPress: () => cubitTheme
-                                          .changeTheme(AppTheme.light),
-                                    ),
-                                  ),
-                                ),
+                                // Center(
+                                //   child: IconButton(
+                                //     icon: FlutterLogo(
+                                //       size: 4000.0,
+                                //     ),
+                                //     onPressed: () async {
+                                //       final prefs =
+                                //           await SharedPreferences.getInstance();
+                                //       await prefs.clear();
+                                //     },
+                                //   ),
+                                // ),
+                                // Align(
+                                //   alignment: Alignment.centerRight,
+                                //   child: Padding(
+                                //     padding: const EdgeInsets.all(40.0),
+                                //     child: FlatButton(
+                                //       child: FlutterLogo(
+                                //         size: 100.0,
+                                //         colors: Colors.red,
+                                //       ),
+                                //       onPressed: () async =>
+                                //           cubitTheme.changeTheme(AppTheme.dark),
+                                //       onLongPress: () => cubitTheme
+                                //           .changeTheme(AppTheme.light),
+                                //     ),
+                                //   ),
+                                // ),
                                 _buildBottomSheet(
                                   context,
                                   bodyStatusCubit,
@@ -453,7 +510,12 @@ class _HomePageState extends State<HomePage> {
                                   },
                                   builder: (context, state) {
                                     if (state is BangLoaded) {
-                                      _isDateOudated(bangBloc, state.bang);
+                                      _isDateOudated(
+                                        bangBloc,
+                                        state.bang,
+                                        isNotConnected,
+                                        isLocalSnapshot.data,
+                                      );
                                       return SingleChildScrollView(
                                         child: Column(
                                           children: <Widget>[
@@ -508,43 +570,6 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLoadingOverlay(BuildContext context) {
-    return Container(
-      height: double.infinity,
-      width: double.infinity,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 4,
-              sigmaY: 4,
-            ),
-            child: SizedBox(
-              height: 260.w,
-              width: 260.w,
-              child: SpinKitDoubleBounce(
-                color: Colors.white,
-                size: 300.w,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 700.h,
-            right: 50.w,
-            left: 50.w,
-            child: AutoSizeText(
-              'Getting prayer times for today',
-              style: customFarroDynamicStyle(context: context, size: 6.0),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationRepository {
@@ -13,7 +14,7 @@ class LocationRepository {
     final splitedAddress = formattedAddress.split(',');
 
     await prefs.setString(
-        'location', '${splitedAddress[0]}, ${splitedAddress[1]}');
+        LOCATION_KEY, '${splitedAddress[0]}, ${splitedAddress[1]}');
 
     return position;
   }

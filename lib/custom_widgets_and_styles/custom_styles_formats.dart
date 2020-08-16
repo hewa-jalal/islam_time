@@ -17,6 +17,7 @@ const String LAT_KEY = 'lat';
 const String LNG_KEY = 'lng';
 const String METHOD_NUMBER_KEY = 'methodNumber';
 const String TUNING_KEY = 'tuning';
+const String LOCATION_KEY = 'location';
 
 enum OfflineMessage {
   location,
@@ -29,7 +30,7 @@ void showOfflineDialog(
   BuildContext context,
   OfflineMessage offlineMessage,
   bool showLastThirdDeeds,
-) async {
+) {
   AwesomeDialog(
     context: context,
     customHeader: Lottie.asset('assets/images/no_internet.json'),

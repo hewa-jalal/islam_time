@@ -56,8 +56,6 @@ class LocalBangRepository implements BangRepository {
       final matchedDate =
           fileLines.where((element) => element.contains(getDate())).toString();
 
-      // print('matched data => $matchedDate');
-
       // split the line that has the data by ','
       final splitLine = matchedDate.split(',');
 

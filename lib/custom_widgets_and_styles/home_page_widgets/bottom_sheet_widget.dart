@@ -11,7 +11,6 @@ import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/custom_widgets_and_styles/home_page_widgets/prayer_tile_widget.dart';
 import 'package:islamtime/models/bang.dart';
 import 'package:islamtime/models/fetch_settings.dart';
-import 'package:islamtime/models/time_cycle.dart';
 import 'package:islamtime/pages/setting_page.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:islamtime/services/connection_service.dart';
@@ -74,7 +73,7 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
               align: AlignContent.top,
               child: AutoSizeText(
                 _isLocal
-                    ? 'Tap here to get a new location'
+                    ? 'Tap here to get a new location'.i18n
                     : 'Tap here to tune prayers times or get a new location'
                         .i18n,
                 style: GoogleFonts.roboto(
@@ -165,9 +164,10 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
         child: Padding(
           padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 1.0),
           child: Text(
-            '''you have fixed prayer times for you location, are you sure you want to change your location,and get prayer times from the internet?''',
+            '''you have fixed prayer times for your location, are you sure you want to change your location,and get prayer times from the internet?'''
+                .i18n,
             style: customFarroDynamicStyle(
-              size: 4.0,
+              size: 3.2,
               context: context,
             ),
             textAlign: TextAlign.center,
@@ -176,6 +176,8 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
       ),
       btnOkOnPress: () => bloc.add(FetchBang()),
       btnCancelOnPress: () {},
+      btnOkText: 'Ok'.i18n,
+      btnCancelText: 'Cancel'.i18n,
     )..show();
   }
 
@@ -238,9 +240,11 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     BangBloc bangBloc,
     Bang bang,
     bool isNotConnected,
+    bool isLocal,
+    String location,
   ) {
     final day = bang.date.numericOnly(bang.date, firstWordOnly: true);
-    if (int.parse(day) < DateTime.now().day) {
+    if (int.parse(day) < DateTime.now().day && !isLocal) {
       return FutureBuilder<FetchSetting>(
         future: _getSettings(),
         builder: (context, fetchSetting) {
@@ -274,97 +278,94 @@ class _BottomSheetTimeState extends State<BottomSheetTime> {
     final connectionStatus = Provider.of<ConnectivityStatus>(context);
     final isNotConnected = connectionStatus == ConnectivityStatus.Offline;
 
-    return Container(
-      color: Colors.grey.withOpacity(0.4),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-          child: BlocBuilder<BangBloc, BangState>(
-            builder: (context, state) {
-              if (state is BangLoaded) {
-                final bang = state.bang;
-                return Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          'Hijri ${bang.formattedHijriDate}',
-                          style: customFarroDynamicStyle(
-                            size: 4.0,
-                            fontWeight: FontWeight.bold,
-                            context: context,
+    return FutureBuilder(
+      future: _locationFuture,
+      builder: (context, snapshotLocation) => Container(
+        color: Colors.grey.withOpacity(0.4),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+            child: BlocBuilder<BangBloc, BangState>(
+              builder: (context, state) {
+                if (state is BangLoaded) {
+                  final bang = state.bang;
+                  return Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            'Hijri ${bang.formattedHijriDate}',
+                            style: customFarroDynamicStyle(
+                              size: 4.0,
+                              fontWeight: FontWeight.bold,
+                              context: context,
+                            ),
                           ),
-                        ),
-                        Spacer(),
-                        _buildIsOutdatedWidget(
-                          bangBloc,
-                          bang,
-                          isNotConnected,
-                        ),
-                        Text(
-                          bang.date,
-                          style: customFarroDynamicStyle(
-                            size: 4.0,
-                            fontWeight: FontWeight.bold,
-                            context: context,
+                          Spacer(),
+                          _buildIsOutdatedWidget(
+                            bangBloc,
+                            bang,
+                            isNotConnected,
+                            _isLocal,
+                            snapshotLocation.data,
                           ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: FutureBuilder<String>(
-                        future: _locationFuture,
-                        builder: (_, snapshotLocation) {
-                          if (!snapshotLocation.hasData) {
-                            return CircularProgressIndicator();
-                          }
-                          return Stack(
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    'Prayers Times for'.i18n +
-                                        '\n' +
-                                        snapshotLocation.data,
-                                    style: customFarroDynamicStyle(
-                                      fontWeight: FontWeight.bold,
-                                      context: context,
-                                      size: 4.6,
-                                      height: 1.35,
-                                    ),
-                                    textAlign: TextAlign.center,
+                          Text(
+                            bang.date,
+                            style: customFarroDynamicStyle(
+                              size: 4.0,
+                              fontWeight: FontWeight.bold,
+                              context: context,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Stack(
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  'Prayers Times for'.i18n +
+                                      '\n' +
+                                      snapshotLocation.data,
+                                  style: customFarroDynamicStyle(
+                                    fontWeight: FontWeight.bold,
+                                    context: context,
+                                    size: 4.6,
+                                    height: 1.35,
                                   ),
-                                ],
-                              ),
-                              Positioned.fill(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Container(
-                                    child: _buildSettingChoiceButton(
-                                      context,
-                                      bangBloc,
-                                      isNotConnected,
-                                    ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                            Positioned.fill(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Container(
+                                  child: _buildSettingChoiceButton(
+                                    context,
+                                    bangBloc,
+                                    isNotConnected,
                                   ),
                                 ),
-                              )
-                            ],
-                          );
-                        },
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    Divider(color: Colors.black, height: 20, thickness: 2),
-                    _buildPrayerTilesColumn(bang),
-                  ],
-                );
-              } else {
-                return CircularProgressIndicator(
-                  backgroundColor: Colors.purple,
-                );
-              }
-            },
+                      Divider(color: Colors.black, height: 20, thickness: 2),
+                      _buildPrayerTilesColumn(bang),
+                    ],
+                  );
+                } else {
+                  return CircularProgressIndicator(
+                    backgroundColor: Colors.purple,
+                  );
+                }
+              },
+            ),
           ),
         ),
       ),

@@ -7,6 +7,10 @@ extension Localization on String {
         'ar': 'حسنا',
       } +
       {
+        'en': 'Cancel',
+        'ar': 'إلغاء',
+      } +
+      {
         'en': 'Fajr',
         'ar': 'الصباح',
       } +
@@ -71,12 +75,26 @@ extension Localization on String {
         'ar': 'اضغط هنا لضبط مواقيت الصلاة أو الحصول على موقع جديد',
       } +
       {
+        'en': 'Tap here to get a new location',
+        'ar': 'اضغط هنا للحصول على موقع جديد',
+      } +
+      {
         'en': 'Tap the screen to get your location',
         'ar': 'اضغط على الشاشة للحصول على موقعك',
       } +
       {
         'en': 'Your Location is',
         'ar': 'موقعك هو',
+      } +
+      {
+        'en': 'Getting prayer times for today',
+        'ar': 'الحصول على أوقات الصلاة لهذا اليوم',
+      } +
+      {
+        'en':
+            '''you have fixed prayer times for your location, are you sure you want to change your location,and get prayer times from the internet?''',
+        'ar':
+            '''لديك أوقات الصلاة الثابتة لموقعك، هل أنت متأكد من أنك تريد تغيير موقعك، والحصول على أوقات الصلاة من الإنترنت؟''',
       };
 
   String get i18n => localize(this, _t);

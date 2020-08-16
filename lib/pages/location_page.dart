@@ -4,8 +4,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/pages/select_city_page.dart';
@@ -78,7 +80,10 @@ class _LocationPageState extends State<LocationPage> {
                       ? Center(
                           child: BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                            child: CircularProgressIndicator(),
+                            child: SpinKitDoubleBounce(
+                              color: Colors.white,
+                              size: 300.w,
+                            ),
                           ),
                         )
                       : Container(),
@@ -96,7 +101,7 @@ class _LocationPageState extends State<LocationPage> {
     final bangBloc = BlocProvider.of<BangBloc>(context);
 
     final prefs = await SharedPreferences.getInstance();
-    final locationPrefs = prefs.getString('location');
+    final locationPrefs = prefs.getString(LOCATION_KEY);
 
     final position = await Geolocator().getCurrentPosition();
     final placemarks = await Geolocator()
@@ -116,9 +121,9 @@ class _LocationPageState extends State<LocationPage> {
       );
     }
 
-    if (userCountry.toLowerCase().contains('i2raq')) {
+    if (userCountry.toLowerCase().contains('iraq')) {
       await prefs.setBool(IS_LOCAL_KEY, true);
-      Get.off(SelectCityPage());
+      await Get.off(SelectCityPage());
     } else {
       await prefs.setBool(IS_LOCAL_KEY, false);
       bangBloc.add(FetchBang());

@@ -69,7 +69,6 @@ class BangBloc extends HydratedBloc<BangEvent, BangState> {
         yield BangError();
       }
     } else if (event is GetBang) {
-      print('get bang is called');
       try {
         final bang = await bangRepository.getPrayerData(
           event.countryName,

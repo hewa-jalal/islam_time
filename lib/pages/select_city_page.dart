@@ -3,7 +3,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:islamtime/bloc/bang_bloc.dart';
 import 'package:islamtime/custom_widgets_and_styles/custom_styles_formats.dart';
 import 'package:islamtime/pages/home_page.dart';
@@ -170,7 +172,10 @@ class _SelectCityPageState extends State<SelectCityPage> {
             ? Center(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                  child: CircularProgressIndicator(),
+                  child: SpinKitDoubleBounce(
+                    color: Colors.white,
+                    size: 300.w,
+                  ),
                 ),
               )
             : Container(),
