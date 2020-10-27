@@ -221,32 +221,33 @@ class _CountdownState extends State<Countdown> {
     // lastThird == MidNightEnd
 
     if (DateTime.now().hour >= bang.midNightEnd.hour &&
-        DateTime.now().hour <= bang.spedaDateTime.hour &&
         TimeOfDay.now().period == DayPeriod.am) {
-      // checking for equal hours
-      if (DateTime.now().hour == bang.spedaDateTime.hour) {
-        if (DateTime.now().minute <= bang.spedaDateTime.minute) {
+      // fixed git
+      if (DateTime.now().hour > bang.midNightEnd.hour &&
+          DateTime.now().hour <= bang.spedaDateTime.hour) {
+        if (DateTime.now().hour == bang.spedaDateTime.hour) {
+          if (DateTime.now().minute <= bang.spedaDateTime.minute) {
+            if (!_isLastThird) {
+              _isLastThird = true;
+              _addToBloc();
+            }
+          }
+        } else {
+          // hours are smaller than speda bang so it's still last third
           if (!_isLastThird) {
             _isLastThird = true;
             _addToBloc();
+            _setDurationToNight();
           }
         }
-      } else {
-        // hours are smaller than speda bang so it's still last third
-        if (!_isLastThird) {
-          _isLastThird = true;
-          _addToBloc();
-          _setDurationToNight();
-        }
-      }
-      if (DateTime.now().hour == bang.midNightEnd.hour) {
+      } else if (DateTime.now().hour == bang.midNightEnd.hour) {
         if (DateTime.now().minute >= bang.midNightEnd.minute) {
           if (!_isLastThird) {
             _isLastThird = true;
             _addToBloc();
           }
         }
-      } else {
+      } else if (DateTime.now().hour < bang.spedaDateTime.hour) {
         // hours are greater
         if (!_isLastThird) {
           _isLastThird = true;
