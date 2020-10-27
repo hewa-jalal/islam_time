@@ -64,8 +64,7 @@ class _HomePageState extends State<HomePage> {
   int _animation;
   String _arrowAnimation = 'upArrowAnimation';
   var _isLoading = false;
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  final _refreshController = RefreshController(initialRefresh: false);
 
   final _scaffold = GlobalKey();
   final _solidController = SolidController();
@@ -262,10 +261,7 @@ class _HomePageState extends State<HomePage> {
   ) {
     return FutureBuilder(
       future: _getTutorialDisplay(),
-      builder: (
-        context,
-        isFirstTimeSnapshot,
-      ) =>
+      builder: (context, isFirstTimeSnapshot) =>
           BlocBuilder<AfterSpotLightCubit, bool>(
         builder: (context, afterSpotLightState) => SimpleTooltip(
           content: Material(
@@ -385,7 +381,7 @@ class _HomePageState extends State<HomePage> {
       width: double.infinity,
       child: Stack(
         alignment: Alignment.center,
-        children: [
+        children: <Widget>[
           BackdropFilter(
             filter: ImageFilter.blur(
               sigmaX: 4,
@@ -435,7 +431,7 @@ class _HomePageState extends State<HomePage> {
         child: Scaffold(
           key: _scaffold,
           body: Stack(
-            children: [
+            children: <Widget>[
               FutureBuilder<bool>(
                 future: _getIsLocal(),
                 builder: (context, isLocalSnapshot) {
@@ -531,7 +527,7 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                             Align(
                                               alignment: Alignment.topCenter,
-                                              child: CountdownPage(
+                                              child: Countdown(
                                                 bang: state.bang,
                                               ),
                                             ),
@@ -554,7 +550,7 @@ class _HomePageState extends State<HomePage> {
                             return BlocBuilder<BangBloc, BangState>(
                               builder: (context, state) {
                                 if (state is BangLoaded) {
-                                  return CountdownPage(bang: state.bang);
+                                  return Countdown(bang: state.bang);
                                 }
                                 return SizedBox();
                               },

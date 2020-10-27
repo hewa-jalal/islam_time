@@ -83,7 +83,7 @@ class _SelectCityPageState extends State<SelectCityPage> {
                   );
                 }
               },
-              child: FutureBuilder(
+              child: FutureBuilder<List<String>>(
                 future: _citiesFiles,
                 builder: (context, snapshot) {
                   final bangBloc = BlocProvider.of<BangBloc>(context);

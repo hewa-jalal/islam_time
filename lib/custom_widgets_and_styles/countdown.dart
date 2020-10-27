@@ -10,22 +10,23 @@ import 'custom_styles_formats.dart';
 
 enum TimeIs { night, day }
 
-class CountdownPage extends StatefulWidget {
+class Countdown extends StatefulWidget {
   final Bang bang;
 
-  const CountdownPage({Key key, @required this.bang}) : super(key: key);
+  const Countdown({Key key, @required this.bang}) : super(key: key);
 
   @override
-  _CountdownPageState createState() => _CountdownPageState();
+  _CountdownState createState() => _CountdownState();
 }
 
-class _CountdownPageState extends State<CountdownPage> {
+class _CountdownState extends State<Countdown> {
   Bang bang;
   TimeIs _timeIs;
   TimeIs _oldTimeIs;
   bool _isLastThird = false;
   TimeCycleBloc _timeCycleBloc;
-  String isDayOrNightText;
+  String _isDayOrNightText;
+  // final DateTime.now() = DateTime.DateTime.now()();
 
   /// Formats a duration to 'mm:ss'.
   static String formatDuration(Duration d) =>
@@ -133,8 +134,8 @@ class _CountdownPageState extends State<CountdownPage> {
 
   @override
   Widget build(BuildContext context) {
-    checkDayNight();
-    checkLastThird();
+    _checkLastThird();
+    _checkDayNight();
     return AutoSizeText(
       formatDuration(remainingTime ?? duration),
       maxLines: 1,
@@ -147,7 +148,7 @@ class _CountdownPageState extends State<CountdownPage> {
     );
   }
 
-  void checkDayNight() {
+  void _checkDayNight() {
     // if it passed maghrab prayer time
     if (DateTime.now().hour >= bang.maghrabDateTime.hour) {
       if (DateTime.now().hour == bang.maghrabDateTime.hour) {
@@ -156,16 +157,16 @@ class _CountdownPageState extends State<CountdownPage> {
           _timeIs = TimeIs.night;
           if (_timeIs != _oldTimeIs) {
             _oldTimeIs = _timeIs;
-            addToBloc();
-            setDurationToNight();
+            _addToBloc();
+            _setDurationToNight();
           }
         } else {
           // minutes are still not greater so it's still day time
           _timeIs = TimeIs.day;
           if (_timeIs != _oldTimeIs) {
             _oldTimeIs = _timeIs;
-            addToBloc();
-            setDurationToDay();
+            _addToBloc();
+            _setDurationToDay();
           }
         }
       } else {
@@ -173,8 +174,8 @@ class _CountdownPageState extends State<CountdownPage> {
         _timeIs = TimeIs.night;
         if (_timeIs != _oldTimeIs) {
           _oldTimeIs = _timeIs;
-          addToBloc();
-          setDurationToNight();
+          _addToBloc();
+          _setDurationToNight();
         }
       }
     }
@@ -185,15 +186,15 @@ class _CountdownPageState extends State<CountdownPage> {
           _timeIs = TimeIs.night;
           if (_timeIs != _oldTimeIs) {
             _oldTimeIs = _timeIs;
-            addToBloc();
-            setDurationToNight();
+            _addToBloc();
+            _setDurationToNight();
           }
         } else {
           _timeIs = TimeIs.day;
           if (_timeIs != _oldTimeIs) {
             _oldTimeIs = _timeIs;
-            addToBloc();
-            setDurationToDay();
+            _addToBloc();
+            _setDurationToDay();
           }
         }
       } else {
@@ -201,44 +202,62 @@ class _CountdownPageState extends State<CountdownPage> {
         _timeIs = TimeIs.night;
         if (_timeIs != _oldTimeIs) {
           _oldTimeIs = _timeIs;
-          addToBloc();
-          setDurationToNight();
+          _addToBloc();
+          _setDurationToNight();
         }
       }
     } else {
       _timeIs = TimeIs.day;
       if (_timeIs != _oldTimeIs) {
         _oldTimeIs = _timeIs;
-        addToBloc();
-        setDurationToDay();
+        _addToBloc();
+        _setDurationToDay();
       }
     }
   }
 
-  void checkLastThird() {
+  void _checkLastThird() {
     // midNightEnd is the beginning of lastThird
     // lastThird == MidNightEnd
+
     if (DateTime.now().hour >= bang.midNightEnd.hour &&
-        TimeOfDay.now().period == DayPeriod.am &&
-        _timeIs == TimeIs.night) {
+        DateTime.now().hour <= bang.spedaDateTime.hour &&
+        TimeOfDay.now().period == DayPeriod.am) {
+      // checking for equal hours
+      if (DateTime.now().hour == bang.spedaDateTime.hour) {
+        if (DateTime.now().minute <= bang.spedaDateTime.minute) {
+          if (!_isLastThird) {
+            _isLastThird = true;
+            _addToBloc();
+          }
+        }
+      } else {
+        // hours are smaller than speda bang so it's still last third
+        if (!_isLastThird) {
+          _isLastThird = true;
+          _addToBloc();
+          _setDurationToNight();
+        }
+      }
       if (DateTime.now().hour == bang.midNightEnd.hour) {
         if (DateTime.now().minute >= bang.midNightEnd.minute) {
           if (!_isLastThird) {
             _isLastThird = true;
-            addToBloc();
+            _addToBloc();
           }
         }
       } else {
         // hours are greater
         if (!_isLastThird) {
           _isLastThird = true;
-          addToBloc();
+          _addToBloc();
+          _setDurationToNight();
         }
       }
     }
   }
 
-  void setDurationToDay() {
+  void _setDurationToDay() {
     final dayDuration = bang.maghrabDateTime.subtract(
       Duration(
         hours: DateTime.now().hour,
@@ -248,26 +267,42 @@ class _CountdownPageState extends State<CountdownPage> {
     duration = Duration(hours: dayDuration.hour, minutes: dayDuration.minute);
   }
 
-  void setDurationToNight() {
-    final nightDuration = bang.spedaDateTime.subtract(
-      Duration(
-        hours: DateTime.now().hour,
-        minutes: DateTime.now().minute,
-      ),
-    );
-    duration =
-        Duration(hours: nightDuration.hour, minutes: nightDuration.minute);
+  void _setDurationToNight() {
+    if (_isLastThird) {
+      final lastThirdDuration = bang.spedaDateTime.subtract(
+        Duration(
+          hours: DateTime.now().hour,
+          minutes: DateTime.now().minute,
+        ),
+      );
+      duration = Duration(
+        hours: lastThirdDuration.hour,
+        minutes: lastThirdDuration.minute,
+      );
+    } else {
+      final nightDuration = bang.midNightEnd.subtract(
+        Duration(
+          hours: DateTime.now().hour,
+          minutes: DateTime.now().minute,
+        ),
+      );
+      duration = Duration(
+        hours: nightDuration.hour,
+        minutes: nightDuration.minute,
+      );
+    }
+    // _timeIs = TimeIs.night;
   }
 
-  void addToBloc() {
+  void _addToBloc() {
     if (_timeIs == TimeIs.day) {
       // it's day so we need time until Night
-      isDayOrNightText = 'Night';
+      _isDayOrNightText = 'Night';
     } else if (_timeIs == TimeIs.night) {
-      isDayOrNightText = 'Last Third';
+      _isDayOrNightText = 'Last Third';
     }
     if (_isLastThird) {
-      isDayOrNightText = 'Day';
+      _isDayOrNightText = 'Day';
     }
 
     _timeCycleBloc.add(
@@ -275,7 +310,7 @@ class _CountdownPageState extends State<CountdownPage> {
         timeCycle: TimeCycle(
           timeIs: _timeIs,
           isLastThird: _isLastThird,
-          untilDayOrNight: isDayOrNightText,
+          untilDayOrNight: _isDayOrNightText,
         ),
       ),
     );
